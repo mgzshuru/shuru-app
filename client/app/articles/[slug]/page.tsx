@@ -1,22 +1,17 @@
-import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { articles } from "@/lib/data"
 import { formatDate } from "@/lib/utils"
 import BlockRenderer from "@/components/block-renderer"
 import { ArrowLeft } from "lucide-react"
 import { getArticleBySlug } from "@/lib/strapi-client"
 import { StrapiImage } from "@/components/custom/strapi-image"
 
-
 export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug;
-
   const { data } = await getArticleBySlug(slug)
 
   if (data.length === 0) notFound();
-
   const article = data[0]
 
   return (
