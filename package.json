@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "Next.js preview example with Strapi",
   "type": "module",
+  "license": "MIT",
+
   "scripts": {
     "client": "yarn dev --prefix ../client/",
     "server": "yarn dev --prefix ../server/",

@@ -5,11 +5,17 @@ import BlockRenderer from "@/components/block-renderer"
 import { ArrowLeft } from "lucide-react"
 import { getArticleBySlug } from "@/lib/strapi-client"
 import { StrapiImage } from "@/components/custom/strapi-image"
+import { draftMode } from "next/headers"
+
 
 export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug;
-  const { data } = await getArticleBySlug(slug)
+
+  const { isEnabled: isDraftMode } = await draftMode();
+  const status = isDraftMode ? "draft" : "published";
+
+  const { data } = await getArticleBySlug(slug, status)
 
   if (data.length === 0) notFound();
   const article = data[0]
