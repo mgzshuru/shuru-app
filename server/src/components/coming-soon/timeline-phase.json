@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_coming_soon_timeline_phase",
+  "info": {
+    "displayName": "Timeline Phase",
+    "icon": "circle"
+  },
+  "options": {},
+  "attributes": {
+    "phase": {
+      "type": "string",
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "isCurrent": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+} 

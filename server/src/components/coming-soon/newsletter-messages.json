@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_coming_soon_newsletter_messages",
+  "info": {
+    "displayName": "Newsletter Messages",
+    "icon": "message-circle"
+  },
+  "options": {},
+  "attributes": {
+    "success": {
+      "type": "string",
+      "required": true
+    },
+    "privacy": {
+      "type": "text",
+      "required": true
+    }
+  }
+} 

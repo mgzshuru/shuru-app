@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_coming_soon_team",
+  "info": {
+    "displayName": "Team",
+    "icon": "users"
+  },
+  "options": {},
+  "attributes": {
+    "header": {
+      "type": "component",
+      "component": "coming-soon.section-header",
+      "required": true
+    },
+    "teams": {
+      "type": "component",
+      "component": "coming-soon.team-item",
+      "repeatable": true,
+      "min": 1,
+      "max": 10
+    }
+  }
+} 

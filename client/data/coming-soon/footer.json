@@ -1,0 +1,67 @@
+{
+  "copyright_text": "شروع © 2025",
+  "logo": {
+    "logoText": "شروع",
+    "image": {
+      "url": "/logos/Shuru-footer-logo.svg",
+      "alternativeText": "شروع - مجلة رقمية للابتكار وريادة الأعمال"
+    },
+    "mobileImage": {
+      "url": "/logos/Shuru-mobile-footer-logo.svg",
+      "alternativeText": "شروع - مجلة رقمية للابتكار وريادة الأعمال"
+    }
+  },
+  "socialMedia": [
+    {
+      "id": 1,
+      "text": "Twitter",
+      "href": "https://twitter.com/shuru",
+      "isExternal": true,
+      "icon": "x"
+    },
+    {
+      "id": 2,
+      "text": "Facebook",
+      "href": "https://facebook.com/shuru",
+      "isExternal": true,
+      "icon": "facebook"
+    },
+    {
+      "id": 3,
+      "text": "Instagram",
+      "href": "https://instagram.com/shuru",
+      "isExternal": true,
+      "icon": "instagram"
+    },
+    {
+      "id": 4,
+      "text": "LinkedIn",
+      "href": "https://linkedin.com/company/shuru",
+      "isExternal": true,
+      "icon": "linkedin"
+    }
+  ],
+  "bottomLinks": [
+    {
+      "id": 1,
+      "text": "سياسة الخصوصية",
+      "href": "/privacy",
+      "isExternal": false,
+      "icon": null
+    },
+    {
+      "id": 2,
+      "text": "شروط الاستخدام",
+      "href": "/terms",
+      "isExternal": false,
+      "icon": null
+    },
+    {
+      "id": 3,
+      "text": "اتصل بنا",
+      "href": "/contact",
+      "isExternal": false,
+      "icon": null
+    }
+  ]
+} 

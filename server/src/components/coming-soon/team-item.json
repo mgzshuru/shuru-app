@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_coming_soon_team_item",
+  "info": {
+    "displayName": "Team Item",
+    "icon": "user"
+  },
+  "options": {},
+  "attributes": {
+    "icon": {
+      "type": "string",
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    }
+  }
+} 

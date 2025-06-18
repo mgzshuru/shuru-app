@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_coming_soon_cta_button",
+  "info": {
+    "displayName": "CTA Button",
+    "icon": "cursor-pointer"
+  },
+  "options": {},
+  "attributes": {
+    "text": {
+      "type": "string",
+      "required": true
+    },
+    "target": {
+      "type": "string",
+      "required": true
+    },
+    "variant": {
+      "type": "enumeration",
+      "enum": ["primary", "secondary", "outline"],
+      "default": "primary"
+    }
+  }
+} 

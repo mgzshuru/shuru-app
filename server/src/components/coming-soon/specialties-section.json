@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_coming_soon_specialties_section",
+  "info": {
+    "displayName": "Specialties Section",
+    "icon": "tag"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "items": {
+      "type": "json",
+      "required": true
+    }
+  }
+} 

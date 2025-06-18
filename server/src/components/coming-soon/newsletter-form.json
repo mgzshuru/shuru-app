@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_coming_soon_newsletter_form",
+  "info": {
+    "displayName": "Newsletter Form",
+    "icon": "form"
+  },
+  "options": {},
+  "attributes": {
+    "emailPlaceholder": {
+      "type": "string",
+      "required": true
+    },
+    "submitButton": {
+      "type": "component",
+      "component": "coming-soon.submit-button",
+      "required": true
+    }
+  }
+} 

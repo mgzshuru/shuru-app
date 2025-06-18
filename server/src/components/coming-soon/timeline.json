@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_coming_soon_timeline",
+  "info": {
+    "displayName": "Timeline",
+    "icon": "clock"
+  },
+  "options": {},
+  "attributes": {
+    "header": {
+      "type": "component",
+      "component": "coming-soon.section-header",
+      "required": true
+    },
+    "phases": {
+      "type": "component",
+      "component": "coming-soon.timeline-phase",
+      "repeatable": true,
+      "min": 1,
+      "max": 10
+    }
+  }
+} 

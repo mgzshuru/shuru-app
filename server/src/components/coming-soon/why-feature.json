@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_coming_soon_why_feature",
+  "info": {
+    "displayName": "Why Feature",
+    "icon": "star"
+  },
+  "options": {},
+  "attributes": {
+    "icon": {
+      "type": "string",
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    }
+  }
+} 

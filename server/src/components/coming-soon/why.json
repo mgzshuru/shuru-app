@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_coming_soon_why",
+  "info": {
+    "displayName": "Why",
+    "icon": "help-circle"
+  },
+  "options": {},
+  "attributes": {
+    "header": {
+      "type": "component",
+      "component": "coming-soon.section-header",
+      "required": true
+    },
+    "features": {
+      "type": "component",
+      "component": "coming-soon.why-feature",
+      "repeatable": true,
+      "min": 1,
+      "max": 10
+    }
+  }
+} 

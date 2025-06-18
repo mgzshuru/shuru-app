@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_coming_soon_features_grid",
+  "info": {
+    "displayName": "Features Grid",
+    "icon": "grid"
+  },
+  "options": {},
+  "attributes": {
+    "mainFeature": {
+      "type": "component",
+      "component": "coming-soon.main-feature",
+      "required": true
+    },
+    "stats": {
+      "type": "component",
+      "component": "coming-soon.stats-section",
+      "required": true
+    },
+    "specialties": {
+      "type": "component",
+      "component": "coming-soon.specialties-section",
+      "required": true
+    }
+  }
+} 

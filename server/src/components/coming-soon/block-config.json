@@ -1,0 +1,35 @@
+{
+  "collectionName": "components_coming_soon_block_config",
+  "info": {
+    "displayName": "Block Configuration",
+    "icon": "settings"
+  },
+  "options": {
+    "collapsible": true,
+    "collapsed": false
+  },
+  "attributes": {
+    "blockId": {
+      "type": "string",
+      "required": true
+    },
+    "blockName": {
+      "type": "string",
+      "required": true
+    },
+    "isVisible": {
+      "type": "boolean",
+      "default": true
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    },
+    "customClasses": {
+      "type": "text"
+    },
+    "customStyles": {
+      "type": "json"
+    }
+  }
+} 

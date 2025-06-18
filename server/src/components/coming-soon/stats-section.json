@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_coming_soon_stats_section",
+  "info": {
+    "displayName": "Stats Section",
+    "icon": "chart-bar"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "items": {
+      "type": "component",
+      "component": "coming-soon.stat-item",
+      "repeatable": true,
+      "min": 1,
+      "max": 10
+    }
+  }
+} 

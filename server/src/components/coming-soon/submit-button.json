@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_coming_soon_submit_button",
+  "info": {
+    "displayName": "Submit Button",
+    "icon": "cursor-pointer"
+  },
+  "options": {},
+  "attributes": {
+    "text": {
+      "type": "string",
+      "required": true
+    },
+    "icon": {
+      "type": "string",
+      "required": true
+    }
+  }
+} 

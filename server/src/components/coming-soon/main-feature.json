@@ -1,0 +1,29 @@
+{
+  "collectionName": "components_coming_soon_main_feature",
+  "info": {
+    "displayName": "Main Feature",
+    "icon": "star"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "features": {
+      "type": "component",
+      "component": "coming-soon.feature-item",
+      "repeatable": true,
+      "min": 1,
+      "max": 10
+    }
+  }
+} 

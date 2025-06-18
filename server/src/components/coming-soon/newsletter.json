@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_coming_soon_newsletter",
+  "info": {
+    "displayName": "Newsletter",
+    "icon": "mail"
+  },
+  "options": {},
+  "attributes": {
+    "header": {
+      "type": "component",
+      "component": "coming-soon.section-header",
+      "required": true
+    },
+    "form": {
+      "type": "component",
+      "component": "coming-soon.newsletter-form",
+      "required": true
+    },
+    "messages": {
+      "type": "component",
+      "component": "coming-soon.newsletter-messages",
+      "required": true
+    }
+  }
+} 

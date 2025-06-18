@@ -1,0 +1,33 @@
+{
+  "collectionName": "components_coming_soon_footer",
+  "info": {
+    "displayName": "Footer",
+    "icon": "footer"
+  },
+  "options": {},
+  "attributes": {
+    "copyright_text": {
+      "type": "string",
+      "required": true
+    },
+    "logo": {
+      "type": "component",
+      "component": "coming-soon.footer-logo",
+      "required": true
+    },
+    "socialMedia": {
+      "type": "component",
+      "component": "coming-soon.social-link",
+      "repeatable": true,
+      "min": 1,
+      "max": 10
+    },
+    "bottomLinks": {
+      "type": "component",
+      "component": "coming-soon.footer-link",
+      "repeatable": true,
+      "min": 1,
+      "max": 10
+    }
+  }
+} 

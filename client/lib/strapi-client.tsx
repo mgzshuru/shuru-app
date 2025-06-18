@@ -20,3 +20,29 @@ export async function getArticleBySlug(slug: string, status: "draft" | "publishe
   });
   return article;
 }
+
+export async function submitToNewsletter(email: string) {
+  try {    
+    const response = await fetch(`${STRAPI_BASE_URL}/api/newsletters`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        data: {
+          email: email,
+        }
+      })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTTP ${response.status}: ${errorText}`);
+    }
+
+    const result = await response.json();
+    return { success: true, data: result };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_coming_soon_footer_link",
+  "info": {
+    "displayName": "Footer Link",
+    "icon": "link"
+  },
+  "options": {},
+  "attributes": {
+    "text": {
+      "type": "string",
+      "required": true
+    },
+    "href": {
+      "type": "string",
+      "required": true
+    },
+    "isExternal": {
+      "type": "boolean",
+      "default": false
+    },
+    "icon": {
+      "type": "string"
+    }
+  }
+} 

@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_coming_soon_section_header",
+  "info": {
+    "displayName": "Section Header",
+    "icon": "heading"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    }
+  }
+} 
