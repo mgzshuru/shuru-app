@@ -1,0 +1,29 @@
+{
+    "collectionName": "components_content_images",
+    "info": {
+      "displayName": "Image",
+      "description": "Image content block with caption"
+    },
+    "options": {},
+    "attributes": {
+      "image": {
+        "type": "media",
+        "multiple": false,
+        "required": true,
+        "allowedTypes": ["images"]
+      },
+      "caption": {
+        "type": "string",
+        "required": false
+      },
+      "alt_text": {
+        "type": "string",
+        "required": true
+      },
+      "width": {
+        "type": "enumeration",
+        "enum": ["small", "medium", "large", "full"],
+        "default": "medium"
+      }
+    }
+  }

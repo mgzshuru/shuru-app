@@ -12,12 +12,12 @@
     },
     "image": {
       "type": "component",
-      "component": "shared.media",
+      "component": "content.image",
       "required": true
     },
     "mobileImage": {
       "type": "component",
-      "component": "shared.media",
+      "component": "content.image",
       "required": true
     }
   }

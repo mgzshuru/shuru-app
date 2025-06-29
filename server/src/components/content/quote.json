@@ -1,0 +1,27 @@
+{
+    "collectionName": "components_content_quotes",
+    "info": {
+      "displayName": "Quote",
+      "description": "Quote or blockquote content"
+    },
+    "options": {},
+    "attributes": {
+      "quote_text": {
+        "type": "text",
+        "required": true
+      },
+      "author": {
+        "type": "string",
+        "required": false
+      },
+      "author_title": {
+        "type": "string",
+        "required": false
+      },
+      "style": {
+        "type": "enumeration",
+        "enum": ["default", "highlighted", "pullquote"],
+        "default": "default"
+      }
+    }
+  }

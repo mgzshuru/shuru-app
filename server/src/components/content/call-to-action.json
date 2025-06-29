@@ -1,0 +1,43 @@
+{
+  "collectionName": "components_content_call_to_actions",
+  "info": {
+    "displayName": "Call to Action",
+    "description": "Call to action block with button"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": false
+    },
+    "button_text": {
+      "type": "string",
+      "required": true
+    },
+    "button_url": {
+      "type": "string",
+      "required": true
+    },
+    "style": {
+      "type": "enumeration",
+      "enum": [
+        "primary",
+        "secondary",
+        "outline"
+      ],
+      "default": "primary"
+    },
+    "background_color": {
+      "type": "string",
+      "required": false
+    },
+    "open_in_new_tab": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

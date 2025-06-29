@@ -1,0 +1,33 @@
+{
+  "kind": "collectionType",
+  "collectionName": "subscribers",
+  "info": {
+    "singularName": "subscriber",
+    "pluralName": "subscribers",
+    "displayName": "Subscriber",
+    "description": "Newsletter subscribers"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "email": {
+      "type": "email",
+      "required": true,
+      "unique": true
+    },
+    "name": {
+      "type": "string",
+      "required": false,
+      "maxLength": 100
+    },
+    "subscribed_at": {
+      "type": "datetime",
+      "required": true
+    },
+    "is_verified": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

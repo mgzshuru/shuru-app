@@ -5,35 +5,47 @@
     "singularName": "article",
     "pluralName": "articles",
     "displayName": "Article",
-    "description": "Create your blog content"
+    "description": "Articles with rich content support"
   },
   "options": {
     "draftAndPublish": true
   },
-  "pluginOptions": {},
   "attributes": {
     "title": {
-      "type": "string"
-    },
-    "description": {
-      "type": "text",
-      "maxLength": 80
+      "type": "string",
+      "required": true,
+      "maxLength": 255
     },
     "slug": {
       "type": "uid",
-      "targetField": "title"
+      "targetField": "title",
+      "required": true
     },
-    "cover": {
+    "cover_image": {
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["images", "files", "videos"]
+      "allowedTypes": [
+        "images"
+      ]
     },
-    "author": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::author.author",
-      "inversedBy": "articles"
+    "blocks": {
+      "type": "dynamiczone",
+      "components": [
+        "content.rich-text",
+        "content.image",
+        "content.video-embed",
+        "content.quote",
+        "content.code-block",
+        "content.gallery",
+        "content.call-to-action"
+      ],
+      "required": true,
+      "min": 1
+    },
+    "excerpt": {
+      "type": "text",
+      "maxLength": 500
     },
     "category": {
       "type": "relation",
@@ -41,9 +53,40 @@
       "target": "api::category.category",
       "inversedBy": "articles"
     },
-    "blocks": {
-      "type": "dynamiczone",
-      "components": ["shared.media", "shared.quote", "shared.rich-text", "shared.slider"]
+    "author": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::author.author",
+      "inversedBy": "articles"
+    },
+    "guest_author_name": {
+      "type": "string",
+      "required": false
+    },
+    "publish_date": {
+      "type": "datetime",
+      "required": true
+    },
+    "is_featured": {
+      "type": "boolean",
+      "default": false
+    },
+    "magazine_issues": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::magazine-issue.magazine-issue",
+      "inversedBy": "articles"
+    },
+    "newsletters": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::newsletter-edition.newsletter-edition",
+      "inversedBy": "featured_articles"
+    },
+    "SEO": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
     }
   }
 }

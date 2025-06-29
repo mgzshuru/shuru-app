@@ -1,22 +1,27 @@
 {
   "collectionName": "components_shared_seos",
   "info": {
-    "name": "Seo",
+    "displayName": "SEO Meta",
     "icon": "allergies",
-    "displayName": "Seo",
-    "description": ""
+    "description": "SEO metadata component for articles"
   },
   "options": {},
   "attributes": {
-    "metaTitle": {
+    "meta_title": {
       "type": "string",
-      "required": true
+      "maxLength": 60,
+      "required": false
     },
-    "metaDescription": {
+    "meta_description": {
       "type": "text",
-      "required": true
+      "maxLength": 160,
+      "required": false
     },
-    "shareImage": {
+    "meta_keywords": {
+      "type": "string",
+      "required": false
+    },
+    "og_image": {
       "type": "media",
       "multiple": false,
       "required": false,

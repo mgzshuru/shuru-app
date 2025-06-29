@@ -5,24 +5,48 @@
     "singularName": "author",
     "pluralName": "authors",
     "displayName": "Author",
-    "description": "Create authors for your content"
+    "description": "Blog post authors"
   },
   "options": {
     "draftAndPublish": false
   },
-  "pluginOptions": {},
   "attributes": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "required": true,
+      "maxLength": 100
     },
-    "avatar": {
+    "phone_number": {
+      "type": "string",
+      "required": false,
+      "maxLength": 20
+    },
+    "email": {
+      "type": "email",
+      "required": true,
+      "unique": true
+    },
+    "profile_picture": {
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["images", "files", "videos"]
+      "allowedTypes": [
+        "images"
+      ]
     },
-    "email": {
-      "type": "string"
+    "organization": {
+      "type": "string",
+      "required": false,
+      "maxLength": 100
+    },
+    "jobTitle": {
+      "type": "string",
+      "required": false,
+      "maxLength": 100
+    },
+    "linkedin_url": {
+      "type": "string",
+      "required": false
     },
     "articles": {
       "type": "relation",

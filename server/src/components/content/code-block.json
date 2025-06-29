@@ -1,0 +1,27 @@
+{
+    "collectionName": "components_content_code_blocks",
+    "info": {
+      "displayName": "Code Block",
+      "description": "Code snippet with syntax highlighting"
+    },
+    "options": {},
+    "attributes": {
+      "code": {
+        "type": "text",
+        "required": true
+      },
+      "language": {
+        "type": "string",
+        "required": false,
+        "default": "javascript"
+      },
+      "title": {
+        "type": "string",
+        "required": false
+      },
+      "show_line_numbers": {
+        "type": "boolean",
+        "default": true
+      }
+    }
+  }

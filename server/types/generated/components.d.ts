@@ -115,10 +115,10 @@ export interface ComingSoonFooterLogo extends Struct.ComponentSchema {
     icon: 'image';
   };
   attributes: {
-    image: Schema.Attribute.Component<'shared.media', false> &
+    image: Schema.Attribute.Component<'content.image', false> &
       Schema.Attribute.Required;
     logoText: Schema.Attribute.String & Schema.Attribute.Required;
-    mobileImage: Schema.Attribute.Component<'shared.media', false> &
+    mobileImage: Schema.Attribute.Component<'content.image', false> &
       Schema.Attribute.Required;
   };
 }
@@ -133,7 +133,7 @@ export interface ComingSoonHero extends Struct.ComponentSchema {
     cta: Schema.Attribute.Component<'coming-soon.cta-button', false> &
       Schema.Attribute.Required;
     description: Schema.Attribute.RichText & Schema.Attribute.Required;
-    logo: Schema.Attribute.Component<'shared.media', false> &
+    logo: Schema.Attribute.Component<'content.image', false> &
       Schema.Attribute.Required;
     stats: Schema.Attribute.Component<'coming-soon.stat-item', true> &
       Schema.Attribute.SetMinMax<
@@ -398,65 +398,141 @@ export interface ComingSoonWhyFeature extends Struct.ComponentSchema {
   };
 }
 
-export interface SharedMedia extends Struct.ComponentSchema {
-  collectionName: 'components_shared_media';
+export interface ContentCallToAction extends Struct.ComponentSchema {
+  collectionName: 'components_content_call_to_actions';
   info: {
-    displayName: 'Media';
-    icon: 'file-video';
+    description: 'Call to action block with button';
+    displayName: 'Call to Action';
   };
   attributes: {
-    file: Schema.Attribute.Media<'images' | 'files' | 'videos'>;
+    background_color: Schema.Attribute.String;
+    button_text: Schema.Attribute.String & Schema.Attribute.Required;
+    button_url: Schema.Attribute.String & Schema.Attribute.Required;
+    description: Schema.Attribute.Text;
+    open_in_new_tab: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    style: Schema.Attribute.Enumeration<['primary', 'secondary', 'outline']> &
+      Schema.Attribute.DefaultTo<'primary'>;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
 
-export interface SharedQuote extends Struct.ComponentSchema {
-  collectionName: 'components_shared_quotes';
+export interface ContentCodeBlock extends Struct.ComponentSchema {
+  collectionName: 'components_content_code_blocks';
   info: {
-    displayName: 'Quote';
-    icon: 'indent';
+    description: 'Code snippet with syntax highlighting';
+    displayName: 'Code Block';
   };
   attributes: {
-    body: Schema.Attribute.Text;
+    code: Schema.Attribute.Text & Schema.Attribute.Required;
+    language: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'javascript'>;
+    show_line_numbers: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<true>;
     title: Schema.Attribute.String;
   };
 }
 
-export interface SharedRichText extends Struct.ComponentSchema {
-  collectionName: 'components_shared_rich_texts';
+export interface ContentGallery extends Struct.ComponentSchema {
+  collectionName: 'components_content_galleries';
   info: {
-    description: '';
-    displayName: 'Rich text';
-    icon: 'align-justify';
+    description: 'Image gallery content block';
+    displayName: 'Gallery';
   };
   attributes: {
-    body: Schema.Attribute.RichText;
+    columns: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 6;
+          min: 1;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<3>;
+    description: Schema.Attribute.Text;
+    images: Schema.Attribute.Media<'images', true> & Schema.Attribute.Required;
+    layout: Schema.Attribute.Enumeration<['grid', 'carousel', 'masonry']> &
+      Schema.Attribute.DefaultTo<'grid'>;
+    title: Schema.Attribute.String;
+  };
+}
+
+export interface ContentImage extends Struct.ComponentSchema {
+  collectionName: 'components_content_images';
+  info: {
+    description: 'Image content block with caption';
+    displayName: 'Image';
+  };
+  attributes: {
+    alt_text: Schema.Attribute.String & Schema.Attribute.Required;
+    caption: Schema.Attribute.String;
+    image: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
+    width: Schema.Attribute.Enumeration<['small', 'medium', 'large', 'full']> &
+      Schema.Attribute.DefaultTo<'medium'>;
+  };
+}
+
+export interface ContentQuote extends Struct.ComponentSchema {
+  collectionName: 'components_content_quotes';
+  info: {
+    description: 'Quote or blockquote content';
+    displayName: 'Quote';
+  };
+  attributes: {
+    author: Schema.Attribute.String;
+    author_title: Schema.Attribute.String;
+    quote_text: Schema.Attribute.Text & Schema.Attribute.Required;
+    style: Schema.Attribute.Enumeration<
+      ['default', 'highlighted', 'pullquote']
+    > &
+      Schema.Attribute.DefaultTo<'default'>;
+  };
+}
+
+export interface ContentRichText extends Struct.ComponentSchema {
+  collectionName: 'components_content_rich_texts';
+  info: {
+    description: 'Rich text content block';
+    displayName: 'Rich Text';
+  };
+  attributes: {
+    content: Schema.Attribute.RichText & Schema.Attribute.Required;
+  };
+}
+
+export interface ContentVideoEmbed extends Struct.ComponentSchema {
+  collectionName: 'components_content_video_embeds';
+  info: {
+    description: 'Embedded video content';
+    displayName: 'Video Embed';
+  };
+  attributes: {
+    autoplay: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    description: Schema.Attribute.Text;
+    thumbnail: Schema.Attribute.Media<'images'>;
+    title: Schema.Attribute.String;
+    video_url: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
 
 export interface SharedSeo extends Struct.ComponentSchema {
   collectionName: 'components_shared_seos';
   info: {
-    description: '';
-    displayName: 'Seo';
+    description: 'SEO metadata component for articles';
+    displayName: 'SEO Meta';
     icon: 'allergies';
-    name: 'Seo';
   };
   attributes: {
-    metaDescription: Schema.Attribute.Text & Schema.Attribute.Required;
-    metaTitle: Schema.Attribute.String & Schema.Attribute.Required;
-    shareImage: Schema.Attribute.Media<'images'>;
-  };
-}
-
-export interface SharedSlider extends Struct.ComponentSchema {
-  collectionName: 'components_shared_sliders';
-  info: {
-    description: '';
-    displayName: 'Slider';
-    icon: 'address-book';
-  };
-  attributes: {
-    files: Schema.Attribute.Media<'images', true>;
+    meta_description: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 160;
+      }>;
+    meta_keywords: Schema.Attribute.String;
+    meta_title: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
+    og_image: Schema.Attribute.Media<'images'>;
   };
 }
 
@@ -487,11 +563,14 @@ declare module '@strapi/strapi' {
       'coming-soon.timeline-phase': ComingSoonTimelinePhase;
       'coming-soon.why': ComingSoonWhy;
       'coming-soon.why-feature': ComingSoonWhyFeature;
-      'shared.media': SharedMedia;
-      'shared.quote': SharedQuote;
-      'shared.rich-text': SharedRichText;
+      'content.call-to-action': ContentCallToAction;
+      'content.code-block': ContentCodeBlock;
+      'content.gallery': ContentGallery;
+      'content.image': ContentImage;
+      'content.quote': ContentQuote;
+      'content.rich-text': ContentRichText;
+      'content.video-embed': ContentVideoEmbed;
       'shared.seo': SharedSeo;
-      'shared.slider': SharedSlider;
     }
   }
 }
