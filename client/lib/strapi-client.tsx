@@ -46,3 +46,39 @@ export async function submitToNewsletter(email: string) {
     return { success: false, error: error.message };
   }
 }
+
+// Page related functions (for your dynamic pages)
+export async function getAllPages() {
+  const query = {
+    fields: ['slug', 'title'],
+    sort: ['createdAt:desc'],
+  };
+
+  const pages = await client.collection("pages").find(query);
+  console.log(pages, "pages")
+  return pages;
+}
+
+export async function getPageBySlug(slug: string) {
+  const query = {
+    filters: {
+      slug: {
+        $eq: slug,
+      },
+    },
+    populate: ["SEO", "blocks"],
+  };
+
+  try {
+    const response = await client.collection("pages").find(query);
+    console.log(response, "response");
+    
+    if (response && Array.isArray(response.data) && response.data.length > 0) {
+      return response.data[0];
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching page:", error);
+    return null;
+  }
+}
