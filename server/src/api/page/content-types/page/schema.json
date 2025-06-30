@@ -1,19 +1,18 @@
 {
-  "kind": "singleType",
-  "collectionName": "abouts",
+  "kind": "collectionType",
+  "collectionName": "pages",
   "info": {
-    "singularName": "about",
-    "pluralName": "abouts",
-    "displayName": "About",
-    "description": "Write about yourself and the content you create"
+    "singularName": "page",
+    "pluralName": "pages",
+    "displayName": "Page"
   },
   "options": {
-    "draftAndPublish": false
+    "draftAndPublish": true
   },
-  "pluginOptions": {},
   "attributes": {
     "title": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "blocks": {
       "type": "dynamiczone",
@@ -23,6 +22,7 @@
         "content.quote",
         "content.image",
         "content.gallery",
+        "content.code-block",
         "content.call-to-action"
       ]
     },
@@ -30,6 +30,11 @@
       "type": "component",
       "repeatable": false,
       "component": "shared.seo"
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title",
+      "required": true
     }
   }
 }
