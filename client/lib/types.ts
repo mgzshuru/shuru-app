@@ -2,63 +2,97 @@ export interface Article {
   id: number
   documentId: string
   title: string
-  description: string
+  description?: string 
   slug: string
   createdAt: string
   updatedAt: string
   publishedAt: string
-  cover: {
+  publish_date: string 
+  is_featured: boolean 
+  cover_image?: {
     id: number
     documentId: string
     name: string
     alternativeText: string
     url: string
+    width?: number
+    height?: number
   }
-  category: {
+  category?: { 
     id: number
     documentId: string
     name: string
     slug: string
+    description?: string
+    SEO?: SEOComponent
   }
-  author: {
+  author?: { 
     id: number
     documentId: string
     name: string
     email: string
+    jobTitle?: string
+    organization?: string
+    phone_number?: string
+    linkedin_url?: string
     createdAt: string
     updatedAt: string
-    publishedAt: string
-    avatar: {
+    publishedAt?: string
+    avatar?: {
       id: number
       documentId: string
       url: string
       alternativeText: string
-      width: number
-      height: number
+      width?: number
+      height?: number
     }
   }
-  blocks: Block[]
+  blocks: Block[] 
+  SEO?: SEOComponent 
+  magazine_issues?: MagazineIssue[] 
+  newsletters?: NewsletterEdition[] 
 }
 
-export type Block = RichTextBlock | QuoteBlock | MediaBlock | SliderBlock
+// Based on your schema's dynamic zone components
+export type Block = 
+  | RichTextBlock 
+  | ImageBlock 
+  | VideoEmbedBlock 
+  | QuoteBlock 
+  | CodeBlock 
+  | GalleryBlock 
+  | CallToActionBlock
 
 export interface RichTextBlock {
-  __component: "shared.rich-text"
+  __component: "content.rich-text" 
   id: number
-  body: string
+  content: string 
 }
 
-export interface QuoteBlock {
-  __component: "shared.quote"
+export interface ImageBlock {
+  __component: "content.image" 
   id: number
-  title: string
-  body: string
+  image: {
+    id: number
+    documentId: string
+    url: string
+    alternativeText: string
+    width?: number
+    height?: number
+  }
+  alt_text: string 
+  caption?: string 
+  width: 'small' | 'medium' | 'large' | 'full' 
 }
 
-export interface MediaBlock {
-  __component: "shared.media"
+export interface VideoEmbedBlock {
+  __component: "content.video-embed" 
   id: number
-  file: {
+  video_url: string
+  title?: string
+  description?: string
+  autoplay: boolean
+  thumbnail?: {
     id: number
     documentId: string
     url: string
@@ -68,14 +102,194 @@ export interface MediaBlock {
   }
 }
 
-export interface SliderBlock {
-  __component: "shared.slider"
+export interface QuoteBlock {
+  __component: "content.quote" 
   id: number
-  files: {
+  quote_text: string 
+  author?: string 
+  author_title?: string 
+  style: 'default' | 'highlighted' | 'pullquote' 
+}
+
+export interface CodeBlock {
+  __component: "content.code-block" 
+  id: number
+  code: string
+  language: string
+  title?: string
+  show_line_numbers: boolean
+}
+
+export interface GalleryBlock {
+  __component: "content.gallery" 
+  id: number
+  title?: string
+  description?: string
+  images: {
     id: number
     documentId: string
     name: string
     url: string
     alternativeText: string
+    width?: number
+    height?: number
   }[]
+  layout: 'grid' | 'carousel' | 'masonry'
+  columns: number
+}
+
+export interface CallToActionBlock {
+  __component: "content.call-to-action" 
+  id: number
+  title: string
+  description?: string
+  button_text: string
+  button_url: string
+  style: 'primary' | 'secondary' | 'outline'
+  background_color?: string
+  open_in_new_tab: boolean
+}
+
+export interface SEOComponent {
+  id: number
+  meta_title?: string
+  meta_description?: string
+  meta_keywords?: string
+  og_image?: {
+    id: number
+    documentId: string
+    url: string
+    alternativeText: string
+    width?: number
+    height?: number
+  }
+}
+
+export interface Category {
+  id: number
+  documentId: string
+  name: string
+  slug: string
+  description?: string
+  createdAt: string
+  updatedAt: string
+  publishedAt?: string
+  parent_category?: Category
+  children_categories?: Category[]
+  articles?: Article[]
+  SEO?: SEOComponent
+}
+
+export interface Author {
+  id: number
+  documentId: string
+  name: string
+  email: string
+  jobTitle?: string
+  organization?: string
+  phone_number?: string
+  linkedin_url?: string
+  createdAt: string
+  updatedAt: string
+  publishedAt?: string
+  avatar?: {
+    id: number
+    documentId: string
+    url: string
+    alternativeText: string
+    width?: number
+    height?: number
+  }
+  articles?: Article[]
+}
+
+export interface MagazineIssue {
+  id: number
+  documentId: string
+  title: string
+  slug: string
+  description: string
+  issue_number: number
+  publish_date: string
+  is_featured: boolean
+  createdAt: string
+  updatedAt: string
+  publishedAt?: string
+  cover_image: {
+    id: number
+    documentId: string
+    url: string
+    alternativeText: string
+    width?: number
+    height?: number
+  }
+  pdf_attachment?: {
+    id: number
+    documentId: string
+    name: string
+    url: string
+  }
+  articles?: Article[]
+  SEO?: SEOComponent
+}
+
+export interface NewsletterEdition {
+  id: number
+  documentId: string
+  subject: string
+  slug: string
+  content: string
+  sent_at?: string
+  createdAt: string
+  updatedAt: string
+  publishedAt?: string
+  featured_articles?: Article[]
+  pdf_archive?: {
+    id: number
+    documentId: string
+    name: string
+    url: string
+  }
+}
+
+export interface Subscriber {
+  id: number
+  documentId: string
+  email: string
+  name?: string
+  is_verified: boolean
+  subscribed_at: string
+  createdAt: string
+  updatedAt: string
+  publishedAt?: string
+}
+
+// Global settings type
+export interface Global {
+  id: number
+  documentId: string
+  siteName: string
+  siteDescription: string
+  defaultSeo?: SEOComponent
+  favicon?: {
+    id: number
+    documentId: string
+    url: string
+    alternativeText: string
+  }
+  createdAt: string
+  updatedAt: string
+  publishedAt?: string
+}
+
+export interface Page {
+  id: number
+  documentId: string
+  title: string
+  slug: string
+  createdAt: string
+  updatedAt: string
+  publishedAt?: string
+  blocks?: Block[]
+  SEO?: SEOComponent
 }

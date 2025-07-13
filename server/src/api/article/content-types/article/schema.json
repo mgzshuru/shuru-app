@@ -43,7 +43,7 @@
       "required": true,
       "min": 1
     },
-    "excerpt": {
+    "description": {
       "type": "text",
       "maxLength": 500
     },
@@ -58,10 +58,6 @@
       "relation": "manyToOne",
       "target": "api::author.author",
       "inversedBy": "articles"
-    },
-    "guest_author_name": {
-      "type": "string",
-      "required": false
     },
     "publish_date": {
       "type": "datetime",
