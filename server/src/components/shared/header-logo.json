@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_shared_header_logos",
+  "info": {
+    "displayName": "Header Logo",
+    "description": "Logo component for header with responsive images",
+    "icon": "picture"
+  },
+  "options": {},
+  "attributes": {
+    "logoImage": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "alt": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100,
+      "default": "Company logo"
+    }
+  }
+}

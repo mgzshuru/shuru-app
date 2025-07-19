@@ -26,7 +26,7 @@ interface WhyData {
 export const Why = ({ data }: { data: WhyData }) => {
   return (
     <section className="relative py-32">
-      <div className="absolute inset-0 bg-black bg-opacity-90"></div>
+      <div className="absolute inset-0 bg-[#231f20] bg-opacity-90"></div>
       <div className="relative max-w-7xl mx-auto px-6">
         <div className="mb-24">
           <div className="text-xs font-black uppercase tracking-[0.2em] text-gray-400 mb-6">

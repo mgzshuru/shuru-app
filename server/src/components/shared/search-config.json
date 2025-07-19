@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_shared_search_configs",
+  "info": {
+    "displayName": "Search Config",
+    "description": "Search button configuration",
+    "icon": "search"
+  },
+  "options": {},
+  "attributes": {
+    "ariaLabel": {
+      "type": "string",
+      "default": "Search button"
+    },
+    "icon": {
+      "type": "string",
+      "default": "search"
+    }
+  }
+}

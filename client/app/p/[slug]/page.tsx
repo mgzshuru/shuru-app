@@ -185,20 +185,6 @@ export default async function PageComponent({ params }: PageProps) {
           </div>
         )}
       </main>
-
-      {/* Footer Navigation */}
-      <footer className="border-t border-gray-200 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-6 py-8">
-          <div className="text-center">
-            <a
-              href="/"
-              className="inline-flex items-center text-sm font-semibold text-gray-900 hover:text-gray-600 transition-colors duration-200 uppercase tracking-wider"
-            >
-              ← Back to Home
-            </a>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

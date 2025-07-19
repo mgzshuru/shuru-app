@@ -1,5 +1,6 @@
 import { strapi } from "@strapi/client";
 import { getStrapiURL } from "./utils";
+import { GlobalData } from "./types";
 
 const PATH = "/api";
 const STRAPI_BASE_URL = getStrapiURL();
@@ -639,4 +640,98 @@ export async function searchContent(searchTerm: string, contentTypes?: string[],
   }
 
   return results;
+}
+
+// =====================
+// GLOBAL FUNCTIONS
+// =====================
+
+export async function getGlobal(): Promise<GlobalData | null> {
+  try {
+    const response = await client.single("global").find({
+      populate: {
+        favicon: {
+          fields: ["url", "alternativeText"]
+        },
+        defaultSeo: {
+          fields: ["meta_title", "meta_description", "meta_keywords"],
+          populate: {
+            og_image: {
+              fields: ["url", "alternativeText", "width", "height"]
+            }
+          }
+        },
+        header: {
+          populate: {
+            logo: {
+              populate: {
+                logoImage: {
+                  fields: ["url", "alternativeText", "width", "height"]
+                }
+              }
+            },
+            navigation: {
+              populate: {
+                primaryMenuItems: {
+                  fields: ["label", "url", "openInNewTab", "isActive", "order"]
+                },
+                SideMenuButton: {
+                  populate: {
+                    icon: {
+                      fields: ["url", "alternativeText"]
+                    }
+                  }
+                }
+              }
+            },
+            subscription: {
+              fields: ["text", "url"]
+            },
+            loginButton: {
+              fields: ["text", "url"]
+            }
+          }
+        },
+        footer: {
+          populate: {
+            logo: {
+              populate: {
+                logoImage: {
+                  fields: ["url", "alternativeText", "width", "height"]
+                },
+                mobileImage: {
+                  fields: ["url", "alternativeText", "width", "height"]
+                }
+              }
+            },
+            socialLinks: {
+              populate: {
+                link: {
+                  fields: ["text", "href", "openInNewTab", "icon", "iconPosition"]
+                }
+              }
+            },
+            bottomLinks: {
+              populate: {
+                link: {
+                  fields: ["text", "href", "openInNewTab", "icon", "iconPosition"]
+                }
+              }
+            },
+            copyright: {
+              fields: ["companyName", "year", "allRightsReserved", "customText", "showCurrentYear"]
+            }
+          }
+        }
+      }
+    });
+
+    if (response && response.data) {
+      return response.data as unknown as GlobalData;
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching global data:", error);
+    return null;
+  }
 }

@@ -1,0 +1,40 @@
+{
+    "collectionName": "components_shared_social_link",
+    "info": {
+      "displayName": "Social Link",
+      "description": "Social media link with platform-specific styling",
+      "icon": "connector"
+    },
+    "options": {},
+    "attributes": {
+      "platform": {
+        "type": "enumeration",
+        "enum": [
+          "facebook",
+          "twitter",
+          "instagram", 
+          "linkedin",
+          "youtube",
+          "tiktok",
+          "discord",
+          "github",
+          "telegram",
+          "whatsapp",
+          "pinterest",
+          "snapchat",
+          "reddit",
+          "custom"
+        ],
+        "required": true
+      },
+      "link": {
+        "type": "component",
+        "component": "shared.link",
+        "repeatable": false
+      },
+      "order": {
+        "type": "integer",
+        "default": 0
+      }
+    }
+  }

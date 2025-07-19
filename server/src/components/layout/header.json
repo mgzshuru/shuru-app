@@ -1,0 +1,31 @@
+{
+  "collectionName": "components_layout_header",
+  "info": {
+    "displayName": "Header",
+    "description": "Main site header with logo, navigation, search, and subscription",
+    "icon": "layout"
+  },
+  "options": {},
+  "attributes": {
+    "logo": {
+      "type": "component",
+      "component": "shared.header-logo",
+      "required": true
+    },
+    "navigation": {
+      "type": "component",
+      "component": "shared.navigation-menu",
+      "required": true
+    },
+    "subscription": {
+      "type": "component",
+      "component": "shared.subscription-button",
+      "required": true
+    },
+    "loginButton": {
+      "type": "component",
+      "component": "shared.login-button",
+      "required": false
+    }
+  }
+}

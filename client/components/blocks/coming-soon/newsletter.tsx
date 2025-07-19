@@ -1,7 +1,7 @@
 "use client"
 import { useState } from 'react';
 import { Send } from 'lucide-react';
-import { submitToNewsletter } from '@/lib/strapi-client';
+import { subscribe } from '@/lib/strapi-client';
 
 // Define the type for the data prop
 interface NewsletterData {
@@ -22,23 +22,25 @@ interface NewsletterData {
 
 export const Newsletter = ({ data }: { data: NewsletterData }) => {
   const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubscribe = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!email) return;
+    if (!email || !name) return;
 
     setIsLoading(true);
     setErrorMessage('');
 
     try {
-      const result = await submitToNewsletter(email);
+      const result = await subscribe(email, name);
       console.log(result, "result")
       if (result.success) {
         setIsSubscribed(true);
         setEmail('');
+        setName('');
         setTimeout(() => setIsSubscribed(false), 5000);
       } else {
         // Handle specific error messages in Arabic
@@ -72,6 +74,16 @@ export const Newsletter = ({ data }: { data: NewsletterData }) => {
         
         <form onSubmit={handleSubscribe} className="max-w-md mx-auto mb-12">
           <div className="space-y-6">
+            <input
+              type="text"
+              placeholder="الاسم الكامل"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full px-6 py-5 border-2 border-gray-300 text-right focus:border-[#808080] focus:outline-none text-lg disabled:opacity-50"
+              dir="rtl"
+              required
+              disabled={isLoading}
+            />
             <input
               type="email"
               placeholder={data.form.emailPlaceholder}

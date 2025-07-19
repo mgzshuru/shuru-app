@@ -1,0 +1,44 @@
+{
+    "collectionName": "components_shared_secondary_navigations",
+    "info": {
+      "displayName": "Secondary Navigation",
+      "description": "Secondary navigation section with icon and expandable items",
+      "icon": "grid-nine"
+    },
+    "options": {},
+    "attributes": {
+      "title": {
+        "type": "string",
+        "required": true,
+        "maxLength": 50,
+        "default": "FastCo Works"
+      },
+      "icon": {
+        "type": "string",
+        "required": false
+      },
+      "mainUrl": {
+        "type": "string",
+        "required": true
+      },
+      "subItems": {
+        "type": "component",
+        "component": "shared.navigation-item",
+        "repeatable": true,
+        "min": 0,
+        "max": 10
+      },
+      "backgroundColor": {
+        "type": "string",
+        "default": "bg-inherit"
+      },
+      "borderColor": {
+        "type": "string",
+        "default": "border-transparent"
+      },
+      "isExpandable": {
+        "type": "boolean",
+        "default": true
+      }
+    }
+  }

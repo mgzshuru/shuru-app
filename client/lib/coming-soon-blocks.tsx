@@ -35,10 +35,10 @@ export const renderComingSoonBlock = (block: ComingSoonBlock) => {
         subtitle: block.subtitle || '',
         description: block.description || '',
         logo: {
-          src: getStrapiMedia(block.logo?.file?.url) || '/logos/Shuru.png',
+          src: getStrapiMedia(block.logo?.image?.url) || '/logos/Shuru.png',
           alt: block.logo?.alt || 'Logo',
-          width: block.logo?.width || 120,
-          height: block.logo?.height || 48,
+          width: block.logo?.width === "small" ? 120 : block.logo?.width === "medium" ? 180 : 240,
+          height: block.logo?.width === "small" ? 48 : block.logo?.width === "medium" ? 64 : 80,
         },
         stats: block.stats || [],
         cta: block.cta || { text: '', target: '' },

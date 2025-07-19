@@ -15,21 +15,20 @@ interface HeroData {
 export const Hero = ({ data }: { data: HeroData }) => {
   return (
     <section className="relative min-h-[90vh] flex items-center overflow-hidden">
-      <div className="absolute inset-0 bg-black bg-opacity-95"></div>
+      <div className="absolute inset-0 bg-[#231f20] bg-opacity-95"></div>
       <div className="absolute inset-0 bg-gradient-to-b from-[#CBD1F9]/10 to-transparent"></div>
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
+        <div className="absolute inset-0"></div>
       </div>
       <div className="relative w-full max-w-7xl mx-auto px-6 py-16">
         <div className="max-w-4xl">
-          <div className="mb-8 transform hover:scale-105 transition-transform duration-300">
+          <div className="mb-8">
             <div className="inline-block mb-4">
               <Image
                 src={data.logo.src}
                 alt={data.logo.alt}
                 width={data.logo.width}
                 height={data.logo.height}
-                className="h-12 w-auto"
               />
             </div>
           </div>

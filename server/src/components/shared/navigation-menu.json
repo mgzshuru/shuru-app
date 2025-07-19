@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_shared_navigation_menus",
+  "info": {
+    "displayName": "Navigation Menu",
+    "description": "Main navigation menu with primary and secondary links",
+    "icon": "apps"
+  },
+  "options": {},
+  "attributes": {
+    "primaryMenuItems": {
+      "type": "component",
+      "component": "shared.navigation-item",
+      "repeatable": true,
+      "min": 0,
+      "max": 20
+    },
+    "SideMenuButton": {
+      "type": "component",
+      "component": "shared.mobile-menu-button",
+      "required": true,
+      "repeatable": false
+    }
+  }
+}

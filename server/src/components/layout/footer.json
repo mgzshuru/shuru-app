@@ -1,0 +1,35 @@
+{
+    "collectionName": "components_layout_footer",
+    "info": {
+      "displayName": "Footer",
+      "description": "Main footer component with logo, links, and social media",
+      "icon": "layout"
+    },
+    "options": {},
+    "attributes": {
+      "logo": {
+        "type": "component",
+        "component": "shared.footer-logo",
+        "required": true
+      },
+      "socialLinks": {
+        "type": "component",
+        "component": "shared.social-link",
+        "repeatable": true,
+        "min": 0,
+        "max": 15
+      },
+      "bottomLinks": {
+        "type": "component",
+        "component": "shared.footer-link-section",
+        "repeatable": true,
+        "min": 0,
+        "max": 10
+      },
+      "copyright": {
+        "type": "component",
+        "component": "shared.footer-copyright",
+        "required": true
+      }
+    }
+  }

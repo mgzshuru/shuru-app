@@ -1,0 +1,37 @@
+{
+  "collectionName": "components_shared_link",
+  "info": {
+    "displayName": "Link",
+    "description": "Individual footer link with icon support",
+    "icon": "link"
+  },
+  "options": {},
+  "attributes": {
+    "text": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100
+    },
+    "href": {
+      "type": "string",
+      "required": true
+    },
+    "openInNewTab": {
+      "type": "boolean",
+      "default": false
+    },
+    "icon": {
+      "type": "string",
+      "maxLength": 50
+    },
+    "iconPosition": {
+      "type": "enumeration",
+      "enum": [
+        "left",
+        "right",
+        "none"
+      ],
+      "default": "none"
+    }
+  }
+}

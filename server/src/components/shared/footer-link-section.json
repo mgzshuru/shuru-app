@@ -1,0 +1,20 @@
+{
+    "collectionName": "components_shared_footer_link_section",
+    "info": {
+      "displayName": "Footer Link Section",
+      "description": "Grouped links section with title",
+      "icon": "apps"
+    },
+    "options": {},
+    "attributes": {
+      "link": {
+        "type": "component",
+        "component": "shared.link",
+        "repeatable": false
+      },
+      "order": {
+        "type": "integer",
+        "default": 0
+      }
+    }
+  }

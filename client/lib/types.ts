@@ -1,3 +1,112 @@
+export interface GlobalData {
+  siteName: string;
+  siteDescription: string;
+  favicon?: {
+    url: string;
+    alternativeText?: string;
+  };
+  defaultSeo?: {
+    meta_title?: string;
+    meta_description?: string;
+    meta_keywords?: string;
+    og_image?: {
+      url: string;
+      alternativeText?: string;
+      width?: number;
+      height?: number;
+    };
+  };
+  header: HeaderData;
+  footer: FooterData;
+}
+
+export interface HeaderData {
+  logo: {
+    logoImage: {
+      url: string;
+      alternativeText?: string;
+      width?: number;
+      height?: number;
+    };
+    alt: string;
+  };
+  navigation: {
+    primaryMenuItems: NavigationItem[];
+    SideMenuButton: {
+      icon?: {
+        url: string;
+        alternativeText?: string;
+      };
+    };
+  };
+  subscription: {
+    text: string;
+    url: string;
+  };
+  loginButton?: {
+    text: string;
+    url?: string;
+  };
+}
+
+export interface FooterData {
+  logo: {
+    logoImage?: {
+      url: string;
+      alternativeText?: string;
+      width?: number;
+      height?: number;
+    };
+    mobileImage?: {
+      url: string;
+      alternativeText?: string;
+      width?: number;
+      height?: number;
+    };
+    alt?: string;
+  };
+  socialLinks: SocialLink[];
+  bottomLinks: FooterLinkSection[];
+  copyright: {
+    companyName: string;
+    year: number;
+    allRightsReserved: boolean;
+    customText?: string;
+    showCurrentYear: boolean;
+  };
+}
+
+export interface NavigationItem {
+  label: string;
+  url: string;
+  openInNewTab: boolean;
+  isActive: boolean;
+  order: number;
+}
+
+export interface SocialLink {
+  platform: string;
+  link: {
+    text: string;
+    href: string;
+    openInNewTab: boolean;
+    icon?: string;
+    iconPosition: 'left' | 'right' | 'none';
+  };
+  order: number;
+}
+
+export interface FooterLinkSection {
+  link: {
+    text: string;
+    href: string;
+    openInNewTab: boolean;
+    icon?: string;
+    iconPosition: 'left' | 'right' | 'none';
+  };
+  order: number;
+}
+
 export interface Article {
   id: number
   documentId: string

@@ -515,6 +515,286 @@ export interface ContentVideoEmbed extends Struct.ComponentSchema {
   };
 }
 
+export interface LayoutFooter extends Struct.ComponentSchema {
+  collectionName: 'components_layout_footer';
+  info: {
+    description: 'Main footer component with logo, links, and social media';
+    displayName: 'Footer';
+    icon: 'layout';
+  };
+  attributes: {
+    bottomLinks: Schema.Attribute.Component<
+      'shared.footer-link-section',
+      true
+    > &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 10;
+          min: 0;
+        },
+        number
+      >;
+    copyright: Schema.Attribute.Component<'shared.footer-copyright', false> &
+      Schema.Attribute.Required;
+    logo: Schema.Attribute.Component<'shared.footer-logo', false> &
+      Schema.Attribute.Required;
+    socialLinks: Schema.Attribute.Component<'shared.social-link', true> &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 15;
+          min: 0;
+        },
+        number
+      >;
+  };
+}
+
+export interface LayoutHeader extends Struct.ComponentSchema {
+  collectionName: 'components_layout_header';
+  info: {
+    description: 'Main site header with logo, navigation, search, and subscription';
+    displayName: 'Header';
+    icon: 'layout';
+  };
+  attributes: {
+    loginButton: Schema.Attribute.Component<'shared.login-button', false>;
+    logo: Schema.Attribute.Component<'shared.header-logo', false> &
+      Schema.Attribute.Required;
+    navigation: Schema.Attribute.Component<'shared.navigation-menu', false> &
+      Schema.Attribute.Required;
+    subscription: Schema.Attribute.Component<
+      'shared.subscription-button',
+      false
+    > &
+      Schema.Attribute.Required;
+  };
+}
+
+export interface SharedFooterCopyright extends Struct.ComponentSchema {
+  collectionName: 'components_shared_footer_copyright';
+  info: {
+    description: 'Copyright information with year and company details';
+    displayName: 'Footer Copyright';
+    icon: 'information';
+  };
+  attributes: {
+    allRightsReserved: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<true>;
+    companyName: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
+    customText: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    showCurrentYear: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<true>;
+    year: Schema.Attribute.Integer &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 2100;
+          min: 1900;
+        },
+        number
+      >;
+  };
+}
+
+export interface SharedFooterLinkSection extends Struct.ComponentSchema {
+  collectionName: 'components_shared_footer_link_section';
+  info: {
+    description: 'Grouped links section with title';
+    displayName: 'Footer Link Section';
+    icon: 'apps';
+  };
+  attributes: {
+    link: Schema.Attribute.Component<'shared.link', false>;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+  };
+}
+
+export interface SharedFooterLogo extends Struct.ComponentSchema {
+  collectionName: 'components_shared_footer_logo';
+  info: {
+    description: 'Logo component for footer with text and images';
+    displayName: 'Footer Logo';
+    icon: 'picture';
+  };
+  attributes: {
+    alt: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
+    logoImage: Schema.Attribute.Media<'images'>;
+    mobileImage: Schema.Attribute.Media<'images'>;
+  };
+}
+
+export interface SharedHeaderLogo extends Struct.ComponentSchema {
+  collectionName: 'components_shared_header_logos';
+  info: {
+    description: 'Logo component for header with responsive images';
+    displayName: 'Header Logo';
+    icon: 'picture';
+  };
+  attributes: {
+    alt: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }> &
+      Schema.Attribute.DefaultTo<'Company logo'>;
+    logoImage: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
+  };
+}
+
+export interface SharedLink extends Struct.ComponentSchema {
+  collectionName: 'components_shared_link';
+  info: {
+    description: 'Individual footer link with icon support';
+    displayName: 'Link';
+    icon: 'link';
+  };
+  attributes: {
+    href: Schema.Attribute.String & Schema.Attribute.Required;
+    icon: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }>;
+    iconPosition: Schema.Attribute.Enumeration<['left', 'right', 'none']> &
+      Schema.Attribute.DefaultTo<'none'>;
+    openInNewTab: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    text: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
+  };
+}
+
+export interface SharedLoginButton extends Struct.ComponentSchema {
+  collectionName: 'components_shared_login_buttons';
+  info: {
+    description: 'Login button for user authentication';
+    displayName: 'Login Button';
+    icon: 'user';
+  };
+  attributes: {
+    text: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'LOGIN'>;
+    url: Schema.Attribute.String;
+  };
+}
+
+export interface SharedMobileMenuButton extends Struct.ComponentSchema {
+  collectionName: 'components_shared_mobile_menu_buttons';
+  info: {
+    description: 'Hamburger menu button for mobile navigation';
+    displayName: 'Mobile Menu Button';
+    icon: 'burger';
+  };
+  attributes: {
+    icon: Schema.Attribute.Media<'images'>;
+  };
+}
+
+export interface SharedNavigationItem extends Struct.ComponentSchema {
+  collectionName: 'components_shared_navigation_items';
+  info: {
+    description: 'Individual navigation menu item';
+    displayName: 'Navigation Item';
+    icon: 'link';
+  };
+  attributes: {
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    label: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }>;
+    openInNewTab: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    url: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface SharedNavigationMenu extends Struct.ComponentSchema {
+  collectionName: 'components_shared_navigation_menus';
+  info: {
+    description: 'Main navigation menu with primary and secondary links';
+    displayName: 'Navigation Menu';
+    icon: 'apps';
+  };
+  attributes: {
+    primaryMenuItems: Schema.Attribute.Component<
+      'shared.navigation-item',
+      true
+    > &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 20;
+          min: 0;
+        },
+        number
+      >;
+    SideMenuButton: Schema.Attribute.Component<
+      'shared.mobile-menu-button',
+      false
+    > &
+      Schema.Attribute.Required;
+  };
+}
+
+export interface SharedSearchConfig extends Struct.ComponentSchema {
+  collectionName: 'components_shared_search_configs';
+  info: {
+    description: 'Search button configuration';
+    displayName: 'Search Config';
+    icon: 'search';
+  };
+  attributes: {
+    ariaLabel: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Search button'>;
+    icon: Schema.Attribute.String & Schema.Attribute.DefaultTo<'search'>;
+  };
+}
+
+export interface SharedSecondaryNavigation extends Struct.ComponentSchema {
+  collectionName: 'components_shared_secondary_navigations';
+  info: {
+    description: 'Secondary navigation section with icon and expandable items';
+    displayName: 'Secondary Navigation';
+    icon: 'grid-nine';
+  };
+  attributes: {
+    backgroundColor: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'bg-inherit'>;
+    borderColor: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'border-transparent'>;
+    icon: Schema.Attribute.String;
+    isExpandable: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    mainUrl: Schema.Attribute.String & Schema.Attribute.Required;
+    subItems: Schema.Attribute.Component<'shared.navigation-item', true> &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 10;
+          min: 0;
+        },
+        number
+      >;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }> &
+      Schema.Attribute.DefaultTo<'FastCo Works'>;
+  };
+}
+
 export interface SharedSeo extends Struct.ComponentSchema {
   collectionName: 'components_shared_seos';
   info: {
@@ -533,6 +813,53 @@ export interface SharedSeo extends Struct.ComponentSchema {
         maxLength: 60;
       }>;
     og_image: Schema.Attribute.Media<'images'>;
+  };
+}
+
+export interface SharedSocialLink extends Struct.ComponentSchema {
+  collectionName: 'components_shared_social_link';
+  info: {
+    description: 'Social media link with platform-specific styling';
+    displayName: 'Social Link';
+    icon: 'connector';
+  };
+  attributes: {
+    link: Schema.Attribute.Component<'shared.link', false>;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    platform: Schema.Attribute.Enumeration<
+      [
+        'facebook',
+        'twitter',
+        'instagram',
+        'linkedin',
+        'youtube',
+        'tiktok',
+        'discord',
+        'github',
+        'telegram',
+        'whatsapp',
+        'pinterest',
+        'snapchat',
+        'reddit',
+        'custom',
+      ]
+    > &
+      Schema.Attribute.Required;
+  };
+}
+
+export interface SharedSubscriptionButton extends Struct.ComponentSchema {
+  collectionName: 'components_shared_subscription_buttons';
+  info: {
+    description: 'Call-to-action subscription button';
+    displayName: 'Subscription Button';
+    icon: 'cursor';
+  };
+  attributes: {
+    text: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'SUBSCRIBE'>;
+    url: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
 
@@ -570,7 +897,22 @@ declare module '@strapi/strapi' {
       'content.quote': ContentQuote;
       'content.rich-text': ContentRichText;
       'content.video-embed': ContentVideoEmbed;
+      'layout.footer': LayoutFooter;
+      'layout.header': LayoutHeader;
+      'shared.footer-copyright': SharedFooterCopyright;
+      'shared.footer-link-section': SharedFooterLinkSection;
+      'shared.footer-logo': SharedFooterLogo;
+      'shared.header-logo': SharedHeaderLogo;
+      'shared.link': SharedLink;
+      'shared.login-button': SharedLoginButton;
+      'shared.mobile-menu-button': SharedMobileMenuButton;
+      'shared.navigation-item': SharedNavigationItem;
+      'shared.navigation-menu': SharedNavigationMenu;
+      'shared.search-config': SharedSearchConfig;
+      'shared.secondary-navigation': SharedSecondaryNavigation;
       'shared.seo': SharedSeo;
+      'shared.social-link': SharedSocialLink;
+      'shared.subscription-button': SharedSubscriptionButton;
     }
   }
 }

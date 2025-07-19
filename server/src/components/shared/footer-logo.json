@@ -1,0 +1,27 @@
+{
+    "collectionName": "components_shared_footer_logo",
+    "info": {
+      "displayName": "Footer Logo",
+      "description": "Logo component for footer with text and images",
+      "icon": "picture"
+    },
+    "options": {},
+    "attributes": {
+      "logoImage": {
+        "type": "media",
+        "multiple": false,
+        "required": false,
+        "allowedTypes": ["images"]
+      },
+      "mobileImage": {
+        "type": "media",
+        "multiple": false,
+        "required": false,
+        "allowedTypes": ["images"]
+      },
+      "alt": {
+        "type": "string",
+        "maxLength": 100
+      }
+    }
+  }
