@@ -1,11 +1,59 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Mail, User, Building, Briefcase, GraduationCap, Code, TrendingUp, CheckCircle } from 'lucide-react';
+import { getAllNewsletterEditions } from '@/lib/strapi-client';
+
+interface NewsletterEdition {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  sent_at: string;
+  featured_articles: {
+    title: string;
+    slug: string;
+    cover_image: {
+      url: string;
+      alternativeText: string;
+      width: number;
+      height: number;
+    };
+  }[];
+  pdf_archive: {
+    name: string;
+    url: string;
+  };
+}
 
 const NewsletterPage = () => {
   const [email, setEmail] = useState('');
   const [jobTitle, setJobTitle] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [newsletters, setNewsletters] = useState<NewsletterEdition[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchNewsletters = async () => {
+      try {
+        const response = await getAllNewsletterEditions();
+        if (response.data) {
+          const newsletters: NewsletterEdition[] = response.data.map((item: any) => ({
+            id: item.id,
+            ...item.attributes,
+          }));
+          setNewsletters(newsletters);
+        } else {
+          setNewsletters([]);
+        }
+      } catch (error) {
+        console.error('Error fetching newsletters:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchNewsletters();
+  }, []);
 
   const handleSubmit = () => {
     if (email && jobTitle) {
@@ -22,6 +70,15 @@ const NewsletterPage = () => {
     { value: 'student', label: 'طالب' },
     { value: 'entrepreneur', label: 'رائد أعمال' },
     { value: 'other', label: 'أخرى' },
+  ];
+
+  // Sample categories for the preview cards (you can replace with actual categories from your data)
+  const newsletterCategories = [
+    { name: 'COMPASS', content: ['نصائح الاستثمار', 'أفكار ريادية', 'تحليلات السوق'] },
+    { name: 'CO.DESIGN', content: ['التصميم المبتكر', 'تجربة المستخدم', 'الإبداع الرقمي'] },
+    { name: 'IMPACT', content: ['التأثير الاجتماعي', 'الاستدامة', 'الابتكار المسؤول'] },
+    { name: 'PLUGGED IN', content: ['أخبار التكنولوجيا', 'الذكاء الاصطناعي', 'ريادة الأعمال'] },
+    { name: 'MODERN CEO', content: ['القيادة الحديثة', 'استراتيجيات الأعمال', 'إدارة الفرق'] }
   ];
 
   return (
@@ -41,13 +98,7 @@ const NewsletterPage = () => {
             
             {/* Newsletter Preview Cards - Exact Fast Company Style */}
             <div className="flex justify-center items-end gap-2 sm:gap-3 mt-6 perspective-1000">
-              {[
-                { name: 'COMPASS', content: ['نصائح الاستثمار', 'أفكار ريادية', 'تحليلات السوق'] },
-                { name: 'CO.DESIGN', content: ['التصميم المبتكر', 'تجربة المستخدم', 'الإبداع الرقمي'] },
-                { name: 'IMPACT', content: ['التأثير الاجتماعي', 'الاستدامة', 'الابتكار المسؤول'] },
-                { name: 'PLUGGED IN', content: ['أخبار التكنولوجيا', 'الذكاء الاصطناعي', 'ريادة الأعمال'] },
-                { name: 'MODERN CEO', content: ['القيادة الحديثة', 'استراتيجيات الأعمال', 'إدارة الفرق'] }
-              ].map((newsletter, index) => (
+              {newsletterCategories.map((newsletter, index) => (
                 <div
                   key={index}
                   className={`
@@ -111,11 +162,17 @@ const NewsletterPage = () => {
           <div className="grid lg:grid-cols-2 gap-8 items-center">
              {/* Left Side - Images */}
             <div className="relative hidden lg:block">
-              {/* Main Image */}
+              {/* Main Image - Use first newsletter's featured image if available */}
               <div className="relative">
                 <img 
-                  src="https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
-                  alt="Business meeting"
+                  src={
+                    newsletters[0]?.featured_articles?.[0]?.cover_image?.url || 
+                    "https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+                  }
+                  alt={
+                    newsletters[0]?.featured_articles?.[0]?.cover_image?.alternativeText || 
+                    "Business meeting"
+                  }
                   className="w-full h-80 object-cover"
                   style={{ border: '1px solid #e5e7eb' }}
                 />
@@ -144,17 +201,29 @@ const NewsletterPage = () => {
                 </div>
               </div>
               
-              {/* Small images grid */}
+              {/* Small images grid - Use other newsletter images if available */}
               <div className="grid grid-cols-2 gap-4 mt-6">
                 <img 
-                  src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-                  alt="Working on laptop"
+                  src={
+                    newsletters[1]?.featured_articles?.[0]?.cover_image?.url || 
+                    "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                  }
+                  alt={
+                    newsletters[1]?.featured_articles?.[0]?.cover_image?.alternativeText || 
+                    "Working on laptop"
+                  }
                   className="w-full h-24 object-cover"
                   style={{ border: '1px solid #e5e7eb' }}
                 />
                 <img 
-                  src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-                  alt="Business analytics"
+                  src={
+                    newsletters[2]?.featured_articles?.[0]?.cover_image?.url || 
+                    "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                  }
+                  alt={
+                    newsletters[2]?.featured_articles?.[0]?.cover_image?.alternativeText || 
+                    "Business analytics"
+                  }
                   className="w-full h-24 object-cover"
                   style={{ border: '1px solid #e5e7eb' }}
                 />
@@ -166,8 +235,14 @@ const NewsletterPage = () => {
               {/* Mobile Image */}
               <div className="lg:hidden mb-6">
                 <img 
-                  src="https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-                  alt="Business meeting"
+                  src={
+                    newsletters[0]?.featured_articles?.[0]?.cover_image?.url || 
+                    "https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                  }
+                  alt={
+                    newsletters[0]?.featured_articles?.[0]?.cover_image?.alternativeText || 
+                    "Business meeting"
+                  }
                   className="w-full h-48 object-cover"
                   style={{ border: '1px solid #e5e7eb' }}
                 />

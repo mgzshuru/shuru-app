@@ -38,7 +38,7 @@ export async function getFeaturedArticles(limit?: number) {
   return articles;
 }
 
-// Get articles by category
+// Get articles by category non
 export async function getArticlesByCategory(categorySlug: string, limit?: number) {
   const query = {
     filters: { 
@@ -54,7 +54,7 @@ export async function getArticlesByCategory(categorySlug: string, limit?: number
   return articles;
 }
 
-// Get articles by author
+// Get articles by author non
 export async function getArticlesByAuthor(authorId: string, limit?: number) {
   const query = {
     filters: { 
@@ -70,7 +70,7 @@ export async function getArticlesByAuthor(authorId: string, limit?: number) {
   return articles;
 }
 
-// Get articles featured in newsletters
+// Get articles featured in newsletters non
 export async function getArticlesByNewsletter(newsletterId: string) {
   const query = {
     filters: { 
@@ -116,7 +116,7 @@ export async function getArticlesPaginated(page: number = 1, pageSize: number = 
   return articles;
 }
 
-// Get related articles (by same category, excluding current article)
+// Get related articles (by same category, excluding current article) non
 export async function getRelatedArticles(articleId: string, categorySlug: string, limit: number = 3) {
   const query = {
     filters: {
@@ -133,7 +133,7 @@ export async function getRelatedArticles(articleId: string, categorySlug: string
   return articles;
 }
 
-// Get article count by category
+// Get article count by category non
 export async function getArticleCountByCategory(categorySlug: string) {
   const query = {
     filters: { 
@@ -439,6 +439,8 @@ export async function getFeaturedMagazineIssues(limit?: number) {
   const issues = await client.collection("magazine-issues").find(query);
   return issues;
 }
+
+
 
 // =====================
 // NEWSLETTER FUNCTIONS
