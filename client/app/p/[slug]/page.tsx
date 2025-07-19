@@ -135,8 +135,7 @@ export default async function PageComponent({ params }: PageProps) {
                 {page.description}
               </p>
             )}
-            
-            {/* Metadata */}
+                        {/* Metadata */}
             <div className="mt-8 flex items-center justify-center text-sm text-gray-500 space-x-4">
               <time dateTime={page.publishedAt}>
                 {new Date(page.publishedAt).toLocaleDateString('en-US', {
