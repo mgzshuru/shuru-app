@@ -32,7 +32,7 @@ export default function Footer({ footerData }: FooterProps) {
   const arabicYear = footerData.copyright.showCurrentYear ? new Date().getFullYear() : footerData.copyright.year;
   const copyrightText =
     footerData.copyright.customText ||
-    `© ${arabicYear.toString().replace(/\d/g, (d: string) => '٠١٢٣٤٥٦٧٨٩'[parseInt(d)])} ${footerData.copyright.companyName}${footerData.copyright.allRightsReserved ? '. جميع الحقوق محفوظة.' : footerData.copyright.customText }`;
+    `© ${arabicYear.toString()} ${footerData.copyright.companyName}${footerData.copyright.allRightsReserved ? '. جميع الحقوق محفوظة.' : footerData.copyright.customText }`;
 
   return (
     <footer className="footer-container mt-8 grid gap-[40px] lg:mt-12">

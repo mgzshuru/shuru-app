@@ -28,19 +28,21 @@ const tajawal = Tajawal({
 // Generate metadata from Strapi or fallback to static Arabic metadata
 export async function generateMetadata(): Promise<Metadata> {
   const globalData = await getGlobal();
-  
+
   // If Strapi data is available, use it; otherwise fallback to static metadata
   if (globalData?.defaultSeo) {
     const seo = globalData.defaultSeo;
+    console.log('SEO Data:', seo);
     const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337';
-    
+
     return {
       title: {
-        default: seo.meta_title || globalData.siteName || 'شروع - المنصة العربية الأولى في إدارة المشاريع',
+        default: seo.meta_title || globalData.siteName || 'شروع - منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال',
         template: `%s | ${globalData.siteName || 'شروع'}`,
       },
-      description: seo.meta_description || globalData.siteDescription || 'المنصة العربية الرائدة في إدارة المشاريع، والقيادة، والتحول، والابتكار، والتميز المؤسسي، والحوكمة، والاستراتيجية',
+      description: seo.meta_description || globalData.siteDescription || 'منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال والقيادة والتحول الرقمي والتقنيات الناشئة والشركات الناشئة والاستثمار والتطوير المؤسسي',
       keywords: seo.meta_keywords?.split(',').map(k => k.trim()) || [
+        'شروع',
         'ريادة الأعمال',
         'الابتكار',
         'القيادة',
@@ -48,19 +50,27 @@ export async function generateMetadata(): Promise<Metadata> {
         'التقنيات الناشئة',
         'الشركات الناشئة',
         'الاستثمار',
-        'التطوير',
+        'التطوير المؤسسي',
+        'إدارة المشاريع',
+        'الحوكمة',
+        'الاستراتيجية',
+        'التميز المؤسسي',
+        'منصة عربية',
+        'إعلام متخصص',
       ],
       authors: [{ name: globalData.siteName || 'شروع للنشر الرقمي' }],
       creator: globalData.siteName || 'شروع للنشر الرقمي',
       publisher: globalData.siteName || 'شروع للنشر الرقمي',
-      
+      category: 'business',
+      classification: 'Business & Professional',
+
       openGraph: {
         type: 'website',
         locale: 'ar_SA',
-        url: process.env.NEXT_PUBLIC_SITE_URL || 'https://yoursite.com',
+        url: process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shurumag.com',
         siteName: globalData.siteName || 'شروع',
-        title: seo.meta_title || globalData.siteName || 'شروع - المنصة العربية الأولى في إدارة المشاريع',
-        description: seo.meta_description || globalData.siteDescription || 'المنصة العربية الرائدة في إدارة المشاريع، والقيادة، والتحول، والابتكار، والتميز المؤسسي، والحوكمة، والاستراتيجية',
+        title: seo.meta_title || globalData.siteName || 'شروع - منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال',
+        description: seo.meta_description || globalData.siteDescription || 'منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال والقيادة والتحول الرقمي والتقنيات الناشئة والشركات الناشئة والاستثمار والتطوير المؤسسي',
         ...(seo.og_image && {
           images: [
             {
@@ -70,24 +80,29 @@ export async function generateMetadata(): Promise<Metadata> {
               alt: seo.og_image.alternativeText || globalData.siteName || 'شروع',
             },
           ],
-        }),
+        }) || {
+          images: [
+            {
+              url: '/og-image.svg',
+              width: 1200,
+              height: 630,
+              alt: globalData.siteName || 'شروع',
+            },
+          ],
+        },
       },
 
       twitter: {
         card: 'summary_large_image',
-        title: seo.meta_title || globalData.siteName || 'شروع - المنصة العربية الأولى في إدارة المشاريع',
-        description: seo.meta_description || globalData.siteDescription || 'المنصة العربية الرائدة في إدارة المشاريع، والقيادة، والتحول، والابتكار، والتميز المؤسسي، والحوكمة، والاستراتيجية',
+        title: seo.meta_title || globalData.siteName || 'شروع - منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال',
+        description: seo.meta_description || globalData.siteDescription || 'منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال والقيادة والتحول الرقمي والتقنيات الناشئة والشركات الناشئة والاستثمار والتطوير المؤسسي',
         ...(seo.og_image && {
           images: [strapiUrl + seo.og_image.url],
-        }),
-      },
-
-      icons: {
-        icon: globalData.favicon?.url ? strapiUrl + globalData.favicon.url : [
-          { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
-          { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
-          { url: '/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
-        ],
+        }) || {
+          images: ['/twitter-image.svg'],
+        },
+        creator: '@shurumag',
+        site: '@shurumag',
       },
 
       robots: {
@@ -102,12 +117,37 @@ export async function generateMetadata(): Promise<Metadata> {
         },
       },
 
+      verification: {
+        google: 'your-google-verification-code',
+        yandex: 'your-yandex-verification-code',
+      },
+
       alternates: {
-        canonical: process.env.NEXT_PUBLIC_SITE_URL || 'https://yoursite.com',
+        canonical: process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shurumag.com',
         languages: {
-          'ar': process.env.NEXT_PUBLIC_SITE_URL || 'https://yoursite.com',
-          'en': (process.env.NEXT_PUBLIC_SITE_URL || 'https://yoursite.com') + '/en',
+          'ar': process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shurumag.com',
+          'en': (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shurumag.com') + '/en',
         },
+      },
+
+      manifest: '/manifest.json',
+
+      icons: {
+        icon: globalData.favicon?.url ? strapiUrl + globalData.favicon.url : [
+          { url: '/favicon.ico', sizes: '32x32' },
+          { url: '/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+          { url: '/icon-512x512.png', sizes: '512x512', type: 'image/png' },
+        ],
+        apple: [
+          { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+        ],
+        other: [
+          {
+            rel: 'mask-icon',
+            url: '/logos/Shuru-black-logo.svg',
+            color: '#000000',
+          },
+        ],
       },
 
       other: {
@@ -115,9 +155,14 @@ export async function generateMetadata(): Promise<Metadata> {
         'apple-mobile-web-app-status-bar-style': 'default',
         'apple-mobile-web-app-title': globalData.siteName || 'شروع',
         'msapplication-TileColor': '#ffffff',
+        'msapplication-TileImage': '/icon-192x192.png',
         'theme-color': '#ffffff',
+        'color-scheme': 'light',
         'content-language': 'ar',
         'dir': 'rtl',
+        'format-detection': 'telephone=no',
+        'mobile-web-app-capable': 'yes',
+        'application-name': globalData.siteName || 'شروع',
       },
     };
   }
@@ -125,11 +170,12 @@ export async function generateMetadata(): Promise<Metadata> {
   // Fallback to static metadata if Strapi is not available
   return {
     title: {
-      default: 'شروع - المنصة العربية الأولى في إدارة المشاريع',
+      default: 'شروع - منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال',
       template: '%s | شروع',
     },
-    description: 'المنصة العربية الرائدة في إدارة المشاريع، والقيادة، والتحول، والابتكار، والتميز المؤسسي، والحوكمة، والاستراتيجية',
+    description: 'منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال والقيادة والتحول الرقمي والتقنيات الناشئة والشركات الناشئة والاستثمار والتطوير المؤسسي',
     keywords: [
+      'شروع',
       'ريادة الأعمال',
       'الابتكار',
       'القيادة',
@@ -137,34 +183,44 @@ export async function generateMetadata(): Promise<Metadata> {
       'التقنيات الناشئة',
       'الشركات الناشئة',
       'الاستثمار',
-      'التطوير',
+      'التطوير المؤسسي',
+      'إدارة المشاريع',
+      'الحوكمة',
+      'الاستراتيجية',
+      'التميز المؤسسي',
+      'منصة عربية',
+      'إعلام متخصص',
     ],
     authors: [{ name: 'شروع للنشر الرقمي' }],
     creator: 'شروع للنشر الرقمي',
     publisher: 'شروع للنشر الرقمي',
-    
+    category: 'business',
+    classification: 'Business & Professional',
+
     openGraph: {
       type: 'website',
       locale: 'ar_SA',
-      url: 'https://yoursite.com',
+      url: 'https://www.shurumag.com',
       siteName: 'شروع',
-      title: 'شروع - المنصة العربية الأولى في إدارة المشاريع',
-      description: 'المنصة العربية الرائدة في إدارة المشاريع، والقيادة، والتحول، والابتكار، والتميز المؤسسي، والحوكمة، والاستراتيجية',
+      title: 'شروع - منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال',
+      description: 'منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال والقيادة والتحول الرقمي والتقنيات الناشئة والشركات الناشئة والاستثمار والتطوير المؤسسي',
       images: [
         {
-          url: '/og-image.jpg',
+          url: '/og-image.svg',
           width: 1200,
           height: 630,
-          alt: 'شروع - المنصة العربية الأولى في إدارة المشاريع',
+          alt: 'شروع - منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال',
         },
       ],
     },
 
     twitter: {
       card: 'summary_large_image',
-      title: 'شروع - المنصة العربية الأولى في إدارة المشاريع',
-      description: 'المنصة العربية الرائدة في إدارة المشاريع، والقيادة، والتحول، والابتكار، والتميز المؤسسي، والحوكمة، والاستراتيجية',
-      images: ['/twitter-image.jpg'],
+      title: 'شروع - منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال',
+      description: 'منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال والقيادة والتحول الرقمي والتقنيات الناشئة والشركات الناشئة والاستثمار والتطوير المؤسسي',
+      images: ['/twitter-image.svg'],
+      creator: '@shurumag',
+      site: '@shurumag',
     },
 
     robots: {
@@ -179,37 +235,35 @@ export async function generateMetadata(): Promise<Metadata> {
       },
     },
 
+    verification: {
+      google: 'your-google-verification-code',
+      yandex: 'your-yandex-verification-code',
+    },
+
     alternates: {
-      canonical: 'https://yoursite.com',
+      canonical: 'https://www.shurumag.com',
       languages: {
-        'ar': 'https://yoursite.com',
-        'en': 'https://yoursite.com/en',
+        'ar': 'https://www.shurumag.com',
+        'en': 'https://www.shurumag.com/en',
       },
     },
 
+    manifest: '/manifest.json',
+
     icons: {
       icon: [
-        { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
-        { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
-        { url: '/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
+        { url: '/favicon.ico', sizes: '32x32' },
+        { url: '/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+        { url: '/icon-512x512.png', sizes: '512x512', type: 'image/png' },
       ],
       apple: [
-        { url: '/apple-icon-57x57.png', sizes: '57x57', type: 'image/png' },
-        { url: '/apple-icon-60x60.png', sizes: '60x60', type: 'image/png' },
-        { url: '/apple-icon-72x72.png', sizes: '72x72', type: 'image/png' },
-        { url: '/apple-icon-76x76.png', sizes: '76x76', type: 'image/png' },
-        { url: '/apple-icon-114x114.png', sizes: '114x114', type: 'image/png' },
-        { url: '/apple-icon-120x120.png', sizes: '120x120', type: 'image/png' },
-        { url: '/apple-icon-144x144.png', sizes: '144x144', type: 'image/png' },
-        { url: '/apple-icon-152x152.png', sizes: '152x152', type: 'image/png' },
-        { url: '/apple-icon-180x180.png', sizes: '180x180', type: 'image/png' },
+        { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
       ],
       other: [
         {
-          rel: 'android-chrome',
-          url: '/android-icon-192x192.png',
-          sizes: '192x192',
-          type: 'image/png',
+          rel: 'mask-icon',
+          url: '/logos/Shuru-black-logo.svg',
+          color: '#000000',
         },
       ],
     },
@@ -219,11 +273,15 @@ export async function generateMetadata(): Promise<Metadata> {
       'apple-mobile-web-app-status-bar-style': 'default',
       'apple-mobile-web-app-title': 'شروع',
       'msapplication-TileColor': '#ffffff',
-      'msapplication-TileImage': '/ms-icon-144x144.png',
+      'msapplication-TileImage': '/icon-192x192.png',
       'theme-color': '#ffffff',
+      'color-scheme': 'light',
       'revisit-after': '7 days',
       'content-language': 'ar',
       'dir': 'rtl',
+      'format-detection': 'telephone=no',
+      'mobile-web-app-capable': 'yes',
+      'application-name': 'شروع',
     },
   };
 }
@@ -250,10 +308,10 @@ export default async function RootLayout({
   }
 
   return (
-    <html 
-      lang="ar" 
-      suppressHydrationWarning 
-      dir="rtl" 
+    <html
+      lang="ar"
+      suppressHydrationWarning
+      dir="rtl"
       className={`${ibmPlexSansArabic.variable} ${notoSansArabic.variable} ${tajawal.variable}`}
     >
       <head>
@@ -261,16 +319,31 @@ export default async function RootLayout({
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="application-name" content={globalData?.siteName || "شروع"} />
-        
+        <meta name="msapplication-config" content="/browserconfig.xml" />
+        <meta name="msapplication-starturl" content="/" />
+
         {/* Preconnect to external domains for performance */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        
+
         {/* DNS prefetch for social media domains */}
         <link rel="dns-prefetch" href="https://www.facebook.com" />
         <link rel="dns-prefetch" href="https://twitter.com" />
         <link rel="dns-prefetch" href="https://www.linkedin.com" />
-        
+        <link rel="dns-prefetch" href="https://www.instagram.com" />
+
+        {/* Security headers */}
+        <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
+        <meta httpEquiv="X-Frame-Options" content="DENY" />
+        <meta httpEquiv="X-XSS-Protection" content="1; mode=block" />
+
+        {/* Favicon and app icons */}
+        <link rel="icon" href="/favicon.ico" sizes="32x32" />
+        <link rel="icon" href="/icon-192x192.png" type="image/png" sizes="192x192" />
+        <link rel="icon" href="/icon-512x512.png" type="image/png" sizes="512x512" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="mask-icon" href="/logos/Shuru-black-logo.svg" color="#000000" />
+
         {/* Structured data for better SEO */}
         <script
           type="application/ld+json"
@@ -279,22 +352,47 @@ export default async function RootLayout({
               "@context": "https://schema.org",
               "@type": "Organization",
               "name": globalData?.siteName || "شروع",
-              "description": globalData?.siteDescription || "المنصة العربية الرائدة في إدارة المشاريع، والقيادة، والتحول، والابتكار، والتميز المؤسسي، والحوكمة، والاستراتيجية",
-              "url": process.env.NEXT_PUBLIC_SITE_URL || "https://yoursite.com",
-              "logo": globalData?.header?.logo?.logoImage?.url 
+              "alternateName": ["Shuru", "شروع للنشر الرقمي"],
+              "description": globalData?.siteDescription || "منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال والقيادة والتحول الرقمي والتقنيات الناشئة والشركات الناشئة والاستثمار والتطوير المؤسسي",
+              "url": process.env.NEXT_PUBLIC_SITE_URL || "https://www.shurumag.com",
+              "logo": globalData?.header?.logo?.logoImage?.url
                 ? `${process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337'}${globalData.header.logo.logoImage.url}`
-                : "https://yoursite.com/logo.png",
+                : "https://www.shurumag.com/logos/Shuru-white-logo.svg",
+              "foundingDate": "2020",
+              "industry": "Media and Publishing",
+              "areaServed": {
+                "@type": "Place",
+                "name": "Middle East and North Africa"
+              },
+              "knowsAbout": [
+                "ريادة الأعمال",
+                "الابتكار",
+                "القيادة",
+                "التحول الرقمي",
+                "التقنيات الناشئة",
+                "إدارة المشاريع",
+                "الاستثمار",
+                "التطوير المؤسسي"
+              ],
               "sameAs": globalData?.footer?.socialLinks?.map(social => social.link.href) || [
-                "https://www.facebook.com/YourPage",
-                "https://twitter.com/YourHandle",
-                "https://www.linkedin.com/company/YourCompany",
-                "https://www.instagram.com/YourHandle"
+                "https://www.facebook.com/shurumag",
+                "https://twitter.com/shurumag",
+                "https://www.linkedin.com/company/shurumag",
+                "https://www.instagram.com/shurumag"
               ],
               "contactPoint": {
                 "@type": "ContactPoint",
                 "contactType": "customer service",
-                "areaServed": "SA",
-                "availableLanguage": "Arabic"
+                "areaServed": ["SA", "AE", "EG", "JO", "LB"],
+                "availableLanguage": ["Arabic", "English"]
+              },
+              "publisher": {
+                "@type": "Organization",
+                "name": "شروع للنشر الرقمي",
+                "logo": {
+                  "@type": "ImageObject",
+                  "url": "https://www.shurumag.com/logos/Shuru-white-logo.svg"
+                }
               }
             })
           }}
