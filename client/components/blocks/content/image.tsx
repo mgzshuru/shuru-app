@@ -1,12 +1,9 @@
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
+import { ImageBlock as ImageBlockType } from '@/lib/types';
 
 interface ImageProps {
-  image: {
-    url: string;
-    width: number;
-    height: number;
-  };
+  image: ImageBlockType['image'];
   caption?: string;
   alt_text: string;
   width?: 'small' | 'medium' | 'large' | 'full';
@@ -31,13 +28,13 @@ export function ImageBlock({
         <Image
           src={image.url}
           alt={alt_text}
-          width={image.width}
-          height={image.height}
+          width={image.width || 800}
+          height={image.height || 600}
           className="w-full h-auto"
           sizes={
-            width === 'full' 
-              ? '100vw' 
-              : width === 'large' 
+            width === 'full'
+              ? '100vw'
+              : width === 'large'
               ? '(min-width: 1024px) 896px, 100vw'
               : width === 'medium'
               ? '(min-width: 768px) 672px, 100vw'
@@ -45,7 +42,7 @@ export function ImageBlock({
           }
         />
       </div>
-      
+
       {caption && (
         <figcaption className="mt-4 text-sm text-gray-600 text-center italic">
           {caption}

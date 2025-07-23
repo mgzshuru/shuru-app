@@ -18,9 +18,9 @@ function getPreviewPath(
 
     // Can add other content types here
 
-    // if (contentType === 'page' || contentType.includes('pages')) {
-    //   return slug ? '/' + slug : '/';
-    // }
+    if (contentType === 'page' || contentType.includes('pages')) {
+      return slug ? '/p/' + slug : '/';
+    }
 
     return "/" + contentType;
   })();

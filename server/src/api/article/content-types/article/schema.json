@@ -61,7 +61,7 @@
     },
     "publish_date": {
       "type": "datetime",
-      "required": true
+      "required": false
     },
     "is_featured": {
       "type": "boolean",

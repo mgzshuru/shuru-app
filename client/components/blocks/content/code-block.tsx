@@ -1,5 +1,7 @@
-import SyntaxHighlighter from 'react-syntax-highlighter/dist/esm/prism';
+import React from 'react';
+import SyntaxHighlighter from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { CodeBlock as CodeBlockType } from '@/lib/types';
 
 interface CodeBlockProps {
   code: string;
@@ -23,33 +25,31 @@ export function CodeBlock({
           </h3>
         </div>
       )}
-      
+
       <div className="relative">
         <div className="absolute top-3 right-3 z-10">
           <span className="bg-black/70 text-white text-xs px-2 py-1 rounded uppercase tracking-wide">
             {language}
           </span>
         </div>
-        
-        <SyntaxHighlighter
-          language={language}
-          style={tomorrow}
-          showLineNumbers={show_line_numbers}
-          customStyle={{
+
+        {React.createElement(SyntaxHighlighter as any, {
+          language: language,
+          style: tomorrow,
+          showLineNumbers: show_line_numbers,
+          customStyle: {
             margin: 0,
             borderRadius: 0,
             fontSize: '14px',
             lineHeight: '1.5',
             padding: '1.5rem',
             backgroundColor: '#1a1a1a'
-          }}
-          lineNumberStyle={{
+          },
+          lineNumberStyle: {
             color: '#666',
             fontSize: '12px'
-          }}
-        >
-          {code}
-        </SyntaxHighlighter>
+          }
+        }, code)}
       </div>
     </div>
   );

@@ -19,19 +19,6 @@
     "openInNewTab": {
       "type": "boolean",
       "default": false
-    },
-    "icon": {
-      "type": "string",
-      "maxLength": 50
-    },
-    "iconPosition": {
-      "type": "enumeration",
-      "enum": [
-        "left",
-        "right",
-        "none"
-      ],
-      "default": "none"
     }
   }
 }

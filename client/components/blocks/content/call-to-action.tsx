@@ -1,12 +1,13 @@
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { CallToActionBlock } from '@/lib/types';
 
 interface CallToActionProps {
   title: string;
   description?: string;
   button_text: string;
   button_url: string;
-  style?: 'primary' | 'secondary' | 'outline';
+  style?: CallToActionBlock['style'];
   background_color?: string;
   open_in_new_tab?: boolean;
 }
@@ -27,7 +28,7 @@ export function CallToAction({
   };
 
   return (
-    <section 
+    <section
       className="py-16 px-6"
       style={background_color ? { backgroundColor: background_color } : undefined}
     >
@@ -35,13 +36,13 @@ export function CallToAction({
         <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 leading-tight">
           {title}
         </h2>
-        
+
         {description && (
           <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
             {description}
           </p>
         )}
-        
+
         <Link
           href={button_url}
           target={open_in_new_tab ? '_blank' : undefined}

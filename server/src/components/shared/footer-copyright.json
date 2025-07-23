@@ -14,7 +14,7 @@
       },
       "year": {
         "type": "integer",
-        "required": true,
+        "required": false,
         "min": 1900,
         "max": 2100
       },

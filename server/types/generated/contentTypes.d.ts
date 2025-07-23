@@ -428,7 +428,7 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
       'manyToMany',
       'api::newsletter-edition.newsletter-edition'
     >;
-    publish_date: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    publish_date: Schema.Attribute.DateTime;
     publishedAt: Schema.Attribute.DateTime;
     SEO: Schema.Attribute.Component<'shared.seo', false>;
     slug: Schema.Attribute.UID<'title'> & Schema.Attribute.Required;
@@ -651,7 +651,7 @@ export interface ApiMagazineIssueMagazineIssue
     > &
       Schema.Attribute.Private;
     pdf_attachment: Schema.Attribute.Media<'files'>;
-    publish_date: Schema.Attribute.Date & Schema.Attribute.Required;
+    publish_date: Schema.Attribute.Date;
     publishedAt: Schema.Attribute.DateTime;
     SEO: Schema.Attribute.Component<'shared.seo', false>;
     slug: Schema.Attribute.UID<'title'> & Schema.Attribute.Required;
@@ -772,11 +772,12 @@ export interface ApiSubscriberSubscriber extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     name: Schema.Attribute.String &
+      Schema.Attribute.Required &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 100;
       }>;
     publishedAt: Schema.Attribute.DateTime;
-    subscribed_at: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    subscribed_at: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

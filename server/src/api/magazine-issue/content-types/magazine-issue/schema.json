@@ -54,7 +54,7 @@
     },
     "publish_date": {
       "type": "date",
-      "required": true
+      "required": false
     },
     "is_featured": {
       "type": "boolean",

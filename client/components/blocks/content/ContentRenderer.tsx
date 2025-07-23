@@ -5,104 +5,23 @@ import { ImageBlock } from './image';
 import { Quote } from './quote';
 import { RichText } from './rich-text';
 import { VideoEmbed } from './video-embed';
-
-// Type definitions based on your Strapi schema
-interface ContentBlock {
-  __component: string;
-  id: number;
-}
-
-interface CallToActionBlock extends ContentBlock {
-  __component: 'content.call-to-action';
-  title: string;
-  description?: string;
-  button_text: string;
-  button_url: string;
-  style?: 'primary' | 'secondary' | 'outline';
-  background_color?: string;
-  open_in_new_tab?: boolean;
-}
-
-interface CodeBlockBlock extends ContentBlock {
-  __component: 'content.code-block';
-  code: string;
-  language?: string;
-  title?: string;
-  show_line_numbers?: boolean;
-}
-
-interface GalleryBlock extends ContentBlock {
-  __component: 'content.gallery';
-  images: Array<{
-    id: number;
-    url: string;
-    alternativeText?: string;
-    width: number;
-    height: number;
-  }>;
-  title?: string;
-  description?: string;
-  layout?: 'grid' | 'carousel' | 'masonry';
-  columns?: number;
-}
-
-interface ImageBlockBlock extends ContentBlock {
-  __component: 'content.image';
-  image: {
-    id: number;
-    url: string;
-    alternativeText?: string;
-    width: number;
-    height: number;
-  };
-  caption?: string;
-  alt_text: string;
-  width?: 'small' | 'medium' | 'large' | 'full';
-}
-
-interface QuoteBlock extends ContentBlock {
-  __component: 'content.quote';
-  quote_text: string;
-  author?: string;
-  author_title?: string;
-  style?: 'default' | 'highlighted' | 'pullquote';
-}
-
-interface RichTextBlock extends ContentBlock {
-  __component: 'content.rich-text';
-  content: string;
-}
-
-interface VideoEmbedBlock extends ContentBlock {
-  __component: 'content.video-embed';
-  video_url: string;
-  title?: string;
-  description?: string;
-  thumbnail?: {
-    id: number;
-    url: string;
-    alternativeText?: string;
-    width: number;
-    height: number;
-  };
-  autoplay?: boolean;
-}
-
-type ContentBlockTypes = 
-  | CallToActionBlock
-  | CodeBlockBlock
-  | GalleryBlock
-  | ImageBlockBlock
-  | QuoteBlock
-  | RichTextBlock
-  | VideoEmbedBlock;
+import {
+  Block,
+  CallToActionBlock,
+  CodeBlock as CodeBlockType,
+  GalleryBlock,
+  ImageBlock as ImageBlockType,
+  QuoteBlock,
+  RichTextBlock,
+  VideoEmbedBlock
+} from '@/lib/types';
 
 interface ContentRendererProps {
-  blocks: ContentBlockTypes[];
+  blocks: Block[];
 }
 
 export function ContentRenderer({ blocks }: ContentRendererProps) {
-  const renderBlock = (block: ContentBlockTypes) => {
+  const renderBlock = (block: Block) => {
     switch (block.__component) {
       case 'content.call-to-action':
         return (
@@ -145,7 +64,14 @@ export function ContentRenderer({ blocks }: ContentRendererProps) {
         return (
           <ImageBlock
             key={block.id}
-            image={block.image}
+            image={{
+              url: block.image.url,
+              width: block.image.width || 0,
+              height: block.image.height || 0,
+              documentId: block.image.documentId,
+              id: block.image.id,
+              alternativeText: block.image.alternativeText
+            }}
             caption={block.caption}
             alt_text={block.alt_text}
             width={block.width}
@@ -178,13 +104,20 @@ export function ContentRenderer({ blocks }: ContentRendererProps) {
             video_url={block.video_url}
             title={block.title}
             description={block.description}
-            thumbnail={block.thumbnail}
+            thumbnail={block.thumbnail ? {
+              url: block.thumbnail.url,
+              width: block.thumbnail.width || 0,
+              height: block.thumbnail.height || 0,
+              documentId: block.thumbnail.documentId,
+              id: block.thumbnail.id,
+              alternativeText: block.thumbnail.alternativeText
+            } : undefined}
             autoplay={block.autoplay}
           />
         );
 
       default:
-        console.warn(`Unknown component type: ${(block as ContentBlock).__component}`);
+        console.warn(`Unknown component type: ${(block as any).__component}`);
         return null;
     }
   };
@@ -195,15 +128,3 @@ export function ContentRenderer({ blocks }: ContentRendererProps) {
     </div>
   );
 }
-
-// Export types for use in other files
-export type {
-  ContentBlockTypes,
-  CallToActionBlock,
-  CodeBlockBlock,
-  GalleryBlock,
-  ImageBlockBlock,
-  QuoteBlock,
-  RichTextBlock,
-  VideoEmbedBlock
-};

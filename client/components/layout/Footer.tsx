@@ -33,25 +33,25 @@ export default function Footer({ footerData }: FooterProps) {
   const copyrightText =
     footerData.copyright.customText ||
     `© ${arabicYear.toString().replace(/\d/g, (d: string) => '٠١٢٣٤٥٦٧٨٩'[parseInt(d)])} ${footerData.copyright.companyName}${footerData.copyright.allRightsReserved ? '. جميع الحقوق محفوظة.' : footerData.copyright.customText }`;
-  
+
   return (
     <footer className="footer-container mt-8 grid gap-[40px] lg:mt-12">
-      
+
       {/* Categories Grid Section */}
       <div className="categories-section bg-gray-50 py-8 md:py-12">
         <CategoriesGrid />
       </div>
-      
+
       {/* Bottom Section with Logo Background */}
-      <div 
+      <div
         className="footer-server grid w-full gap-12 bg-bottom bg-no-repeat px-5 pt-8 md:pt-16 pb-6 md:pb-12 relative"
       >
         {/* Logo background with transparency */}
         {logoUrl && (
           <>
-            <div 
+            <div
               className="absolute inset-0 z-0 bg-bottom bg-no-repeat hidden md:block"
-              style={{ 
+              style={{
                 backgroundImage: `url(${logoUrl})`,
                 backgroundSize: 'contain',
                 backgroundPosition: 'center',
@@ -60,9 +60,9 @@ export default function Footer({ footerData }: FooterProps) {
               }}
             />
             {mobileLogoUrl && (
-              <div 
+              <div
                 className="absolute inset-0 z-0 bg-bottom bg-no-repeat md:hidden"
-                style={{ 
+                style={{
                   backgroundImage: `url(${mobileLogoUrl})`,
                   backgroundSize: 'contain',
                   backgroundPosition: 'center',
@@ -73,7 +73,7 @@ export default function Footer({ footerData }: FooterProps) {
             )}
           </>
         )}
-        
+
         {/* Content with proper z-index to stay above the background */}
         <div className="relative z-10 flex flex-col justify-around h-full">
           {/* Social Media Links */}
@@ -87,15 +87,13 @@ export default function Footer({ footerData }: FooterProps) {
                   className="text-black hover:opacity-80 transition-opacity"
                   rel={item.link.openInNewTab ? 'noopener noreferrer' : undefined}
                 >
-                  {item.link.icon && (
-                    <Image
-                      src={`/icons/${item.link.icon}.svg`}
-                      alt={item.platform}
-                      width={24}
-                      height={24}
-                      className="h-6 w-6"
-                    />
-                  )}
+                  <Image
+                    src={`/icons/${item.platform}.svg`}
+                    alt={item.platform}
+                    width={24}
+                    height={24}
+                    className="h-6 w-6"
+                  />
                 </Link>
               </li>
             ))}

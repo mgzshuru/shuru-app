@@ -3,6 +3,7 @@
 import { cn } from '@/lib/utils';
 import { marked } from 'marked';
 import { useMemo } from 'react';
+import { RichTextBlock } from '@/lib/types';
 
 interface RichTextProps {
   content: string;
@@ -16,14 +17,14 @@ export function RichText({ content, className }: RichTextProps) {
       breaks: true,
       gfm: true,
     });
-    
+
     // Check if content is already HTML or if it's Markdown
     const isMarkdown = content.includes('#') || content.includes('**') || content.includes('- ');
-    
+
     if (isMarkdown) {
       return marked(content);
     }
-    
+
     // If it's already HTML, return as is
     return content;
   }, [content]);

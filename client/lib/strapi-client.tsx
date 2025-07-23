@@ -41,10 +41,10 @@ export async function getFeaturedArticles(limit?: number) {
 // Get articles by category non
 export async function getArticlesByCategory(categorySlug: string, limit?: number) {
   const query = {
-    filters: { 
-      category: { 
-        slug: { $eq: categorySlug } 
-      } 
+    filters: {
+      category: {
+        slug: { $eq: categorySlug }
+      }
     },
     sort: ['publish_date:desc'],
     ...(limit && { pagination: { limit } }),
@@ -57,10 +57,10 @@ export async function getArticlesByCategory(categorySlug: string, limit?: number
 // Get articles by author non
 export async function getArticlesByAuthor(authorId: string, limit?: number) {
   const query = {
-    filters: { 
-      author: { 
-        id: { $eq: authorId } 
-      } 
+    filters: {
+      author: {
+        id: { $eq: authorId }
+      }
     },
     sort: ['publish_date:desc'],
     ...(limit && { pagination: { limit } }),
@@ -73,10 +73,10 @@ export async function getArticlesByAuthor(authorId: string, limit?: number) {
 // Get articles featured in newsletters non
 export async function getArticlesByNewsletter(newsletterId: string) {
   const query = {
-    filters: { 
-      newsletters: { 
-        id: { $eq: newsletterId } 
-      } 
+    filters: {
+      newsletters: {
+        id: { $eq: newsletterId }
+      }
     },
     sort: ['publish_date:desc'],
   };
@@ -106,9 +106,9 @@ export async function searchArticles(searchTerm: string, limit?: number) {
 export async function getArticlesPaginated(page: number = 1, pageSize: number = 10) {
   const query = {
     sort: ['publish_date:desc'],
-    pagination: { 
+    pagination: {
       page,
-      pageSize 
+      pageSize
     },
   };
 
@@ -136,10 +136,10 @@ export async function getRelatedArticles(articleId: string, categorySlug: string
 // Get article count by category non
 export async function getArticleCountByCategory(categorySlug: string) {
   const query = {
-    filters: { 
-      category: { 
-        slug: { $eq: categorySlug } 
-      } 
+    filters: {
+      category: {
+        slug: { $eq: categorySlug }
+      }
     },
     pagination: { limit: 1 },
   };
@@ -244,11 +244,11 @@ export async function getArticleWithFullPopulation(slug: string, status: "draft"
           "content.call-to-action": {
             fields: [
               "title",
-              "description", 
-              "button_text", 
-              "button_url", 
-              "style", 
-              "background_color", 
+              "description",
+              "button_text",
+              "button_url",
+              "style",
+              "background_color",
               "open_in_new_tab"
             ]
           }
@@ -497,8 +497,8 @@ export async function getNewsletterEditionBySlug(slug: string) {
 // SUBSCRIBER FUNCTIONS
 // =====================
 
-export async function subscribe(email: string, name?: string) {
-  try {    
+export async function subscribe(email: string, name: string) {
+  try {
     const response = await fetch(`${STRAPI_BASE_URL}/api/subscribers`, {
       method: 'POST',
       headers: {
@@ -554,7 +554,7 @@ export async function getPageBySlug(slug: string) {
   try {
     const response = await client.collection("pages").find(query);
     console.log(response, "response");
-    
+
     if (response && Array.isArray(response.data) && response.data.length > 0) {
       return response.data[0];
     }
@@ -676,13 +676,6 @@ export async function getGlobal(): Promise<GlobalData | null> {
               populate: {
                 primaryMenuItems: {
                   fields: ["label", "url", "openInNewTab", "isActive", "order"]
-                },
-                SideMenuButton: {
-                  populate: {
-                    icon: {
-                      fields: ["url", "alternativeText"]
-                    }
-                  }
                 }
               }
             },
@@ -709,14 +702,14 @@ export async function getGlobal(): Promise<GlobalData | null> {
             socialLinks: {
               populate: {
                 link: {
-                  fields: ["text", "href", "openInNewTab", "icon", "iconPosition"]
+                  fields: ["text", "href", "openInNewTab"]
                 }
               }
             },
             bottomLinks: {
               populate: {
                 link: {
-                  fields: ["text", "href", "openInNewTab", "icon", "iconPosition"]
+                  fields: ["text", "href", "openInNewTab"]
                 }
               }
             },

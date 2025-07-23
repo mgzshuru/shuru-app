@@ -32,12 +32,6 @@ export interface HeaderData {
   };
   navigation: {
     primaryMenuItems: NavigationItem[];
-    SideMenuButton: {
-      icon?: {
-        url: string;
-        alternativeText?: string;
-      };
-    };
   };
   subscription: {
     text: string;
@@ -85,13 +79,11 @@ export interface NavigationItem {
 }
 
 export interface SocialLink {
-  platform: string;
+  platform: 'facebook' | 'twitter' | 'instagram' | 'linkedin' | 'youtube' | 'tiktok' | 'discord' | 'github' | 'telegram' | 'whatsapp' | 'pinterest' | 'snapchat' | 'reddit' | 'custom';
   link: {
     text: string;
     href: string;
     openInNewTab: boolean;
-    icon?: string;
-    iconPosition: 'left' | 'right' | 'none';
   };
   order: number;
 }
@@ -101,8 +93,6 @@ export interface FooterLinkSection {
     text: string;
     href: string;
     openInNewTab: boolean;
-    icon?: string;
-    iconPosition: 'left' | 'right' | 'none';
   };
   order: number;
 }
@@ -111,13 +101,13 @@ export interface Article {
   id: number
   documentId: string
   title: string
-  description?: string 
+  description?: string
   slug: string
   createdAt: string
   updatedAt: string
   publishedAt: string
-  publish_date: string 
-  is_featured: boolean 
+  publish_date: string
+  is_featured: boolean
   cover_image?: {
     id: number
     documentId: string
@@ -127,7 +117,7 @@ export interface Article {
     width?: number
     height?: number
   }
-  category?: { 
+  category?: {
     id: number
     documentId: string
     name: string
@@ -135,7 +125,7 @@ export interface Article {
     description?: string
     SEO?: SEOComponent
   }
-  author?: { 
+  author?: {
     id: number
     documentId: string
     name: string
@@ -156,30 +146,32 @@ export interface Article {
       height?: number
     }
   }
-  blocks: Block[] 
-  SEO?: SEOComponent 
-  magazine_issues?: MagazineIssue[] 
-  newsletters?: NewsletterEdition[] 
+  blocks: Block[]
+  SEO?: SEOComponent
+  magazine_issues?: MagazineIssue[]
+  newsletters?: NewsletterEdition[]
 }
 
 // Based on your schema's dynamic zone components
-export type Block = 
-  | RichTextBlock 
-  | ImageBlock 
-  | VideoEmbedBlock 
-  | QuoteBlock 
-  | CodeBlock 
-  | GalleryBlock 
+export type Block =
+  | RichTextBlock
+  | ImageBlock
+  | VideoEmbedBlock
+  | QuoteBlock
+  | CodeBlock
+  | GalleryBlock
   | CallToActionBlock
+  | MediaBlock
+  | SliderBlock
 
 export interface RichTextBlock {
-  __component: "content.rich-text" 
+  __component: "content.rich-text"
   id: number
-  content: string 
+  content: string
 }
 
 export interface ImageBlock {
-  __component: "content.image" 
+  __component: "content.image"
   id: number
   image: {
     id: number
@@ -189,13 +181,13 @@ export interface ImageBlock {
     width?: number
     height?: number
   }
-  alt_text: string 
-  caption?: string 
-  width: 'small' | 'medium' | 'large' | 'full' 
+  alt_text: string
+  caption?: string
+  width: 'small' | 'medium' | 'large' | 'full'
 }
 
 export interface VideoEmbedBlock {
-  __component: "content.video-embed" 
+  __component: "content.video-embed"
   id: number
   video_url: string
   title?: string
@@ -212,16 +204,16 @@ export interface VideoEmbedBlock {
 }
 
 export interface QuoteBlock {
-  __component: "content.quote" 
+  __component: "content.quote"
   id: number
-  quote_text: string 
-  author?: string 
-  author_title?: string 
-  style: 'default' | 'highlighted' | 'pullquote' 
+  quote_text: string
+  author?: string
+  author_title?: string
+  style: 'default' | 'highlighted' | 'pullquote'
 }
 
 export interface CodeBlock {
-  __component: "content.code-block" 
+  __component: "content.code-block"
   id: number
   code: string
   language: string
@@ -230,7 +222,7 @@ export interface CodeBlock {
 }
 
 export interface GalleryBlock {
-  __component: "content.gallery" 
+  __component: "content.gallery"
   id: number
   title?: string
   description?: string
@@ -248,7 +240,7 @@ export interface GalleryBlock {
 }
 
 export interface CallToActionBlock {
-  __component: "content.call-to-action" 
+  __component: "content.call-to-action"
   id: number
   title: string
   description?: string
@@ -257,6 +249,32 @@ export interface CallToActionBlock {
   style: 'primary' | 'secondary' | 'outline'
   background_color?: string
   open_in_new_tab: boolean
+}
+
+export interface MediaBlock {
+  __component: "shared.media"
+  id: number
+  files: {
+    id: number
+    documentId: string
+    url: string
+    alternativeText: string
+    width?: number
+    height?: number
+  }[]
+}
+
+export interface SliderBlock {
+  __component: "shared.slider"
+  id: number
+  files: {
+    id: number
+    documentId: string
+    url: string
+    alternativeText: string
+    width?: number
+    height?: number
+  }[]
 }
 
 export interface SEOComponent {
@@ -317,7 +335,7 @@ export interface MagazineIssue {
   documentId: string
   title: string
   slug: string
-  description: string
+  description: string  // This is richtext in Strapi
   issue_number: number
   publish_date: string
   is_featured: boolean
@@ -365,7 +383,7 @@ export interface Subscriber {
   id: number
   documentId: string
   email: string
-  name?: string
+  name: string  // Required in the schema
   is_verified: boolean
   subscribed_at: string
   createdAt: string

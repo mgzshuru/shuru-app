@@ -1,16 +1,9 @@
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
-
-interface GalleryImage {
-  id: number; // Changed from string to number to match ContentRenderer
-  url: string;
-  alternativeText?: string;
-  width: number;
-  height: number;
-}
+import { GalleryBlock } from '@/lib/types';
 
 interface GalleryProps {
-  images: GalleryImage[];
+  images: GalleryBlock['images'];
   title?: string;
   description?: string;
   layout?: 'grid' | 'carousel' | 'masonry';
@@ -98,8 +91,8 @@ export function Gallery({
                 <Image
                   src={image.url}
                   alt={image.alternativeText || ''}
-                  width={image.width}
-                  height={image.height}
+                  width={image.width || 400}
+                  height={image.height || 300}
                   className="w-full transition-transform duration-300 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />

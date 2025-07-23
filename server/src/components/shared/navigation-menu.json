@@ -13,12 +13,6 @@
       "repeatable": true,
       "min": 0,
       "max": 20
-    },
-    "SideMenuButton": {
-      "type": "component",
-      "component": "shared.mobile-menu-button",
-      "required": true,
-      "repeatable": false
     }
   }
 }

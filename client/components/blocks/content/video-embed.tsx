@@ -2,16 +2,13 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import { Play } from 'lucide-react';
+import { VideoEmbedBlock } from '@/lib/types';
 
 interface VideoEmbedProps {
   video_url: string;
   title?: string;
   description?: string;
-  thumbnail?: {
-    url: string;
-    width: number;
-    height: number;
-  };
+  thumbnail?: VideoEmbedBlock['thumbnail'];
   autoplay?: boolean;
 }
 

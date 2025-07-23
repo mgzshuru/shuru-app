@@ -592,7 +592,6 @@ export interface SharedFooterCopyright extends Struct.ComponentSchema {
     showCurrentYear: Schema.Attribute.Boolean &
       Schema.Attribute.DefaultTo<true>;
     year: Schema.Attribute.Integer &
-      Schema.Attribute.Required &
       Schema.Attribute.SetMinMax<
         {
           max: 2100;
@@ -642,7 +641,6 @@ export interface SharedHeaderLogo extends Struct.ComponentSchema {
   };
   attributes: {
     alt: Schema.Attribute.String &
-      Schema.Attribute.Required &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 100;
       }> &
@@ -660,12 +658,6 @@ export interface SharedLink extends Struct.ComponentSchema {
   };
   attributes: {
     href: Schema.Attribute.String & Schema.Attribute.Required;
-    icon: Schema.Attribute.String &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 50;
-      }>;
-    iconPosition: Schema.Attribute.Enumeration<['left', 'right', 'none']> &
-      Schema.Attribute.DefaultTo<'none'>;
     openInNewTab: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     text: Schema.Attribute.String &
       Schema.Attribute.Required &
@@ -685,20 +677,8 @@ export interface SharedLoginButton extends Struct.ComponentSchema {
   attributes: {
     text: Schema.Attribute.String &
       Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<'LOGIN'>;
-    url: Schema.Attribute.String;
-  };
-}
-
-export interface SharedMobileMenuButton extends Struct.ComponentSchema {
-  collectionName: 'components_shared_mobile_menu_buttons';
-  info: {
-    description: 'Hamburger menu button for mobile navigation';
-    displayName: 'Mobile Menu Button';
-    icon: 'burger';
-  };
-  attributes: {
-    icon: Schema.Attribute.Media<'images'>;
+      Schema.Attribute.DefaultTo<'\u062A\u0633\u062C\u064A\u0644 \u0627\u0644\u062F\u062E\u0648\u0644'>;
+    url: Schema.Attribute.String & Schema.Attribute.DefaultTo<'/login'>;
   };
 }
 
@@ -741,25 +721,6 @@ export interface SharedNavigationMenu extends Struct.ComponentSchema {
         },
         number
       >;
-    SideMenuButton: Schema.Attribute.Component<
-      'shared.mobile-menu-button',
-      false
-    > &
-      Schema.Attribute.Required;
-  };
-}
-
-export interface SharedSearchConfig extends Struct.ComponentSchema {
-  collectionName: 'components_shared_search_configs';
-  info: {
-    description: 'Search button configuration';
-    displayName: 'Search Config';
-    icon: 'search';
-  };
-  attributes: {
-    ariaLabel: Schema.Attribute.String &
-      Schema.Attribute.DefaultTo<'Search button'>;
-    icon: Schema.Attribute.String & Schema.Attribute.DefaultTo<'search'>;
   };
 }
 
@@ -858,8 +819,8 @@ export interface SharedSubscriptionButton extends Struct.ComponentSchema {
   attributes: {
     text: Schema.Attribute.String &
       Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<'SUBSCRIBE'>;
-    url: Schema.Attribute.String & Schema.Attribute.Required;
+      Schema.Attribute.DefaultTo<'\u0627\u0634\u062A\u0631\u0643 \u0627\u0644\u0622\u0646'>;
+    url: Schema.Attribute.String & Schema.Attribute.DefaultTo<'/subscribe'>;
   };
 }
 
@@ -905,10 +866,8 @@ declare module '@strapi/strapi' {
       'shared.header-logo': SharedHeaderLogo;
       'shared.link': SharedLink;
       'shared.login-button': SharedLoginButton;
-      'shared.mobile-menu-button': SharedMobileMenuButton;
       'shared.navigation-item': SharedNavigationItem;
       'shared.navigation-menu': SharedNavigationMenu;
-      'shared.search-config': SharedSearchConfig;
       'shared.secondary-navigation': SharedSecondaryNavigation;
       'shared.seo': SharedSeo;
       'shared.social-link': SharedSocialLink;

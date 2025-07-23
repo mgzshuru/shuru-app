@@ -10,11 +10,12 @@
     "text": {
       "type": "string",
       "required": true,
-      "default": "LOGIN"
+      "default": "تسجيل الدخول"
     },
     "url": {
       "type": "string",
-      "required": false
+      "required": false,
+      "default": "/login"
     }
   }
 }

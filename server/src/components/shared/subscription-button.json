@@ -10,11 +10,12 @@
     "text": {
       "type": "string",
       "required": true,
-      "default": "SUBSCRIBE"
+      "default": "اشترك الآن"
     },
     "url": {
       "type": "string",
-      "required": true
+      "required": false,
+      "default": "/subscribe"
     }
   }
 }

@@ -1,10 +1,11 @@
 import { cn } from '@/lib/utils';
+import { QuoteBlock } from '@/lib/types';
 
 interface QuoteProps {
   quote_text: string;
   author?: string;
   author_title?: string;
-  style?: 'default' | 'highlighted' | 'pullquote';
+  style?: QuoteBlock['style'];
 }
 
 export function Quote({
