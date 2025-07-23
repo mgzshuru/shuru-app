@@ -46,6 +46,8 @@ export const Newsletter = ({ data }: { data: NewsletterData }) => {
         // Handle specific error messages in Arabic
         if (result.error === 'Email already subscribed to newsletter') {
           setErrorMessage('هذا البريد الإلكتروني مشترك بالفعل في النشرة الإخبارية');
+        } else if (result.error && result.error.includes('This attribute must be unique')) {
+          setErrorMessage('هذا البريد الإلكتروني مشترك بالفعل في النشرة الإخبارية');
         } else {
           setErrorMessage('فشل في الاشتراك. يرجى المحاولة مرة أخرى.');
         }

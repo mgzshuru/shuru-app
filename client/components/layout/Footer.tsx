@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { FooterData } from '@/lib/types';
 import { getStrapiURL } from '@/lib/utils';
+import CategoriesGrid from './CategoriesGrid';
 
 interface FooterProps {
   footerData: FooterData;
@@ -32,8 +33,15 @@ export default function Footer({ footerData }: FooterProps) {
   const copyrightText =
     footerData.copyright.customText ||
     `© ${arabicYear.toString().replace(/\d/g, (d: string) => '٠١٢٣٤٥٦٧٨٩'[parseInt(d)])} ${footerData.copyright.companyName}${footerData.copyright.allRightsReserved ? '. جميع الحقوق محفوظة.' : footerData.copyright.customText }`;
+  
   return (
     <footer className="footer-container mt-8 grid gap-[40px] lg:mt-12">
+      
+      {/* Categories Grid Section */}
+      <div className="categories-section bg-gray-50 py-8 md:py-12">
+        <CategoriesGrid />
+      </div>
+      
       {/* Bottom Section with Logo Background */}
       <div 
         className="footer-server grid w-full gap-12 bg-bottom bg-no-repeat px-5 pt-8 md:pt-16 pb-6 md:pb-12 relative"

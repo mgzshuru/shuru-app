@@ -1,6 +1,6 @@
 import { strapi } from "@strapi/client";
 import { getStrapiURL } from "./utils";
-import { GlobalData } from "./types";
+import { Article, Author, Category, GlobalData, MagazineIssue } from "./types";
 
 const PATH = "/api";
 const STRAPI_BASE_URL = getStrapiURL();
@@ -569,11 +569,11 @@ export async function getPageBySlug(slug: string) {
 // SEARCH & FILTER FUNCTIONS
 // =====================
 
-interface SearchResults {
-  articles: any[];
-  categories: any[];
-  authors: any[];
-  magazine_issues: any[];
+export interface SearchResults {
+  articles: Article[];
+  categories: Category[];
+  authors: Author[];
+  magazine_issues: MagazineIssue[];
 }
 
 export async function searchContent(searchTerm: string, contentTypes?: string[], limit?: number): Promise<SearchResults> {

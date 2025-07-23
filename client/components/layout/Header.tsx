@@ -3,11 +3,12 @@
 import { StrapiImage } from '@/components/custom/strapi-image';
 import { StrapiLink } from '@/components/custom/strapi-link';
 import { useState, useEffect } from 'react';
-import { Menu, Search, X } from 'lucide-react';
+import { Menu, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { useRouter } from 'next/navigation';
 import { HeaderData } from '@/lib/types';
+import SearchOverlay from './SearchOverlay';
+import MobileMenu from './MobileMenu';
 
 interface HeaderProps {
   headerData: HeaderData;
@@ -34,6 +35,20 @@ export default function Header({ headerData }: HeaderProps) {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
+
+  // Disable body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    // Cleanup function to restore scroll when component unmounts
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMenuOpen]);
 
   return (
     <header 
@@ -85,7 +100,7 @@ export default function Header({ headerData }: HeaderProps) {
             <Button
               variant="default"
               size="lg"
-              className="text-white rounded-none"
+              className="text-black/90 rounded-none"
             >
               {headerData.subscription.text}
             </Button>
@@ -126,85 +141,18 @@ export default function Header({ headerData }: HeaderProps) {
         </ul>
       </div>
 
-      {/* Mobile Menu Sheet */}
-      <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-        <SheetContent side="right" className="space-y-1 p-2 z-[1100]">
-          {/* Menu items */}
-          <div className="border-b border-gray-200 pb-4 mb-4 pt-8">
-            {headerData.navigation.primaryMenuItems && headerData.navigation.primaryMenuItems.map((item) => (
-              <StrapiLink
-                key={item.order}
-                href={item.url}
-                isExternal={item.openInNewTab}
-                className="block"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <Button
-                  variant="ghost"
-                  size="default"
-                  className="justify-start px-4 py-3 text-base font-medium text-gray-900 hover:bg-gray-100 text-right w-full"
-                >
-                  {item.label}
-                </Button>
-              </StrapiLink>
-            ))}
-          </div>
-          {/* Login button in sheet */}
-          <div className="px-4 pb-2">
-            <Button
-              variant="outline"
-              size="default"
-              className="justify-center mb-4 text-gray-900 border-gray-300 w-full"
-              onClick={() => router.push(headerData.loginButton?.url || '/login')}
-            >
-              {headerData.loginButton?.text}
-            </Button>
-          </div>
-          {/* CTA in sheet */}
-          <div className="px-4">
-            <StrapiLink
-              href={headerData.subscription.url}
-              className="block"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <Button
-                variant="default"
-                size="lg"
-                className="justify-center text-white w-full"
-              >
-                {headerData.subscription.text}
-              </Button>
-            </StrapiLink>
-          </div>
-        </SheetContent>
-      </Sheet>
+      {/* Mobile Menu */}
+      <MobileMenu
+        isOpen={isMenuOpen}
+        onClose={() => setIsMenuOpen(false)}
+        headerData={headerData}
+      />
 
       {/* Search Overlay */}
-      {isSearchOpen && (
-        <div className="fixed inset-0 bg-black/90 z-50 shadow-lg">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <input
-                  type="text"
-                  placeholder="ابحث..."
-                  className="w-full px-4 py-2 text-lg bg-transparent border-b border-gray-600 text-white focus:outline-none focus:border-orange-500 placeholder-gray-500"
-                  autoFocus
-                />
-              </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsSearchOpen(false)}
-                aria-label="Close search"
-                className="hover:text-orange-500 hover:bg-white/40"
-              >
-                <X className="h-5 w-5 text-white" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      <SearchOverlay 
+        isOpen={isSearchOpen} 
+        onClose={() => setIsSearchOpen(false)} 
+      />
     </header>
   );
 }
