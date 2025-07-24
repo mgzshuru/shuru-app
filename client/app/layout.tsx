@@ -6,6 +6,7 @@ import { getGlobal } from '@/lib/strapi-client'
 import MainLayout from '@/components/layout/MainLayout'
 import Link from "next/link"
 import type { GlobalData } from '@/lib/types';
+import { getStrapiMedia } from '@/components/custom/strapi-image';
 
 const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
   subsets: ["arabic"],
@@ -74,7 +75,7 @@ export async function generateMetadata(): Promise<Metadata> {
         ...(seo.og_image && {
           images: [
             {
-              url: strapiUrl + seo.og_image.url,
+              url: getStrapiMedia(seo.og_image.url) || '/og-image.svg',
               width: seo.og_image.width || 1200,
               height: seo.og_image.height || 630,
               alt: seo.og_image.alternativeText || globalData.siteName || 'شروع',
@@ -97,7 +98,7 @@ export async function generateMetadata(): Promise<Metadata> {
         title: seo.meta_title || globalData.siteName || 'شروع - منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال',
         description: seo.meta_description || globalData.siteDescription || 'منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال والقيادة والتحول الرقمي والتقنيات الناشئة والشركات الناشئة والاستثمار والتطوير المؤسسي',
         ...(seo.og_image && {
-          images: [strapiUrl + seo.og_image.url],
+          images: [getStrapiMedia(seo.og_image.url) || '/twitter-image.svg'],
         }) || {
           images: ['/twitter-image.svg'],
         },
@@ -133,11 +134,13 @@ export async function generateMetadata(): Promise<Metadata> {
       manifest: '/manifest.json',
 
       icons: {
-        icon: globalData.favicon?.url ? strapiUrl + globalData.favicon.url : [
-          { url: '/favicon.ico', sizes: '32x32' },
-          { url: '/icon-192x192.png', sizes: '192x192', type: 'image/png' },
-          { url: '/icon-512x512.png', sizes: '512x512', type: 'image/png' },
-        ],
+        icon: globalData.favicon?.url
+          ? [{ url: getStrapiMedia(globalData.favicon.url) || '/favicon.ico', sizes: '32x32' }]
+          : [
+              { url: '/favicon.ico', sizes: '32x32' },
+              { url: '/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+              { url: '/icon-512x512.png', sizes: '512x512', type: 'image/png' },
+            ],
         apple: [
           { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
         ],
@@ -356,7 +359,7 @@ export default async function RootLayout({
               "description": globalData?.siteDescription || "منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال والقيادة والتحول الرقمي والتقنيات الناشئة والشركات الناشئة والاستثمار والتطوير المؤسسي",
               "url": process.env.NEXT_PUBLIC_SITE_URL || "https://www.shurumag.com",
               "logo": globalData?.header?.logo?.logoImage?.url
-                ? `${process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337'}${globalData.header.logo.logoImage.url}`
+                ? getStrapiMedia(globalData.header.logo.logoImage.url) || "https://www.shurumag.com/logos/Shuru-white-logo.svg"
                 : "https://www.shurumag.com/logos/Shuru-white-logo.svg",
               "foundingDate": "2020",
               "industry": "Media and Publishing",
