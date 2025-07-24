@@ -20,6 +20,7 @@
     "slug": {
       "type": "uid",
       "targetField": "name",
+      "unique": true,
       "required": true
     },
     "description": {
