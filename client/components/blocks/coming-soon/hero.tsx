@@ -22,21 +22,10 @@ export const Hero = ({ data }: { data: HeroData }) => {
       </div>
       <div className="relative w-full max-w-7xl mx-auto px-6 py-16">
         <div className="max-w-4xl">
-          <div className="mb-8">
-            <div className="inline-block mb-4">
-              <Image
-                src={data.logo.src}
-                alt={data.logo.alt}
-                width={data.logo.width}
-                height={data.logo.height}
-              />
-            </div>
-          </div>
-          
           <h1 className="text-6xl md:text-8xl font-black text-white mb-6 leading-[0.9] tracking-tight animate-fade-in">
             {data.title}
           </h1>
-          
+
           <div className="mb-8 space-y-4">
             <p className="text-2xl md:text-3xl text-[#CBD1F9] font-light mb-4 leading-tight animate-slide-up">
               {data.subtitle}
@@ -60,7 +49,7 @@ export const Hero = ({ data }: { data: HeroData }) => {
           </div>
 
           <div className="border-t border-gray-600 pt-6 animate-slide-up delay-300">
-            <button 
+            <button
               onClick={() => {
                 document.getElementById(data.cta.target)?.scrollIntoView({ behavior: 'smooth' });
               }}
@@ -77,4 +66,4 @@ export const Hero = ({ data }: { data: HeroData }) => {
       </div>
     </section>
   );
-}; 
+};
