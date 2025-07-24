@@ -6,11 +6,6 @@
   },
   "options": {},
   "attributes": {
-    "logo": {
-      "type": "component",
-      "component": "content.image",
-      "required": true
-    },
     "title": {
       "type": "string",
       "required": true
@@ -36,4 +31,4 @@
       "required": true
     }
   }
-} 
+}
