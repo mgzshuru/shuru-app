@@ -88,7 +88,7 @@ export default function Header({ headerData }: HeaderProps) {
                 alt={headerData.logo.logoImage.alternativeText || headerData.logo.alt}
                 width={200}
                 height={32}
-                className="py-2 max-lg:w-[150px] h-[70px]"
+                className="py-2 max-lg:w-[150px] h-[60px]"
               />
             </StrapiLink>
           </div>
