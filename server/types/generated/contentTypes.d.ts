@@ -527,6 +527,7 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 100;
       }>;
+    order: Schema.Attribute.Integer;
     parent_category: Schema.Attribute.Relation<
       'manyToOne',
       'api::category.category'

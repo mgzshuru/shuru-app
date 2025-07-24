@@ -65,7 +65,10 @@ const CategoriesGrid: React.FC = () => {
 
         if (response && response.data) {
           const categoryGroups = transformCategoriesToGroups(response.data as Category[]);
+          // Only set categories if there are valid ordered categories
           setCategories(categoryGroups);
+        } else {
+          setCategories([]);
         }
       } catch (err) {
         console.error('Error fetching categories:', err);
@@ -83,14 +86,19 @@ const CategoriesGrid: React.FC = () => {
     // Get root categories (categories without parent)
     const rootCategories = strapiCategories.filter(cat => !cat.parent_category);
 
-    return rootCategories.map(rootCategory => ({
+    // Filter out categories with null/undefined order and sort by order
+    const orderedCategories = rootCategories
+      .filter(cat => cat.order !== null && cat.order !== undefined)
+      .sort((a, b) => (a.order || 0) - (b.order || 0));
+
+    return orderedCategories.map(rootCategory => ({
       title: rootCategory.name,
       links: [
         // Add child categories as links
         ...(rootCategory.children_categories?.map((child: any) => ({
           id: child.id,
           text: child.name,
-          href: `/categories/${child.slug}`,
+          href: `/c/${child.slug}`,
           isExternal: false,
         })) || [])
       ]
@@ -138,15 +146,8 @@ const CategoriesGrid: React.FC = () => {
   }
 
   if (!categories || categories.length === 0) {
-    return (
-      <div className="footer-client w-full flex justify-center py-8">
-        <div className="max-w-screen-xl mx-auto px-5 lg:px-6 w-full">
-          <div className="text-center py-8">
-            <p className="text-gray-500 text-sm">No categories found</p>
-          </div>
-        </div>
-      </div>
-    );
+    // Don't render anything if there are no ordered categories
+    return null;
   }
 
   return (

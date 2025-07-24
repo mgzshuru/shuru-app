@@ -305,6 +305,7 @@ export interface Category {
   children_categories?: Category[]
   articles?: Article[]
   SEO?: SEOComponent
+  order?: number
 }
 
 export interface Author {
