@@ -29,7 +29,7 @@ export default function Header({ headerData }: HeaderProps) {
 
     // Add event listener
     window.addEventListener('scroll', handleScroll, { passive: true });
-    
+
     // Clean up event listener
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -51,7 +51,7 @@ export default function Header({ headerData }: HeaderProps) {
   }, [isMenuOpen]);
 
   return (
-    <header 
+    <header
       className="fixed top-0 left-0 right-0 flex flex-col bg-black/90 px-5 shadow-md transition-all duration-300"
       style={{ zIndex: 1000 }}
       onMouseEnter={() => setIsHovered(true)}
@@ -61,8 +61,8 @@ export default function Header({ headerData }: HeaderProps) {
       <div className="grid min-h-[44px] grid-cols-3 items-center justify-between overflow-hidden">
         {/* Left Section */}
         <div className="grid-column-1 flex justify-start items-center gap-6 text-white rounded-none">
-          <Button 
-            aria-label="Hamburger menu button" 
+          <Button
+            aria-label="Hamburger menu button"
             variant="ghost"
             size="icon"
             onClick={() => setIsMenuOpen(true)}
@@ -118,18 +118,18 @@ export default function Header({ headerData }: HeaderProps) {
       </div>
 
       {/* Horizontal Categories */}
-      <div 
+      <div
         className={`flex flex-row items-center justify-center gap-4 uppercase text-white max-lg:hidden overflow-hidden transition-all duration-300 ${
           isScrolled && !isHovered ? 'h-0 opacity-0' : 'h-[23px] opacity-100'
         }`}
       >
-        <ul className="flex flex-row justify-center gap-4 text-xs font-normal leading-4 tracking-[1.4px]">
+        <ul className="flex flex-row justify-center gap-4 text-sm font-normal leading-4 tracking-[1.4px]">
           {headerData.navigation.primaryMenuItems && headerData.navigation.primaryMenuItems.map((item) => (
-            <li 
+            <li
               key={item.order}
               className="border-b-[6px] border-transparent transition-colors duration-500 hover:border-orange-500"
             >
-              <StrapiLink 
+              <StrapiLink
                 href={item.url}
                 isExternal={item.openInNewTab}
                 className="hover:text-orange-500 transition-colors"
@@ -149,9 +149,9 @@ export default function Header({ headerData }: HeaderProps) {
       />
 
       {/* Search Overlay */}
-      <SearchOverlay 
-        isOpen={isSearchOpen} 
-        onClose={() => setIsSearchOpen(false)} 
+      <SearchOverlay
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
       />
     </header>
   );
