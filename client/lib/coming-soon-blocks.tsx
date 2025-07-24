@@ -34,12 +34,6 @@ export const renderComingSoonBlock = (block: ComingSoonBlock) => {
         title: block.title || '',
         subtitle: block.subtitle || '',
         description: block.description || '',
-        logo: {
-          src: getStrapiMedia(block.logo?.image?.url) || '/logos/Shuru.png',
-          alt: block.logo?.alt || 'Logo',
-          width: block.logo?.width === "small" ? 120 : block.logo?.width === "medium" ? 180 : 240,
-          height: block.logo?.width === "small" ? 48 : block.logo?.width === "medium" ? 64 : 80,
-        },
         stats: block.stats || [],
         cta: block.cta || { text: '', target: '' },
       };
@@ -149,7 +143,7 @@ export const ComingSoonBlocksRenderer: React.FC<{ data: ComingSoonData }> = ({ d
 export const fetchComingSoonData = async (): Promise<ComingSoonData> => {
   const baseUrl = getStrapiURL();
   // Deeply populate all blocks and seo
-  const url = `${baseUrl}/api/coming-soon?populate[blocks][populate]=*&populate[seo][populate]=*&populate[blocks][on][coming-soon.hero][populate][logo][populate]=*&populate[blocks][on][coming-soon.hero][populate][stats][populate]=*&populate[blocks][on][coming-soon.hero][populate][cta][populate]=*&populate[blocks][on][coming-soon.features-grid][populate][mainFeature][populate][features][populate]=*&populate[blocks][on][coming-soon.features-grid][populate][stats][populate][items][populate]=*&populate[blocks][on][coming-soon.features-grid][populate][specialties][populate]=*&populate[blocks][on][coming-soon.team][populate][header][populate]=*&populate[blocks][on][coming-soon.team][populate][teams][populate]=*&populate[blocks][on][coming-soon.newsletter][populate][header][populate]=*&populate[blocks][on][coming-soon.newsletter][populate][form][populate][submitButton][populate]=*&populate[blocks][on][coming-soon.newsletter][populate][messages][populate]=*&populate[blocks][on][coming-soon.timeline][populate][header][populate]=*&populate[blocks][on][coming-soon.timeline][populate][phases][populate]=*&populate[blocks][on][coming-soon.why][populate][header][populate]=*&populate[blocks][on][coming-soon.why][populate][features][populate]=*&populate[blocks][on][coming-soon.footer][populate][logo][populate][image][populate]=*&populate[blocks][on][coming-soon.footer][populate][logo][populate][mobileImage][populate]=*&populate[blocks][on][coming-soon.footer][populate][socialMedia][populate]=*&populate[blocks][on][coming-soon.footer][populate][bottomLinks][populate]=*`;
+  const url = `${baseUrl}/api/coming-soon?populate[blocks][populate]=*&populate[seo][populate]=*&populate[blocks][on][coming-soon.hero][populate][stats][populate]=*&populate[blocks][on][coming-soon.hero][populate][cta][populate]=*&populate[blocks][on][coming-soon.features-grid][populate][mainFeature][populate][features][populate]=*&populate[blocks][on][coming-soon.features-grid][populate][stats][populate][items][populate]=*&populate[blocks][on][coming-soon.features-grid][populate][specialties][populate]=*&populate[blocks][on][coming-soon.team][populate][header][populate]=*&populate[blocks][on][coming-soon.team][populate][teams][populate]=*&populate[blocks][on][coming-soon.newsletter][populate][header][populate]=*&populate[blocks][on][coming-soon.newsletter][populate][form][populate][submitButton][populate]=*&populate[blocks][on][coming-soon.newsletter][populate][messages][populate]=*&populate[blocks][on][coming-soon.timeline][populate][header][populate]=*&populate[blocks][on][coming-soon.timeline][populate][phases][populate]=*&populate[blocks][on][coming-soon.why][populate][header][populate]=*&populate[blocks][on][coming-soon.why][populate][features][populate]=*&populate[blocks][on][coming-soon.footer][populate][logo][populate][image][populate]=*&populate[blocks][on][coming-soon.footer][populate][logo][populate][mobileImage][populate]=*&populate[blocks][on][coming-soon.footer][populate][socialMedia][populate]=*&populate[blocks][on][coming-soon.footer][populate][bottomLinks][populate]=*`;
 
   const response = await fetch(url, {
     method: 'GET',
@@ -191,4 +185,4 @@ export const getBlocksByType = (blocks: ComingSoonBlock[], componentType: string
 // Helper function to check if block exists
 export const hasBlock = (blocks: ComingSoonBlock[], componentType: string) => {
   return blocks.some(block => block.__component === componentType);
-}; 
+};

@@ -133,8 +133,6 @@ export interface ComingSoonHero extends Struct.ComponentSchema {
     cta: Schema.Attribute.Component<'coming-soon.cta-button', false> &
       Schema.Attribute.Required;
     description: Schema.Attribute.RichText & Schema.Attribute.Required;
-    logo: Schema.Attribute.Component<'content.image', false> &
-      Schema.Attribute.Required;
     stats: Schema.Attribute.Component<'coming-soon.stat-item', true> &
       Schema.Attribute.SetMinMax<
         {

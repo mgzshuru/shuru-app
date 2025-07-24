@@ -1,10 +1,9 @@
 'use client';
-import Image from 'next/image';
+
 import { ArrowRight } from 'lucide-react';
 
 // Define the type for the data prop
 interface HeroData {
-  logo: { src: string; alt: string; width: number; height: number };
   title: string;
   subtitle: string;
   description: string;
