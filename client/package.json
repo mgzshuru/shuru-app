@@ -39,6 +39,8 @@
     "@radix-ui/react-toggle-group": "1.1.1",
     "@radix-ui/react-tooltip": "1.1.6",
     "@strapi/client": "^1.4.0",
+    "@swc/helpers": "^0.5.17",
+    "@tailwindcss/line-clamp": "^0.4.4",
     "@types/marked": "^6.0.0",
     "@types/react-syntax-highlighter": "^15.5.13",
     "autoprefixer": "^10.4.20",
