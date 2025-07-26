@@ -4,13 +4,140 @@ import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ContentRenderer } from '@/components/blocks/content/ContentRenderer';
-import { getArticleWithFullPopulation, getRelatedArticles } from '@/lib/strapi-client';
+import { getArticleWithFullPopulation, getRelatedArticles, getGlobal } from '@/lib/strapi-client';
 import { getStrapiMedia } from '@/components/custom/strapi-image';
 import { formatDate } from '@/lib/utils';
 import { Article } from '@/lib/types';
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;
+}
+
+// Generate metadata for individual articles
+export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
+  try {
+    const { slug } = await params;
+    const article = await getArticleData(slug);
+
+    // Try to get global data, but don't fail if it's not available
+    let globalData;
+    try {
+      globalData = await getGlobal();
+    } catch (error) {
+      console.error('Error fetching global data for metadata:', error);
+      globalData = null;
+    }
+
+    if (!article) {
+      return {
+        title: 'المقال غير موجود | شروع',
+        description: 'المقال المطلوب غير متوفر.',
+        robots: { index: false, follow: false },
+      };
+    }
+
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shurumag.com';
+    const articleUrl = `${baseUrl}/articles/${article.slug}`;
+
+    // Extract text content for description if not provided
+    const extractedDescription = article.description ||
+      article.blocks?.find(block => block.__component === 'content.rich-text')?.content?.substring(0, 160) ||
+      'مقال في مجلة شروع للابتكار وريادة الأعمال';
+
+    // Get SEO data from article or fallback
+    const seoTitle = article.SEO?.meta_title ||
+      `${article.title} | ${globalData?.siteName || 'شروع'}`;
+
+    const seoDescription = article.SEO?.meta_description ||
+      extractedDescription.substring(0, 160);
+
+    const seoKeywords = article.SEO?.meta_keywords?.split(',').map(k => k.trim()).filter(Boolean) || [
+      article.category?.name,
+      'شروع',
+      'ريادة الأعمال',
+      'الابتكار',
+      'القيادة',
+    ].filter(Boolean) as string[];
+
+    // Article image for social sharing
+    const articleImage = article.cover_image ?
+      getStrapiMedia(article.cover_image.url) || `${baseUrl}/og-image.svg` :
+      article.SEO?.og_image ?
+      getStrapiMedia(article.SEO.og_image.url) || `${baseUrl}/og-image.svg` :
+      `${baseUrl}/og-image.svg`;
+
+    return {
+      title: seoTitle,
+      description: seoDescription,
+      keywords: seoKeywords,
+      authors: article.author ? [{ name: article.author.name }] : [{ name: globalData?.siteName || 'شروع' }],
+      creator: article.author?.name || globalData?.siteName || 'شروع',
+      publisher: globalData?.siteName || 'شروع للنشر الرقمي',
+      category: article.category?.name || 'business',
+
+      openGraph: {
+        type: 'article',
+        locale: 'ar_SA',
+        url: articleUrl,
+        siteName: globalData?.siteName || 'شروع',
+        title: seoTitle,
+        description: seoDescription,
+        publishedTime: article.publish_date,
+        modifiedTime: article.updatedAt,
+        section: article.category?.name,
+        authors: article.author ? [article.author.name] : [],
+        tags: seoKeywords,
+        images: [
+          {
+            url: articleImage,
+            width: article.cover_image?.width || 1200,
+            height: article.cover_image?.height || 630,
+            alt: article.cover_image?.alternativeText || article.title,
+          },
+        ],
+      },
+
+      twitter: {
+        card: 'summary_large_image',
+        title: seoTitle,
+        description: seoDescription,
+        images: [articleImage],
+        creator: '@shurumag',
+        site: '@shurumag',
+      },
+
+      alternates: {
+        canonical: articleUrl,
+      },
+
+      robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          'max-video-preview': -1,
+          'max-image-preview': 'large',
+          'max-snippet': -1,
+        },
+      },
+
+      other: {
+        'article:published_time': article.publish_date,
+        'article:modified_time': article.updatedAt,
+        'article:section': article.category?.name || '',
+        'article:author': article.author?.name || '',
+        'article:tag': seoKeywords.join(','),
+      },
+    };
+  } catch (error) {
+    console.error('Error generating metadata for article:', error);
+    return {
+      title: 'خطأ في تحميل المقال | شروع',
+      description: 'حدث خطأ في تحميل بيانات المقال.',
+      robots: { index: false, follow: false },
+    };
+  }
 }
 
 // Fetch article data with full population
@@ -306,29 +433,86 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               "worksFor": article.author.organization ? {
                 "@type": "Organization",
                 "name": article.author.organization
-              } : undefined
-            } : undefined,
+              } : undefined,
+              "image": article.author.avatar ? getStrapiMedia(article.author.avatar.url) : undefined
+            } : {
+              "@type": "Organization",
+              "name": "شروع للنشر الرقمي"
+            },
             "publisher": {
               "@type": "Organization",
               "name": "شروع",
               "logo": {
                 "@type": "ImageObject",
-                "url": `${process.env.NEXT_PUBLIC_SITE_URL}/logo.png`
-              }
+                "url": `${process.env.NEXT_PUBLIC_SITE_URL}/logos/Shuru-white-logo.svg`,
+                "width": 200,
+                "height": 60
+              },
+              "url": process.env.NEXT_PUBLIC_SITE_URL || "https://www.shurumag.com"
             },
             "mainEntityOfPage": {
               "@type": "WebPage",
               "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/articles/${article.slug}`
             },
             "articleSection": article.category?.name,
-            "keywords": article.SEO?.meta_keywords,
+            "keywords": article.SEO?.meta_keywords || [article.category?.name, 'شروع', 'ريادة الأعمال'].filter(Boolean).join(','),
             "wordCount": article.blocks?.reduce((count, block) => {
               if (block.__component === 'content.rich-text') {
                 return count + (block.content?.split(' ').length || 0);
               }
               return count;
             }, 0),
-            "inLanguage": "ar"
+            "inLanguage": "ar",
+            "about": article.category ? {
+              "@type": "Thing",
+              "name": article.category.name
+            } : undefined,
+            "isPartOf": {
+              "@type": "WebSite",
+              "name": "شروع",
+              "url": process.env.NEXT_PUBLIC_SITE_URL || "https://www.shurumag.com"
+            },
+            "potentialAction": {
+              "@type": "ReadAction",
+              "target": `${process.env.NEXT_PUBLIC_SITE_URL}/articles/${article.slug}`
+            }
+          })
+        }}
+      />
+
+      {/* Breadcrumb Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "الرئيسية",
+                "item": process.env.NEXT_PUBLIC_SITE_URL || "https://www.shurumag.com"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "المقالات",
+                "item": `${process.env.NEXT_PUBLIC_SITE_URL}/articles`
+              },
+              ...(article.category ? [{
+                "@type": "ListItem",
+                "position": 3,
+                "name": article.category.name,
+                "item": `${process.env.NEXT_PUBLIC_SITE_URL}/categories/${article.category.slug}`
+              }] : []),
+              {
+                "@type": "ListItem",
+                "position": article.category ? 4 : 3,
+                "name": article.title,
+                "item": `${process.env.NEXT_PUBLIC_SITE_URL}/articles/${article.slug}`
+              }
+            ]
           })
         }}
       />

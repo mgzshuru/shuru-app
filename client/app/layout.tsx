@@ -4,9 +4,10 @@ import { IBM_Plex_Sans_Arabic, Noto_Sans_Arabic, Tajawal } from "next/font/googl
 import "./globals.css"
 import { getGlobal } from '@/lib/strapi-client'
 import MainLayout from '@/components/layout/MainLayout'
-import Link from "next/link"
 import type { GlobalData } from '@/lib/types';
 import { getStrapiMedia } from '@/components/custom/strapi-image';
+import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics'
+import Script from 'next/script'
 
 const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
   subsets: ["arabic"],
@@ -37,6 +38,7 @@ export async function generateMetadata(): Promise<Metadata> {
     const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337';
 
     return {
+      metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shurumag.com'),
       title: {
         default: seo.meta_title || globalData.siteName || 'شروع - منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال',
         template: `%s | ${globalData.siteName || 'شروع'}`,
@@ -119,8 +121,8 @@ export async function generateMetadata(): Promise<Metadata> {
       },
 
       verification: {
-        google: 'your-google-verification-code',
-        yandex: 'your-yandex-verification-code',
+        google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION || 'your-google-verification-code',
+        yandex: process.env.NEXT_PUBLIC_YANDEX_VERIFICATION || 'your-yandex-verification-code',
       },
 
       alternates: {
@@ -172,6 +174,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   // Fallback to static metadata if Strapi is not available
   return {
+    metadataBase: new URL('https://www.shurumag.com'),
     title: {
       default: 'شروع - منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال',
       template: '%s | شروع',
@@ -296,6 +299,7 @@ export default async function RootLayout({
 }) {
   // Fetch global data from Strapi
   const globalData = await getGlobal();
+  const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS;
 
   if (!globalData || !globalData.footer) {
     return (
@@ -318,6 +322,29 @@ export default async function RootLayout({
       className={`${ibmPlexSansArabic.variable} ${notoSansArabic.variable} ${tajawal.variable}`}
     >
       <head>
+        {/* Google Analytics */}
+        {GA_MEASUREMENT_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_MEASUREMENT_ID}', {
+                  page_path: window.location.pathname,
+                  custom_map: {
+                    'dimension1': 'language'
+                  }
+                });
+              `}
+            </Script>
+          </>
+        )}
+
         {/* Additional meta tags that can't be set via Metadata API */}
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
@@ -402,10 +429,11 @@ export default async function RootLayout({
         />
       </head>
       <body className="font-sans" suppressHydrationWarning>
-          <MainLayout globalData={globalData as GlobalData}>
-            {children}
-          </MainLayout>
+        {GA_MEASUREMENT_ID && <GoogleAnalytics GA_MEASUREMENT_ID={GA_MEASUREMENT_ID} />}
 
+        <MainLayout globalData={globalData as GlobalData}>
+          {children}
+        </MainLayout>
       </body>
     </html>
   )
