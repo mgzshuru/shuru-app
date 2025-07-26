@@ -150,8 +150,8 @@ export const fetchComingSoonData = async (): Promise<ComingSoonData> => {
     headers: {
       'Content-Type': 'application/json',
     },
-    // Next.js SSR/SSG: no credentials, no cache
-    cache: 'no-store',
+    // Enable static generation with revalidation
+    next: { revalidate: 3600 }, // Revalidate every hour
   });
 
   if (!response.ok) {

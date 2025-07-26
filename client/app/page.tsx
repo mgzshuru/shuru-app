@@ -1,5 +1,9 @@
 import { ComingSoonBlocksRenderer, fetchComingSoonData } from '@/lib/coming-soon-blocks';
 
+// Force static generation
+export const dynamic = 'force-static'
+export const revalidate = 3600 // Revalidate every hour
+
 export default async function Home() {
   try {
     const data = await fetchComingSoonData();
