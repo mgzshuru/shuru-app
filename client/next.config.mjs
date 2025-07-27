@@ -26,10 +26,13 @@ const nextConfig = {
   generateEtags: false,
   poweredByHeader: false,
 
-  // Redirect configuration
+  // Redirect configuration - commented out to prevent redirect loops
+  // Only enable this after properly configuring domains in Vercel
   async redirects() {
     return [
       // Redirect www to non-www or vice versa
+      // Uncomment and modify after fixing domain configuration
+      /*
       {
         source: '/:path*',
         has: [
@@ -41,6 +44,7 @@ const nextConfig = {
         destination: 'https://shuru.sa/:path*',
         permanent: true,
       },
+      */
     ]
   },
 
