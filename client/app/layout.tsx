@@ -77,7 +77,7 @@ export async function generateMetadata(): Promise<Metadata> {
         ...(seo.og_image && {
           images: [
             {
-              url: getStrapiMedia(seo.og_image.url) || '/og-image.svg',
+              url: getStrapiMedia(seo.og_image.url) || '/og-image.jpg',
               width: seo.og_image.width || 1200,
               height: seo.og_image.height || 630,
               alt: seo.og_image.alternativeText || globalData.siteName || 'شروع',
@@ -86,7 +86,7 @@ export async function generateMetadata(): Promise<Metadata> {
         }) || {
           images: [
             {
-              url: '/og-image.svg',
+              url: '/og-image.jpg',
               width: 1200,
               height: 630,
               alt: globalData.siteName || 'شروع',
@@ -100,9 +100,9 @@ export async function generateMetadata(): Promise<Metadata> {
         title: seo.meta_title || globalData.siteName || 'شروع - منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال',
         description: seo.meta_description || globalData.siteDescription || 'منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال والقيادة والتحول الرقمي والتقنيات الناشئة والشركات الناشئة والاستثمار والتطوير المؤسسي',
         ...(seo.og_image && {
-          images: [getStrapiMedia(seo.og_image.url) || '/twitter-image.svg'],
+          images: [getStrapiMedia(seo.og_image.url) || '/twitter-image.jpg'],
         }) || {
-          images: ['/twitter-image.svg'],
+          images: ['/twitter-image.jpg'],
         },
         creator: '@shurumag',
         site: '@shurumag',

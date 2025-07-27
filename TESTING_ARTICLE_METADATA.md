@@ -154,7 +154,7 @@ When shared, articles will show:
 1. Check if `getStrapiMedia()` returns valid URLs
 2. Ensure images are publicly accessible
 3. Verify image dimensions (recommended: 1200x630)
-4. Check if fallback OG image exists at `/og-image.svg`
+4. Check if fallback OG image exists at `/og-image.jpg`
 
 ### Issue: "Structured data errors"
 **Solutions**:
