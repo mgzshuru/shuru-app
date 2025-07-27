@@ -2,13 +2,6 @@
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
   "framework": "nextjs",
-  "redirects": [
-    {
-      "source": "https://www.shuru.sa/(.*)",
-      "destination": "https://shuru.sa/$1",
-      "statusCode": 301
-    }
-  ],
   "headers": [
     {
       "source": "/(.*)",
