@@ -70,7 +70,7 @@ Use the provided SEO test script:
 node scripts/test-seo.js your-article-slug
 
 # Test with production URL
-NEXT_PUBLIC_SITE_URL=https://www.shurumag.com node scripts/test-seo.js article-slug
+NEXT_PUBLIC_SITE_URL=https://www.shuru.sa node scripts/test-seo.js article-slug
 ```
 
 The script will analyze:
@@ -84,7 +84,7 @@ The script will analyze:
 
 #### Social Media Preview:
 - **Facebook**: [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/)
-  - Enter: `https://www.shurumag.com/articles/your-article-slug`
+  - Enter: `https://www.shuru.sa/articles/your-article-slug`
   - Check if image, title, and description appear correctly
 
 - **Twitter**: [Twitter Card Validator](https://cards-dev.twitter.com/validator)
@@ -110,7 +110,7 @@ Once your site is live:
 1. **Submit Individual Articles**:
    - Go to Google Search Console
    - Use "URL Inspection" tool
-   - Enter article URL: `https://www.shurumag.com/articles/article-slug`
+   - Enter article URL: `https://www.shuru.sa/articles/article-slug`
    - Click "Request Indexing"
 
 2. **Monitor Performance**:

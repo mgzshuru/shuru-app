@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { ContentRenderer } from '@/components/blocks/content/ContentRenderer';
 import { getArticleWithFullPopulation, getRelatedArticles, getGlobal } from '@/lib/strapi-client';
 import { getStrapiMedia } from '@/components/custom/strapi-image';
+import { SocialShare } from '@/components/custom/social-share';
 import { formatDate } from '@/lib/utils';
 import { Article } from '@/lib/types';
 
@@ -36,7 +37,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       };
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shurumag.com';
+    const baseUrl = 'https://www.shuru.sa';
     const articleUrl = `${baseUrl}/articles/${article.slug}`;
 
     // Extract text content for description if not provided
@@ -279,7 +280,7 @@ function MagazineIssues({ issues }: { issues: Article['magazine_issues'] }) {
   return (
     <div className="mt-8 p-6 bg-gray-50 border border-gray-200">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">
-        هذا المقال متوفر في أعداد المجلة
+        نُشر هذا المقال ضمن إصدارات مجلة شروع
       </h3>
       <div className="space-y-3">
         {issues.map((issue) => (
@@ -397,6 +398,13 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
       {/* Article Content */}
       <main className="max-w-4xl mx-auto px-6">
+        {/* Social Share */}
+        <SocialShare
+          title={article.title}
+          slug={article.slug}
+          description={article.description}
+        />
+
         {article.blocks && article.blocks.length > 0 ? (
           <ContentRenderer blocks={article.blocks} />
         ) : (
@@ -406,6 +414,13 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             </p>
           </div>
         )}
+
+        {/* Social Share - Bottom */}
+        <SocialShare
+          title={article.title}
+          slug={article.slug}
+          description={article.description}
+        />
 
         {/* Magazine Issues */}
         <MagazineIssues issues={article.magazine_issues} />
@@ -444,15 +459,15 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               "name": "شروع",
               "logo": {
                 "@type": "ImageObject",
-                "url": `${process.env.NEXT_PUBLIC_SITE_URL}/logos/Shuru-white-logo.svg`,
+                "url": "https://www.shuru.sa/logos/Shuru-white-logo.svg",
                 "width": 200,
                 "height": 60
               },
-              "url": process.env.NEXT_PUBLIC_SITE_URL || "https://www.shurumag.com"
+              "url": "https://www.shuru.sa"
             },
             "mainEntityOfPage": {
               "@type": "WebPage",
-              "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/articles/${article.slug}`
+              "@id": `https://www.shuru.sa/articles/${article.slug}`
             },
             "articleSection": article.category?.name,
             "keywords": article.SEO?.meta_keywords || [article.category?.name, 'شروع', 'ريادة الأعمال'].filter(Boolean).join(','),
@@ -470,11 +485,11 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             "isPartOf": {
               "@type": "WebSite",
               "name": "شروع",
-              "url": process.env.NEXT_PUBLIC_SITE_URL || "https://www.shurumag.com"
+              "url": "https://www.shuru.sa"
             },
             "potentialAction": {
               "@type": "ReadAction",
-              "target": `${process.env.NEXT_PUBLIC_SITE_URL}/articles/${article.slug}`
+              "target": `https://www.shuru.sa/articles/${article.slug}`
             }
           })
         }}
@@ -492,25 +507,25 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                 "@type": "ListItem",
                 "position": 1,
                 "name": "الرئيسية",
-                "item": process.env.NEXT_PUBLIC_SITE_URL || "https://www.shurumag.com"
+                "item": "https://www.shuru.sa"
               },
               {
                 "@type": "ListItem",
                 "position": 2,
                 "name": "المقالات",
-                "item": `${process.env.NEXT_PUBLIC_SITE_URL}/articles`
+                "item": "https://www.shuru.sa/articles"
               },
               ...(article.category ? [{
                 "@type": "ListItem",
                 "position": 3,
                 "name": article.category.name,
-                "item": `${process.env.NEXT_PUBLIC_SITE_URL}/categories/${article.category.slug}`
+                "item": `https://www.shuru.sa/categories/${article.category.slug}`
               }] : []),
               {
                 "@type": "ListItem",
                 "position": article.category ? 4 : 3,
                 "name": article.title,
-                "item": `${process.env.NEXT_PUBLIC_SITE_URL}/articles/${article.slug}`
+                "item": `https://www.shuru.sa/articles/${article.slug}`
               }
             ]
           })

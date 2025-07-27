@@ -36,7 +36,7 @@ export async function generateMetadata({ searchParams }: ArticlesPageProps): Pro
       globalData = null;
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shurumag.com';
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shuru.sa';
     const articlesUrl = `${baseUrl}/articles`;
 
     // Dynamic title based on search parameters

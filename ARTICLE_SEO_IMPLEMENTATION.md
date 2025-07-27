@@ -52,10 +52,10 @@ The `articles/[slug]/page.tsx` now includes comprehensive metadata generation:
 {
   "@type": "BreadcrumbList",
   "itemListElement": [
-    { "name": "الرئيسية", "item": "https://shurumag.com" },
-    { "name": "المقالات", "item": "https://shurumag.com/articles" },
-    { "name": "Category", "item": "https://shurumag.com/categories/slug" },
-    { "name": "Article Title", "item": "https://shurumag.com/articles/slug" }
+    { "name": "الرئيسية", "item": "https://shuru.sa" },
+    { "name": "المقالات", "item": "https://shuru.sa/articles" },
+    { "name": "Category", "item": "https://shuru.sa/categories/slug" },
+    { "name": "Article Title", "item": "https://shuru.sa/articles/slug" }
   ]
 }
 ```

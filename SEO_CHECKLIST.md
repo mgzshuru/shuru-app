@@ -15,14 +15,14 @@
 
 ### 1. Google Search Console Setup
 1. Go to [Google Search Console](https://search.google.com/search-console/)
-2. Add property: `https://www.shurumag.com`
+2. Add property: `https://www.shuru.sa`
 3. Verify ownership using one of these methods:
    - HTML file upload
    - HTML tag in head (use the verification code in layout.tsx)
    - Google Analytics
    - Google Tag Manager
    - DNS record
-4. Submit sitemap: `https://www.shurumag.com/sitemap.xml`
+4. Submit sitemap: `https://www.shuru.sa/sitemap.xml`
 
 ### 2. Google Analytics Setup (Optional but Recommended)
 1. Create Google Analytics account
@@ -35,7 +35,7 @@
 ### 3. Environment Variables Setup
 Create `.env.local` file in the client directory:
 ```
-NEXT_PUBLIC_SITE_URL=https://www.shurumag.com
+NEXT_PUBLIC_SITE_URL=https://www.shuru.sa
 NEXT_PUBLIC_STRAPI_API_URL=https://your-strapi-domain.com
 NEXT_PUBLIC_GOOGLE_VERIFICATION=your-verification-code
 NEXT_PUBLIC_GOOGLE_ANALYTICS=G-XXXXXXXXXX

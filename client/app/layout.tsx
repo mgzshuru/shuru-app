@@ -38,7 +38,7 @@ export async function generateMetadata(): Promise<Metadata> {
     const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337';
 
     return {
-      metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shurumag.com'),
+      metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shuru.sa'),
       title: {
         default: seo.meta_title || globalData.siteName || 'شروع - منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال',
         template: `%s | ${globalData.siteName || 'شروع'}`,
@@ -70,7 +70,7 @@ export async function generateMetadata(): Promise<Metadata> {
       openGraph: {
         type: 'website',
         locale: 'ar_SA',
-        url: process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shurumag.com',
+        url: process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shuru.sa',
         siteName: globalData.siteName || 'شروع',
         title: seo.meta_title || globalData.siteName || 'شروع - منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال',
         description: seo.meta_description || globalData.siteDescription || 'منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال والقيادة والتحول الرقمي والتقنيات الناشئة والشركات الناشئة والاستثمار والتطوير المؤسسي',
@@ -126,10 +126,10 @@ export async function generateMetadata(): Promise<Metadata> {
       },
 
       alternates: {
-        canonical: process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shurumag.com',
+        canonical: process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shuru.sa',
         languages: {
-          'ar': process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shurumag.com',
-          'en': (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shurumag.com') + '/en',
+          'ar': process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shuru.sa',
+          'en': (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shuru.sa') + '/en',
         },
       },
 
@@ -174,7 +174,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   // Fallback to static metadata if Strapi is not available
   return {
-    metadataBase: new URL('https://www.shurumag.com'),
+    metadataBase: new URL('https://www.shuru.sa'),
     title: {
       default: 'شروع - منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال',
       template: '%s | شروع',
@@ -206,7 +206,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       type: 'website',
       locale: 'ar_SA',
-      url: 'https://www.shurumag.com',
+      url: 'https://www.shuru.sa',
       siteName: 'شروع',
       title: 'شروع - منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال',
       description: 'منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال والقيادة والتحول الرقمي والتقنيات الناشئة والشركات الناشئة والاستثمار والتطوير المؤسسي',
@@ -247,10 +247,10 @@ export async function generateMetadata(): Promise<Metadata> {
     },
 
     alternates: {
-      canonical: 'https://www.shurumag.com',
+      canonical: 'https://www.shuru.sa',
       languages: {
-        'ar': 'https://www.shurumag.com',
-        'en': 'https://www.shurumag.com/en',
+        'ar': 'https://www.shuru.sa',
+        'en': 'https://www.shuru.sa/en',
       },
     },
 
@@ -384,10 +384,10 @@ export default async function RootLayout({
               "name": globalData?.siteName || "شروع",
               "alternateName": ["Shuru", "شروع للنشر الرقمي"],
               "description": globalData?.siteDescription || "منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال والقيادة والتحول الرقمي والتقنيات الناشئة والشركات الناشئة والاستثمار والتطوير المؤسسي",
-              "url": process.env.NEXT_PUBLIC_SITE_URL || "https://www.shurumag.com",
+              "url": process.env.NEXT_PUBLIC_SITE_URL || "https://www.shuru.sa",
               "logo": globalData?.header?.logo?.logoImage?.url
-                ? getStrapiMedia(globalData.header.logo.logoImage.url) || "https://www.shurumag.com/logos/Shuru-white-logo.svg"
-                : "https://www.shurumag.com/logos/Shuru-white-logo.svg",
+                ? getStrapiMedia(globalData.header.logo.logoImage.url) || "https://www.shuru.sa/logos/Shuru-white-logo.svg"
+                : "https://www.shuru.sa/logos/Shuru-white-logo.svg",
               "foundingDate": "2020",
               "industry": "Media and Publishing",
               "areaServed": {
@@ -421,7 +421,7 @@ export default async function RootLayout({
                 "name": "شروع للنشر الرقمي",
                 "logo": {
                   "@type": "ImageObject",
-                  "url": "https://www.shurumag.com/logos/Shuru-white-logo.svg"
+                  "url": "https://www.shuru.sa/logos/Shuru-white-logo.svg"
                 }
               }
             })

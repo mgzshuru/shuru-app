@@ -35,10 +35,10 @@ const nextConfig = {
         has: [
           {
             type: 'host',
-            value: 'www.shurumag.com',
+            value: 'www.shuru.sa',
           },
         ],
-        destination: 'https://shurumag.com/:path*',
+        destination: 'https://shuru.sa/:path*',
         permanent: true,
       },
     ]

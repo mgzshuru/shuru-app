@@ -6,7 +6,7 @@ export const dynamic = 'force-static'
 export const revalidate = 3600 // Revalidate every hour
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shurumag.com'
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shuru.sa'
 
   // Get dynamic data from Strapi
   let articles: any[] = []
