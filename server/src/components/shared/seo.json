@@ -25,7 +25,8 @@
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": ["images"],
+      "allowedMimeTypes": ["image/jpeg", "image/jpg"]
     }
   }
 }
