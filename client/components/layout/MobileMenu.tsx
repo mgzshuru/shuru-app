@@ -28,7 +28,7 @@ export default function MobileMenu({ isOpen, onClose, headerData }: MobileMenuPr
         <SheetTitle className="sr-only">
           Menu
         </SheetTitle>
-        
+
         {/* Menu items */}
         <div className="border-b border-gray-200 pb-4 mb-4 pt-8">
           {headerData.navigation.primaryMenuItems && headerData.navigation.primaryMenuItems.map((item) => (
@@ -49,7 +49,7 @@ export default function MobileMenu({ isOpen, onClose, headerData }: MobileMenuPr
             </StrapiLink>
           ))}
         </div>
-        
+
         {/* Login button in sheet */}
         <div className="px-4 pb-2">
           <Button
@@ -61,9 +61,9 @@ export default function MobileMenu({ isOpen, onClose, headerData }: MobileMenuPr
             {headerData.loginButton?.text}
           </Button>
         </div>
-        
+
         {/* CTA in sheet */}
-        <div className="px-4">
+        {/* <div className="px-4">
           <StrapiLink
             href={headerData.subscription.url}
             className="block"
@@ -77,7 +77,7 @@ export default function MobileMenu({ isOpen, onClose, headerData }: MobileMenuPr
               {headerData.subscription.text}
             </Button>
           </StrapiLink>
-        </div>
+        </div> */}
       </SheetContent>
     </Sheet>
   );

@@ -2,7 +2,6 @@ import React from 'react';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
 import { getArticlesPaginated, getFeaturedArticles, getAllCategories, getGlobal } from '@/lib/strapi-client';
 import { getStrapiMedia } from '@/components/custom/strapi-image';
 import { formatDate } from '@/lib/utils';
@@ -110,7 +109,7 @@ function ArticleCard({ article }: { article: Article }) {
             />
             {article.is_featured && (
               <div className="absolute top-4 right-4">
-                <Badge variant="secondary" className="bg-yellow-500 text-black">
+                <Badge variant="secondary" className="bg-orange-500 text-black">
                   مميز
                 </Badge>
               </div>

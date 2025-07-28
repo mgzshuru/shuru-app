@@ -17,11 +17,6 @@
       "component": "shared.navigation-menu",
       "required": true
     },
-    "subscription": {
-      "type": "component",
-      "component": "shared.subscription-button",
-      "required": true
-    },
     "loginButton": {
       "type": "component",
       "component": "shared.login-button",

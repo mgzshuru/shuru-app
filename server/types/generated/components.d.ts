@@ -560,11 +560,6 @@ export interface LayoutHeader extends Struct.ComponentSchema {
       Schema.Attribute.Required;
     navigation: Schema.Attribute.Component<'shared.navigation-menu', false> &
       Schema.Attribute.Required;
-    subscription: Schema.Attribute.Component<
-      'shared.subscription-button',
-      false
-    > &
-      Schema.Attribute.Required;
   };
 }
 

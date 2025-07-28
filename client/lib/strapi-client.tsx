@@ -679,9 +679,6 @@ export async function getGlobal(): Promise<GlobalData | null> {
                 }
               }
             },
-            subscription: {
-              fields: ["text", "url"]
-            },
             loginButton: {
               fields: ["text", "url"]
             }

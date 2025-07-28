@@ -96,7 +96,7 @@ export default function Header({ headerData }: HeaderProps) {
 
         {/* Right Section */}
         <div className="grid-column-3 flex justify-end items-center gap-6">
-          <StrapiLink href={headerData.subscription.url}>
+          {/* <StrapiLink href={headerData.subscription.url}>
             <Button
               variant="default"
               size="lg"
@@ -104,7 +104,7 @@ export default function Header({ headerData }: HeaderProps) {
             >
               {headerData.subscription.text}
             </Button>
-          </StrapiLink>
+          </StrapiLink> */}
           <Button
             variant="ghost"
             size="icon"

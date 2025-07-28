@@ -33,10 +33,6 @@ export interface HeaderData {
   navigation: {
     primaryMenuItems: NavigationItem[];
   };
-  subscription: {
-    text: string;
-    url: string;
-  };
   loginButton?: {
     text: string;
     url?: string;
