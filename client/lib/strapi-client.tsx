@@ -39,7 +39,7 @@ export async function getFeaturedArticles(limit?: number) {
 }
 
 // Get articles by category non
-export async function getArticlesByCategory(categorySlug: string, limit?: number) {
+export async function getArticlesByCategory(categorySlug: string, limit?: number, page?: number) {
   const query = {
     filters: {
       category: {
@@ -47,7 +47,7 @@ export async function getArticlesByCategory(categorySlug: string, limit?: number
       }
     },
     sort: ['publish_date:desc'],
-    ...(limit && { pagination: { limit } }),
+    ...(limit && page ? { pagination: { page, pageSize: limit } } : limit ? { pagination: { limit } } : {}),
   };
 
   const articles = await client.collection("articles").find(query);

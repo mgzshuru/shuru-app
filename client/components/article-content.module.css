@@ -1,0 +1,453 @@
+/* Article Content Styles - Professional Design with RTL Support */
+.articleContent {
+  color: #1f2937;
+  line-height: 1.75;
+  font-size: 18px;
+  max-width: none;
+  direction: rtl;
+  text-align: right;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Cairo', 'Roboto', sans-serif;
+}
+
+.articleContent h1,
+.articleContent h2,
+.articleContent h3,
+.articleContent h4,
+.articleContent h5,
+.articleContent h6 {
+  color: #111827;
+  font-weight: 700;
+  margin-top: 2.5em;
+  margin-bottom: 1em;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  direction: rtl;
+  text-align: right;
+}
+
+.articleContent h1 {
+  font-size: 2.25em;
+  margin-top: 2em;
+  position: relative;
+  padding-bottom: 0.75em;
+  border-bottom: 3px solid #e5e7eb;
+}
+
+.articleContent h1::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  right: 0;
+  width: 80px;
+  height: 3px;
+  background: #374151;
+}
+
+.articleContent h2 {
+  font-size: 1.875em;
+  margin-top: 2.25em;
+  position: relative;
+  padding-bottom: 0.5em;
+  border-bottom: 2px solid #f3f4f6;
+}
+
+.articleContent h2::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  right: 0;
+  width: 60px;
+  height: 2px;
+  background: #6b7280;
+}
+
+.articleContent h3 {
+  font-size: 1.5em;
+  margin-top: 2em;
+  position: relative;
+  padding-right: 1.25em;
+}
+
+.articleContent h3::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #9ca3af;
+}
+
+.articleContent h4 {
+  font-size: 1.25em;
+  margin-top: 1.75em;
+  color: #374151;
+  font-weight: 600;
+}
+
+.articleContent h5 {
+  font-size: 1.125em;
+  margin-top: 1.5em;
+  color: #4b5563;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.articleContent p {
+  margin-bottom: 1.5em;
+  color: #374151;
+  font-weight: 400;
+  line-height: 1.75;
+  direction: rtl;
+  text-align: right;
+}
+
+.articleContent p:first-child {
+  font-size: 1.125em;
+  color: #1f2937;
+  margin-bottom: 2em;
+  font-weight: 500;
+  line-height: 1.7;
+  border-right: 3px solid #d1d5db;
+  padding-right: 1.5em;
+}
+
+.articleContent strong {
+  font-weight: 700;
+  color: #111827;
+}
+
+.articleContent em {
+  font-style: italic;
+  color: #374151;
+}
+
+.articleContent ul,
+.articleContent ol {
+  margin: 1.75em 0;
+  padding-right: 1.25em;
+  direction: rtl;
+}
+
+.articleContent li {
+  margin: 0.75em 0;
+  color: #374151;
+  line-height: 1.7;
+  font-size: 1em;
+  direction: rtl;
+  text-align: right;
+}
+
+.articleContent ul li {
+  list-style-type: none;
+  position: relative;
+  padding-right: 1.25em;
+}
+
+.articleContent ul li::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0.75em;
+  width: 4px;
+  height: 4px;
+  background: #6b7280;
+  border-radius: 50%;
+}
+
+.articleContent ol li {
+  list-style-type: none;
+  position: relative;
+  padding-right: 2em;
+  counter-increment: item;
+}
+
+.articleContent ol {
+  counter-reset: item;
+}
+
+.articleContent ol li::before {
+  content: counter(item);
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 1.5em;
+  height: 1.5em;
+  background: #9ca3af;
+  color: white;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75em;
+  font-weight: 600;
+}
+
+.articleContent blockquote {
+  border-right: 4px solid #6b7280;
+  padding: 1.75em 1.75em 1.75em 0;
+  margin: 2.5em 0;
+  background: #f9fafb;
+  position: relative;
+  font-size: 1.125em;
+  color: #1f2937;
+  font-style: italic;
+  direction: rtl;
+  text-align: right;
+}
+
+.articleContent blockquote::before {
+  content: '"';
+  position: absolute;
+  top: -10px;
+  right: 20px;
+  font-size: 3em;
+  color: #9ca3af;
+  opacity: 0.6;
+  line-height: 1;
+}
+
+.articleContent blockquote p {
+  margin: 0;
+  font-size: inherit;
+  position: relative;
+  z-index: 1;
+}
+
+.articleContent a {
+  color: #4b5563;
+  text-decoration: none;
+  font-weight: 600;
+  border-bottom: 1px solid transparent;
+  transition: all 0.2s ease-in-out;
+  position: relative;
+}
+
+.articleContent a:hover {
+  color: #1f2937;
+  border-bottom-color: #1f2937;
+}
+
+.articleContent a::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  right: 0;
+  width: 0;
+  height: 1px;
+  background: #1f2937;
+  transition: width 0.3s ease-in-out;
+}
+
+.articleContent a:hover::after {
+  width: 100%;
+}
+
+.articleContent code {
+  background: #f3f4f6;
+  color: #1f2937;
+  padding: 0.25em 0.5em;
+  border-radius: 3px;
+  font-size: 0.875em;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Consolas', monospace;
+  font-weight: 500;
+  border: 1px solid #e5e7eb;
+  direction: ltr;
+  display: inline-block;
+}
+
+.articleContent pre {
+  background: #1f2937;
+  color: #f9fafb;
+  padding: 1.5em;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: 2.5em 0;
+  font-size: 0.875em;
+  line-height: 1.6;
+  border: 1px solid #374151;
+  position: relative;
+  direction: ltr;
+}
+
+.articleContent pre::before {
+  content: '';
+  position: absolute;
+  top: 1em;
+  left: 1em;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ef4444;
+  box-shadow: 18px 0 0 #f59e0b, 36px 0 0 #10b981;
+}
+
+.articleContent pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  border-radius: 0;
+  font-size: inherit;
+  border: none;
+  direction: ltr;
+}
+
+.articleContent table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2.5em 0;
+  font-size: 0.9em;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border-radius: 6px;
+  direction: rtl;
+}
+
+.articleContent th,
+.articleContent td {
+  padding: 1em 1.25em;
+  text-align: right;
+  border-bottom: 1px solid #e5e7eb;
+  direction: rtl;
+}
+
+.articleContent th {
+  background: #f8fafc;
+  color: #374151;
+  font-weight: 600;
+  font-size: 0.875em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.articleContent td {
+  background: #fff;
+  color: #374151;
+}
+
+.articleContent tr:nth-child(even) td {
+  background: #f9fafb;
+}
+
+.articleContent tr:hover td {
+  background: #f3f4f6;
+}
+
+.articleContent img {
+  max-width: 100%;
+  height: auto;
+  margin: 2.5em 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out;
+}
+
+.articleContent img:hover {
+  transform: scale(1.01);
+}
+
+.articleContent figure {
+  margin: 2.5em 0;
+  text-align: center;
+  direction: rtl;
+}
+
+.articleContent figcaption {
+  text-align: center;
+  font-style: italic;
+  color: #6b7280;
+  margin-top: 0.75em;
+  font-size: 0.875em;
+  line-height: 1.5;
+  padding: 0 1.5em;
+  direction: rtl;
+}
+
+.articleContent hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #9ca3af, transparent);
+  margin: 3em 0;
+  position: relative;
+}
+
+.articleContent hr::after {
+  content: '※';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  color: #6b7280;
+  padding: 0 1em;
+  font-size: 1.1em;
+}
+
+/* Special content blocks */
+.articleContent .callout {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-right: 4px solid #6b7280;
+  padding: 1.5em;
+  margin: 2.5em 0;
+  border-radius: 6px;
+  position: relative;
+  direction: rtl;
+}
+
+.articleContent .callout::before {
+  content: '💡';
+  position: absolute;
+  top: 1em;
+  right: 1em;
+  font-size: 1.25em;
+}
+
+.articleContent .callout p {
+  margin: 0;
+  color: #1f2937;
+  font-weight: 500;
+}
+
+/* Enhanced lead paragraph */
+.articleContent > p:first-of-type {
+  font-size: 1.25em;
+  font-weight: 500;
+  color: #1f2937;
+  line-height: 1.6;
+  margin-bottom: 2.5em;
+  position: relative;
+  padding-right: 1.5em;
+  border-right: 3px solid #d1d5db;
+}
+
+/* Focus styles for better accessibility */
+.articleContent a:focus {
+  outline: 2px solid #6b7280;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* RTL-specific adjustments */
+.articleContent {
+  text-align: right;
+}
+
+.articleContent * {
+  direction: rtl;
+}
+
+.articleContent code,
+.articleContent pre {
+  direction: ltr;
+  text-align: left;
+}
+
+/* Professional typography refinements */
+.articleContent {
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

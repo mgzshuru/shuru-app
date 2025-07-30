@@ -6,10 +6,8 @@ import { getArticlesPaginated, getFeaturedArticles, getAllCategories, getGlobal 
 import { getStrapiMedia } from '@/components/custom/strapi-image';
 import { formatDate } from '@/lib/utils';
 import { Article, Category } from '@/lib/types';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { SearchAndFilterClient } from '../../components/custom/search-and-filter-client';
 
 // Force dynamic rendering for search functionality
 export const dynamic = 'force-dynamic';
@@ -91,15 +89,67 @@ export async function generateMetadata({ searchParams }: ArticlesPageProps): Pro
       description: 'تصفح جميع المقالات في مجلة شروع للابتكار وريادة الأعمال',
     };
   }
-}// Article Card Component
+}
+
+// Breadcrumbs Component
+function Breadcrumbs({ search, category }: { search?: string; category?: string }) {
+  return (
+    <nav className="bg-white/95 backdrop-blur-md border-b border-gray-200 top-0 z-10">
+      <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="flex items-center text-sm">
+          <Link href="/" className="text-gray-500 hover:text-gray-700 transition-colors font-medium">
+            الرئيسية
+          </Link>
+          <svg className="w-4 h-4 mx-3 text-gray-300 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+          <span className="text-gray-900 font-medium">
+            {search ? `البحث: ${search}` : category ? `فئة: ${category}` : 'المقالات'}
+          </span>
+        </div>
+      </div>
+    </nav>
+  );
+}
+
+// Page Header Component
+function PageHeader({ search, category }: { search?: string; category?: string }) {
+  let title = 'المقالات';
+  let description = 'اكتشف أحدث المقالات والأفكار في عالم الابتكار وريادة الأعمال والتقنيات الناشئة';
+
+  if (search) {
+    title = `نتائج البحث: ${search}`;
+    description = `نتائج البحث عن "${search}" في مقالات مجلة شروع`;
+  } else if (category) {
+    title = `مقالات فئة: ${category}`;
+    description = `تصفح مقالات فئة ${category} في مجلة شروع`;
+  }
+
+  return (
+    <div className="bg-gray-50 border-b border-gray-200">
+      <div className="max-w-7xl mx-auto px-6 py-16">
+        <div className="max-w-4xl mx-auto text-center" dir="rtl">
+          <h1 className="text-4xl font-bold text-gray-900 mb-6 leading-tight">
+            {title}
+          </h1>
+          <p className="text-lg text-gray-600 leading-relaxed max-w-2xl mx-auto">
+            {description}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Article Card Component
 function ArticleCard({ article }: { article: Article }) {
   const coverImageUrl = article.cover_image ? getStrapiMedia(article.cover_image.url) : null;
 
   return (
-    <Card className="overflow-hidden border-gray-200 rounded-none">
+    <article className="bg-white border border-gray-200 overflow-hidden">
       <Link href={`/articles/${article.slug}`} className="block">
         {coverImageUrl && (
-          <div className="relative aspect-[16/9] overflow-hidden">
+          <div className="relative aspect-[16/9] overflow-hidden bg-gray-100">
             <Image
               src={coverImageUrl}
               alt={article.cover_image?.alternativeText || article.title}
@@ -109,45 +159,43 @@ function ArticleCard({ article }: { article: Article }) {
             />
             {article.is_featured && (
               <div className="absolute top-4 right-4">
-                <Badge variant="secondary" className="bg-orange-500 text-black">
+                <span className="bg-gray-900 text-white px-3 py-1 text-xs font-semibold">
                   مميز
-                </Badge>
+                </span>
               </div>
             )}
           </div>
         )}
 
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+        <div className="p-6" dir="rtl">
+          <div className="flex items-center gap-3 text-sm text-gray-500 mb-4">
             {article.category && (
               <>
-                <Badge variant="outline" className="text-xs">
+                <span className="text-gray-700 font-medium text-xs uppercase tracking-wide border border-gray-300 px-2 py-1">
                   {article.category.name}
-                </Badge>
-                <span>•</span>
+                </span>
+                <span className="text-gray-300">•</span>
               </>
             )}
-            <time dateTime={article.publish_date}>
+            <time dateTime={article.publish_date} className="text-gray-500">
               {formatDate(article.publish_date)}
             </time>
           </div>
 
-          <h3 className="text-lg font-semibold line-clamp-2">
+          <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 leading-tight text-right">
             {article.title}
           </h3>
 
           {article.description && (
-            <p className="text-gray-600 text-sm line-clamp-3 mt-2">
+            <p className="text-gray-600 text-sm line-clamp-3 mb-6 leading-relaxed text-right">
               {article.description}
             </p>
           )}
-        </CardHeader>
 
-        {article.author && (
-          <CardContent className="pt-0">
-            <div className="flex items-center gap-3">
+          {article.author && (
+            <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
               {article.author.avatar && (
-                <div className="relative w-8 h-8 rounded-full overflow-hidden">
+                <div className="relative w-10 h-10 overflow-hidden bg-gray-200">
                   <Image
                     src={getStrapiMedia(article.author.avatar.url) || ''}
                     alt={article.author.name}
@@ -156,17 +204,17 @@ function ArticleCard({ article }: { article: Article }) {
                   />
                 </div>
               )}
-              <div className="text-sm">
-                <p className="font-medium text-gray-900">{article.author.name}</p>
+              <div className="text-sm text-right flex-1">
+                <p className="font-semibold text-gray-900">{article.author.name}</p>
                 {article.author.jobTitle && (
-                  <p className="text-gray-600 text-xs">{article.author.jobTitle}</p>
+                  <p className="text-gray-500 text-xs">{article.author.jobTitle}</p>
                 )}
               </div>
             </div>
-          </CardContent>
-        )}
+          )}
+        </div>
       </Link>
-    </Card>
+    </article>
   );
 }
 
@@ -175,61 +223,17 @@ function FeaturedArticles({ articles }: { articles: Article[] }) {
   if (!articles.length) return null;
 
   return (
-    <section className="mb-12">
-      <h2 className="text-2xl font-bold mb-6 text-gray-900">المقالات المميزة</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <section className="mb-16 border-b border-gray-200 pb-16">
+      <div className="flex items-center gap-3 mb-8" dir="rtl">
+        <div className="w-1 h-8 bg-gray-600"></div>
+        <h2 className="text-2xl font-bold text-gray-900">المقالات المميزة</h2>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {articles.map((article) => (
           <ArticleCard key={article.id} article={article} />
         ))}
       </div>
     </section>
-  );
-}
-
-// Search and Filter Component
-function SearchAndFilter({
-  categories,
-  currentSearch,
-  currentCategory
-}: {
-  categories: Category[];
-  currentSearch?: string;
-  currentCategory?: string;
-}) {
-  return (
-    <div className="bg-gray-50 rounded-lg p-6 mb-8">
-      <h2 className="text-lg font-semibold mb-4">البحث والتصفية</h2>
-      <form method="GET" className="flex flex-col md:flex-row gap-4">
-        <div className="flex-1">
-          <Input
-            type="search"
-            placeholder="ابحث في المقالات..."
-            defaultValue={currentSearch}
-            name="search"
-            className="w-full border border-gray-300 rounded-none p-2 focus:ring-gray-500 focus:border-transparent"
-          />
-        </div>
-
-        <div className="w-full md:w-48">
-          <select
-            name="category"
-            defaultValue={currentCategory}
-            className="w-full p-2 border border-gray-300 rounded-none"
-          >
-            <option value="">جميع الفئات</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.slug}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <Button type="submit" className="w-full md:w-auto">
-          بحث
-        </Button>
-      </form>
-    </div>
   );
 }// Pagination Component
 function Pagination({
@@ -255,10 +259,12 @@ function Pagination({
   };
 
   return (
-    <div className="flex justify-center items-center gap-2 mt-12">
+    <div className="flex justify-center items-center gap-2 mt-16 pt-8 border-t border-gray-200">
       {currentPage > 1 && (
         <Link href={createPageUrl(currentPage - 1)}>
-          <Button variant="outline">السابق</Button>
+          <button className="px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium">
+            السابق
+          </button>
         </Link>
       )}
 
@@ -277,13 +283,15 @@ function Pagination({
 
           return (
             <Link key={pageNum} href={createPageUrl(pageNum)}>
-              <Button
-                variant={pageNum === currentPage ? "default" : "outline"}
-                size="sm"
-                className="w-10"
+              <button
+                className={`w-10 h-10 border font-medium ${
+                  pageNum === currentPage
+                    ? 'bg-gray-900 text-white border-gray-900'
+                    : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                }`}
               >
                 {pageNum}
-              </Button>
+              </button>
             </Link>
           );
         })}
@@ -291,7 +299,9 @@ function Pagination({
 
       {currentPage < totalPages && (
         <Link href={createPageUrl(currentPage + 1)}>
-          <Button variant="outline">التالي</Button>
+          <button className="px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium">
+            التالي
+          </button>
         </Link>
       )}
     </div>
@@ -327,19 +337,12 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
 
     return (
       <div className="min-h-screen bg-white">
-        <div className="container mx-auto px-4 py-8 max-w-6xl">
-          {/* Page Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              المقالات
-            </h1>
-            <p className="text-lg text-gray-600">
-              اكتشف أحدث المقالات والأفكار في عالم الابتكار وريادة الأعمال
-            </p>
-          </div>
+        <Breadcrumbs search={search} category={category} />
+        <PageHeader search={search} category={category} />
 
+        <main className="max-w-7xl mx-auto px-6 py-12">
           {/* Search and Filter */}
-          <SearchAndFilter
+          <SearchAndFilterClient
             categories={categories}
             currentSearch={search}
             currentCategory={category}
@@ -350,11 +353,25 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
             <FeaturedArticles articles={featuredArticles} />
           )}
 
-          {/* Articles Grid */}
+          {/* Articles Section */}
           <section>
+            <div className="flex items-center justify-between mb-8" dir="rtl">
+              <div className="flex items-center gap-3">
+                <div className="w-1 h-8 bg-gray-600"></div>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  {search ? 'نتائج البحث' : category ? 'المقالات' : 'جميع المقالات'}
+                </h2>
+                {pagination?.total && (
+                  <span className="text-base font-normal text-gray-500">
+                    ({pagination.total} مقال)
+                  </span>
+                )}
+              </div>
+            </div>
+
             {articles.length > 0 ? (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {articles.map((article) => (
                     <ArticleCard key={article.id} article={article} />
                   ))}
@@ -368,11 +385,11 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
                 />
               </>
             ) : (
-              <div className="text-center py-12">
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <div className="text-center py-24 border border-gray-200 bg-gray-50">
+                <h3 className="text-xl font-bold text-gray-900 mb-4">
                   لا توجد مقالات
                 </h3>
-                <p className="text-gray-600 mb-6">
+                <p className="text-gray-600 mb-8 max-w-md mx-auto">
                   {search || category
                     ? 'لم نجد مقالات تطابق معايير البحث الخاصة بك'
                     : 'لا توجد مقالات متاحة حالياً'
@@ -380,29 +397,48 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
                 </p>
                 {(search || category) && (
                   <Link href="/articles">
-                    <Button variant="outline">
+                    <button className="px-6 py-3 border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium">
                       عرض جميع المقالات
-                    </Button>
+                    </button>
                   </Link>
                 )}
               </div>
             )}
           </section>
-        </div>
+        </main>
       </div>
     );
 
   } catch (error) {
     console.error('Error loading articles page:', error);
+
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4 text-gray-900">عذراً</h1>
-          <p className="text-gray-600 mb-6">حدث خطأ في تحميل المقالات</p>
-          <Link href="/">
-            <Button>العودة للرئيسية</Button>
-          </Link>
-        </div>
+      <div className="min-h-screen bg-white">
+        <Breadcrumbs />
+        <PageHeader />
+
+        <main className="max-w-7xl mx-auto px-6 py-12">
+          <div className="text-center py-24 border border-gray-200 bg-gray-50">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              حدث خطأ أثناء تحميل المقالات
+            </h2>
+            <p className="text-gray-600 mb-8 max-w-md mx-auto">
+              نعتذر، حدث خطأ أثناء تحميل بيانات المقالات
+            </p>
+            <div className="flex gap-4 justify-center">
+              <Link href="/categories">
+                <button className="px-6 py-3 border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium">
+                  تصفح الفئات
+                </button>
+              </Link>
+              <Link href="/">
+                <button className="px-6 py-3 bg-gray-900 text-white hover:bg-gray-800 font-medium">
+                  العودة للرئيسية
+                </button>
+              </Link>
+            </div>
+          </div>
+        </main>
       </div>
     );
   }

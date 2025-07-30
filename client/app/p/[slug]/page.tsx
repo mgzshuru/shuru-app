@@ -1,9 +1,16 @@
+import React from 'react';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
+import Image from 'next/image';
+import Link from 'next/link';
 import { ContentRenderer } from '@/components/blocks/content/ContentRenderer';
-import { getPageBySlug, getAllPages } from '@/lib/strapi-client';
+import { getPageBySlug, getAllPages, getGlobal } from '@/lib/strapi-client';
+import { getStrapiMedia } from '@/components/custom/strapi-image';
+import { SocialShare } from '@/components/custom/social-share';
+import { TableOfContents } from '@/components/custom/table-of-contents';
+import { formatDate } from '@/lib/utils';
 import { Block, Page } from '@/lib/types';
-
+import styles from '@/components/article-content.module.css';
 // Use the Page type from types.ts with additional fields
 interface PageData extends Omit<Page, 'blocks'> {
   description?: string;
@@ -58,30 +65,97 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const page = await getPageData(slug);
 
+  // Try to get global data, but don't fail if it's not available
+  let globalData;
+  try {
+    globalData = await getGlobal();
+  } catch (error) {
+    console.error('Error fetching global data for metadata:', error);
+    globalData = null;
+  }
+
   if (!page) {
     return {
-      title: 'Page Not Found',
+      title: 'الصفحة غير موجودة | شروع',
+      description: 'الصفحة المطلوبة غير متوفرة.',
+      robots: { index: false, follow: false },
     };
   }
 
-  const metaTitle = page.SEO?.meta_title || page.title; // Updated field names
-  const metaDescription = page.SEO?.meta_description || page.description;
-  const ogImage = page.SEO?.og_image?.url || page.featured_image?.url;
+  const baseUrl = 'https://www.shuru.sa';
+  const pageUrl = `${baseUrl}/p/${page.slug}`;
+
+  // Extract text content for description if not provided
+  const extractedDescription = page.description ||
+    page.blocks?.find(block => block.__component === 'content.rich-text')?.content?.substring(0, 160) ||
+    'صفحة في موقع شروع للابتكار وريادة الأعمال';
+
+  // Get SEO data from page or fallback
+  const seoTitle = page.SEO?.meta_title ||
+    `${page.title} | ${globalData?.siteName || 'شروع'}`;
+
+  const seoDescription = page.SEO?.meta_description ||
+    extractedDescription.substring(0, 160);
+
+  const seoKeywords = page.SEO?.meta_keywords?.split(',').map(k => k.trim()).filter(Boolean) || [
+    'شروع',
+    'ريادة الأعمال',
+    'الابتكار',
+    'القيادة',
+  ].filter(Boolean) as string[];
+
+  // Page image for social sharing
+  const pageImage = page.SEO?.og_image ?
+    (getStrapiMedia(page.SEO.og_image.url) || `${baseUrl}/og-image.jpg`) :
+    page.featured_image ?
+    (getStrapiMedia(page.featured_image.url) || `${baseUrl}/og-image.jpg`) :
+    `${baseUrl}/og-image.jpg`;
 
   return {
-    title: metaTitle,
-    description: metaDescription,
+    title: seoTitle,
+    description: seoDescription,
+    keywords: seoKeywords,
+    creator: globalData?.siteName || 'شروع',
+    publisher: globalData?.siteName || 'شروع للنشر الرقمي',
+
     openGraph: {
-      title: metaTitle,
-      description: metaDescription,
-      images: ogImage ? [{ url: ogImage }] : undefined,
-      type: 'article',
+      type: 'website',
+      locale: 'ar_SA',
+      url: pageUrl,
+      siteName: globalData?.siteName || 'شروع',
+      title: seoTitle,
+      description: seoDescription,
+      images: [
+        {
+          url: pageImage,
+          width: page.featured_image?.width || 1200,
+          height: page.featured_image?.height || 630,
+          alt: page.featured_image?.alternativeText || page.title,
+        },
+      ],
     },
+
     twitter: {
       card: 'summary_large_image',
-      title: metaTitle,
-      description: metaDescription,
-      images: ogImage ? [ogImage] : undefined,
+      title: seoTitle,
+      description: seoDescription,
+      images: pageImage ? [pageImage] : undefined,
+    },
+
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
+
+    alternates: {
+      canonical: pageUrl,
     },
   };
 }
@@ -109,69 +183,184 @@ export default async function PageComponent({ params }: PageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Page Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-6 py-12">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 leading-tight">
+    <div className="min-h-screen bg-white" dir="rtl">
+      {/* Breadcrumb Navigation */}
+      <nav className="bg-white border-b border-gray-200 top-0 z-40">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center text-sm" dir="rtl">
+            <Link href="/" className="text-gray-500 hover:text-gray-700 transition-colors font-medium">
+              الرئيسية
+            </Link>
+            <svg className="w-4 h-4 mx-3 text-gray-300 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+            <span className="text-gray-900 font-medium">{page.title}</span>
+          </div>
+        </div>
+      </nav>
+
+      <div className="max-w-7xl mx-auto">
+        {/* Page Header */}
+        <header className="px-6 pt-16 pb-12">
+          <div className="max-w-4xl mx-auto" dir="rtl">
+            {/* Page Title */}
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 leading-[1] mb-8 tracking-normal text-right" dir="rtl" style={{ lineHeight: '1.8', wordSpacing: '0.1em' }}>
               {page.title}
             </h1>
 
+            {/* Page Description */}
             {page.description && (
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              <p className="text-xl md:text-2xl text-gray-600 leading-relaxed mb-12 max-w-4xl font-light text-right">
                 {page.description}
               </p>
             )}
-                        {/* Metadata */}
-            <div className="mt-8 flex items-center justify-center text-sm text-gray-500 space-x-4">
-              <time dateTime={page.publishedAt}>
-                {page.publishedAt && new Date(page.publishedAt).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
-              </time>
+
+            {/* Page Meta */}
+            <div className="flex flex-wrap items-center gap-8 pb-8 border-b border-gray-200 justify-end" dir="rtl">
+              {/* Publication Date */}
+              <div className="flex items-center gap-2 text-gray-500">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <time dateTime={page.publishedAt} className="font-medium">
+                  {page.publishedAt && formatDate(page.publishedAt)}
+                </time>
+              </div>
+
+              {/* Updated Date */}
               {page.updatedAt !== page.publishedAt && (
-                <>
-                  <span>•</span>
-                  <span>
-                    Updated {new Date(page.updatedAt).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
+                <div className="flex items-center gap-2 text-gray-500">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  <span className="font-medium">
+                    آخر تحديث: {formatDate(page.updatedAt)}
                   </span>
-                </>
+                </div>
               )}
             </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      {/* Featured Image */}
-      {page.featured_image && (
-        <div className="max-w-6xl mx-auto px-6 py-8">
-          <div className="relative aspect-video bg-gray-100 overflow-hidden">
-            <img
-              src={page.featured_image.url}
-              alt={page.featured_image.alternativeText || page.title}
-              className="w-full h-full object-cover"
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Page Content */}
-      <main className="max-w-4xl mx-auto px-6 pb-16">
-        {page.blocks && page.blocks.length > 0 ? (
-          <ContentRenderer blocks={page.blocks} />
-        ) : (
-          <div className="text-center py-16">
-            <p className="text-gray-500 text-lg">No content available for this page.</p>
+        {/* Featured Image */}
+        {page.featured_image && (
+          <div className="px-6 mb-16">
+            <div className="max-w-6xl mx-auto">
+              <div className="relative aspect-[16/9] bg-gray-100 overflow-hidden">
+                <Image
+                  src={getStrapiMedia(page.featured_image.url) || page.featured_image.url}
+                  alt={page.featured_image.alternativeText || page.title}
+                  width={page.featured_image.width || 1200}
+                  height={page.featured_image.height || 675}
+                  className="w-full h-full object-cover"
+                  priority
+                />
+              </div>
+              {page.featured_image.alternativeText && (
+                <p className="text-sm text-gray-500 mt-3 text-center italic">
+                  {page.featured_image.alternativeText}
+                </p>
+              )}
+            </div>
           </div>
         )}
-      </main>
+
+        {/* Main Content Grid */}
+        <div className="px-6">
+          <div className="max-w-6xl mx-auto grid lg:grid-cols-12 gap-16">
+            {/* Page Content */}
+            <main className="lg:col-span-8" dir="rtl">
+              {/* Page Content */}
+              <div id="page-content" className={styles.articleContent}>
+                {page.blocks && page.blocks.length > 0 ? (
+                  <ContentRenderer blocks={page.blocks} />
+                ) : (
+                  <div className="text-center py-24 bg-gray-50">
+                    <div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">لا يوجد محتوى متاح</h3>
+                    <p className="text-gray-500">
+                      المحتوى غير متوفر لهذه الصفحة في الوقت الحالي.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </main>
+
+            {/* Enhanced Sidebar */}
+            <aside className="lg:col-span-4 space-y-8">
+              {/* Page Info Card */}
+              <div className="bg-white p-8 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-2 h-16 bg-gray-600"></div>
+                  <h3 className="text-xl font-bold text-gray-900">معلومات الصفحة</h3>
+                </div>
+                <div className="space-y-4" dir="rtl">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-500">تاريخ النشر:</span>
+                    <span className="font-medium text-gray-900">
+                      {page.publishedAt && formatDate(page.publishedAt)}
+                    </span>
+                  </div>
+                  {page.updatedAt !== page.publishedAt && (
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-500">آخر تحديث:</span>
+                      <span className="font-medium text-gray-900">
+                        {formatDate(page.updatedAt)}
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-500">وقت القراءة:</span>
+                    <span className="font-medium text-gray-900">
+                      {page.blocks ? Math.max(1, Math.ceil(page.blocks.reduce((acc, block) => {
+                        if (block.__component === 'content.rich-text') {
+                          return acc + (block.content?.split(' ').length || 0);
+                        }
+                        return acc;
+                      }, 0) / 200)) : 3} دقائق
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sticky Table of Contents */}
+              <div className="sticky top-24">
+                <TableOfContents articleContentId="page-content" />
+              </div>
+            </aside>
+          </div>
+        </div>
+      </div>
+
+      {/* Structured Data for Page */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            "name": page.title,
+            "description": page.description,
+            "image": page.featured_image ? getStrapiMedia(page.featured_image.url) : undefined,
+            "datePublished": page.publishedAt,
+            "dateModified": page.updatedAt,
+            "url": `https://www.shuru.sa/p/${page.slug}`,
+            "publisher": {
+              "@type": "Organization",
+              "name": "شروع",
+              "url": "https://www.shuru.sa"
+            },
+            "mainEntityOfPage": {
+              "@type": "WebPage",
+              "@id": `https://www.shuru.sa/p/${page.slug}`
+            }
+          })
+        }}
+      />
     </div>
   );
 }
