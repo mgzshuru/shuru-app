@@ -4,7 +4,7 @@ import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ContentRenderer } from '@/components/blocks/content/ContentRenderer';
-import { getPageBySlug, getAllPages, getGlobal } from '@/lib/strapi-client';
+import { getPageBySlug, getAllPages, getGlobalCached } from '@/lib/strapi-optimized';
 import { getStrapiMedia } from '@/components/custom/strapi-image';
 import { SocialShare } from '@/components/custom/social-share';
 import { TableOfContents } from '@/components/custom/table-of-contents';
@@ -68,7 +68,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   // Try to get global data, but don't fail if it's not available
   let globalData;
   try {
-    globalData = await getGlobal();
+    globalData = await getGlobalCached();
   } catch (error) {
     console.error('Error fetching global data for metadata:', error);
     globalData = null;

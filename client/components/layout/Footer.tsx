@@ -25,8 +25,8 @@ export default function Footer({ footerData }: FooterProps) {
   }, [footerData.logo]);
 
   // Sort social links and bottom links by order
-  const sortedSocialLinks = [...footerData?.socialLinks].sort((a, b) => a.order - b.order);
-  const sortedBottomLinks = [...footerData?.bottomLinks].sort((a, b) => a.order - b.order);
+  const sortedSocialLinks = footerData?.socialLinks ? [...footerData.socialLinks].sort((a, b) => a.order - b.order) : [];
+  const sortedBottomLinks = footerData?.bottomLinks ? [...footerData.bottomLinks].sort((a, b) => a.order - b.order) : [];
 
   // Copyright text
   const arabicYear = footerData.copyright.showCurrentYear ? new Date().getFullYear() : footerData.copyright.year;

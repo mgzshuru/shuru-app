@@ -2,9 +2,9 @@ import type React from "react"
 import type { Metadata } from "next"
 import { IBM_Plex_Sans_Arabic, Noto_Sans_Arabic, Tajawal } from "next/font/google"
 import "./globals.css"
-import { getGlobal } from '@/lib/strapi-client'
+import { getGlobalCached } from '@/lib/strapi-optimized'
 import MainLayout from '@/components/layout/MainLayout'
-import type { GlobalData } from '@/lib/types';
+import type { GlobalData, SocialLink } from '@/lib/types';
 import { getStrapiMedia } from '@/components/custom/strapi-image';
 import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics'
 import Script from 'next/script'
@@ -29,7 +29,7 @@ const tajawal = Tajawal({
 
 // Generate metadata from Strapi or fallback to static Arabic metadata
 export async function generateMetadata(): Promise<Metadata> {
-  const globalData = await getGlobal();
+  const globalData = await getGlobalCached();
 
   // If Strapi data is available, use it; otherwise fallback to static metadata
   if (globalData?.defaultSeo) {
@@ -44,7 +44,7 @@ export async function generateMetadata(): Promise<Metadata> {
         template: `%s | ${globalData.siteName || 'شروع'}`,
       },
       description: seo.meta_description || globalData.siteDescription || 'منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال والقيادة والتحول الرقمي والتقنيات الناشئة والشركات الناشئة والاستثمار والتطوير المؤسسي',
-      keywords: seo.meta_keywords?.split(',').map(k => k.trim()) || [
+      keywords: seo.meta_keywords?.split(',').map((k: string) => k.trim()) || [
         'شروع',
         'ريادة الأعمال',
         'الابتكار',
@@ -298,7 +298,7 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   // Fetch global data from Strapi
-  const globalData = await getGlobal();
+  const globalData = await getGlobalCached();
   const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS;
 
   if (!globalData || !globalData.footer) {
@@ -307,7 +307,7 @@ export default async function RootLayout({
         <body className="font-sans flex items-center justify-center min-h-screen">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">عذراً</h1>
-            <p className="text-gray-600">حدث خطأ في تحميل بيانات التذييل (Footer)</p>
+            <p className="text-gray-600">حدث خطأ في تحميل البيانات</p>
           </div>
         </body>
       </html>
@@ -404,7 +404,7 @@ export default async function RootLayout({
                 "الاستثمار",
                 "التطوير المؤسسي"
               ],
-              "sameAs": globalData?.footer?.socialLinks?.map(social => social.link.href) || [
+              "sameAs": globalData?.footer?.socialLinks?.map((social: SocialLink) => social.link.href) || [
                 "https://www.facebook.com/shurumag",
                 "https://twitter.com/shurumag",
                 "https://www.linkedin.com/company/shurumag",

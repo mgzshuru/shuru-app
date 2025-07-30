@@ -4,12 +4,12 @@ import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ContentRenderer } from '@/components/blocks/content/ContentRenderer';
-import { getArticleWithFullPopulation, getRelatedArticles, getGlobal } from '@/lib/strapi-client';
+import { getArticleForDetail, getArticleForSEO, getRelatedArticlesOptimized, getGlobalCached } from '@/lib/strapi-optimized';
 import { getStrapiMedia } from '@/components/custom/strapi-image';
 import { SocialShare } from '@/components/custom/social-share';
 import { TableOfContents } from '@/components/custom/table-of-contents';
 import { formatDate } from '@/lib/utils';
-import { Article } from '@/lib/types';
+import { Article, Block } from '@/lib/types';
 import styles from '@/components/article-content.module.css';
 
 interface ArticlePageProps {
@@ -20,16 +20,12 @@ interface ArticlePageProps {
 export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
   try {
     const { slug } = await params;
-    const article = await getArticleData(slug);
 
-    // Try to get global data, but don't fail if it's not available
-    let globalData;
-    try {
-      globalData = await getGlobal();
-    } catch (error) {
-      console.error('Error fetching global data for metadata:', error);
-      globalData = null;
-    }
+    // Fetch only SEO-related data in parallel
+    const [article, globalData] = await Promise.all([
+      getArticleForSEO(slug), // Minimal population for SEO
+      getGlobalCached().catch(() => null) // Don't fail if global data is unavailable
+    ]);
 
     if (!article) {
       return {
@@ -44,7 +40,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 
     // Extract text content for description if not provided
     const extractedDescription = article.description ||
-      article.blocks?.find(block => block.__component === 'content.rich-text')?.content?.substring(0, 160) ||
+      article.blocks?.find((block: Block) => block.__component === 'content.rich-text')?.content?.substring(0, 160) ||
       'مقال في مجلة شروع للابتكار وريادة الأعمال';
 
     // Get SEO data from article or fallback
@@ -54,7 +50,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     const seoDescription = article.SEO?.meta_description ||
       extractedDescription.substring(0, 160);
 
-    const seoKeywords = article.SEO?.meta_keywords?.split(',').map(k => k.trim()).filter(Boolean) || [
+    const seoKeywords = article.SEO?.meta_keywords?.split(',').map((k: string) => k.trim()).filter(Boolean) || [
       article.category?.name,
       'شروع',
       'ريادة الأعمال',
@@ -146,7 +142,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 // Fetch article data with full population
 async function getArticleData(slug: string): Promise<Article | null> {
   try {
-    const article = await getArticleWithFullPopulation(slug);
+    const article = await getArticleForDetail(slug);
     return article as Article | null;
   } catch (error) {
     console.error('Error fetching article:', error);
@@ -157,7 +153,7 @@ async function getArticleData(slug: string): Promise<Article | null> {
 // Fetch related articles
 async function getRelatedArticlesData(articleId: string, categorySlug: string): Promise<Article[]> {
   try {
-    const relatedResponse = await getRelatedArticles(articleId, categorySlug, 3);
+    const relatedResponse = await getRelatedArticlesOptimized(articleId, categorySlug, 3);
     return (relatedResponse?.data || []) as Article[];
   } catch (error) {
     console.error('Error fetching related articles:', error);

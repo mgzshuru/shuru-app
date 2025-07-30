@@ -2,11 +2,11 @@ import React from 'react';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getArticlesPaginated, getFeaturedArticles, getAllCategories, getGlobal } from '@/lib/strapi-client';
+import { getArticlesOptimized, getGlobalCached } from '@/lib/strapi-optimized';
+import { getAllCategories } from '@/lib/strapi-client';
 import { getStrapiMedia } from '@/components/custom/strapi-image';
 import { formatDate } from '@/lib/utils';
 import { Article, Category } from '@/lib/types';
-import { Input } from '@/components/ui/input';
 import { SearchAndFilterClient } from '../../components/custom/search-and-filter-client';
 
 // Force dynamic rendering for search functionality
@@ -27,7 +27,7 @@ export async function generateMetadata({ searchParams }: ArticlesPageProps): Pro
     let globalData;
 
     try {
-      globalData = await getGlobal();
+      globalData = await getGlobalCached();
     } catch (error) {
       console.error('Error fetching global data for metadata:', error);
       globalData = null;
@@ -314,10 +314,10 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
     const currentPage = parseInt(page);
     const pageSize = 12;
 
-    // Fetch data in parallel
+    // Fetch data in parallel using optimized functions
     const [articlesResponse, featuredArticlesResponse, categoriesResponse] = await Promise.all([
-      getArticlesPaginated(currentPage, pageSize),
-      getFeaturedArticles(3), // Get top 3 featured articles
+      getArticlesOptimized({ page: currentPage, pageSize }),
+      getArticlesOptimized({ featured: true, pageSize: 3 }), // Get top 3 featured articles
       getAllCategories(),
     ]);
 

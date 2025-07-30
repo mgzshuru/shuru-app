@@ -2,14 +2,14 @@ import React from 'react';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getAllCategories, getGlobal } from '@/lib/strapi-client';
+import { getAllCategories, getGlobalCached } from '@/lib/strapi-optimized';
 import { getStrapiMedia } from '@/components/custom/strapi-image';
 import { Category } from '@/lib/types';
 
 // Generate metadata for categories page
 export async function generateMetadata(): Promise<Metadata> {
   try {
-    const globalData = await getGlobal();
+    const globalData = await getGlobalCached();
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shuru.sa';
     const categoriesUrl = `${baseUrl}/categories`;
 

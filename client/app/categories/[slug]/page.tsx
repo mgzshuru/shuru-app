@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getCategoryBySlug, getArticlesByCategory, getGlobal } from '@/lib/strapi-client';
+import { getCategoryBySlug, getArticlesOptimized, getGlobalCached } from '@/lib/strapi-optimized';
 import { getStrapiMedia } from '@/components/custom/strapi-image';
 import { formatDate } from '@/lib/utils';
 import { Article, Category } from '@/lib/types';
@@ -240,7 +240,11 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     const currentPage = parseInt(page, 10);
     const pageSize = 12;
 
-    const articlesResponse = await getArticlesByCategory(slug, pageSize, currentPage);
+    const articlesResponse = await getArticlesOptimized({
+      categorySlug: slug,
+      pageSize,
+      page: currentPage
+    });
     const articles = (articlesResponse?.data || []) as Article[];
     const pagination = articlesResponse?.meta?.pagination;
 

@@ -9,15 +9,15 @@ const nextConfig = {
   images: {
     unoptimized: true,
     domains: ['localhost', 'gorgeous-friends-86d3c26cfb.strapiapp.com'], // Add your Strapi domains
+    // Add image optimization
+    formats: ['image/webp', 'image/avif'],
+    minimumCacheTTL: 60,
   },
   env: {
     // Make sure environment variables are available
     STRAPI_BASE_URL: process.env.STRAPI_BASE_URL,
     NEXT_PUBLIC_STRAPI_API_URL: process.env.NEXT_PUBLIC_STRAPI_API_URL,
   },
-  // Enable static export if deploying to static hosting
-  // output: 'export',
-  // trailingSlash: true,
 
   // Enable compression
   compress: true,
@@ -25,6 +25,17 @@ const nextConfig = {
   // SEO optimizations
   generateEtags: false,
   poweredByHeader: false,
+
+  // Server external packages (moved from experimental)
+  serverExternalPackages: ['@strapi/client'],
+
+  // Performance optimizations
+  experimental: {
+    // Enable PPR for better performance
+    ppr: false, // Set to true when stable
+    // Optimize CSS
+    optimizeCss: true,
+  },
 
   // Redirect configuration - commented out to prevent redirect loops
   // Only enable this after properly configuring domains in Vercel
