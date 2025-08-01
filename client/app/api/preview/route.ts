@@ -22,6 +22,10 @@ function getPreviewPath(
       return slug ? '/p/' + slug : '/';
     }
 
+    if (contentType === 'magazine-issue' || contentType.includes('magazine-issues')) {
+      return slug ? '/magazine/' + slug : '/magazine';
+    }
+
     return "/" + contentType;
   })();
 

@@ -3,6 +3,10 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { useRouter } from 'next/navigation';
 import { HeaderData } from '@/lib/types';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import { getMagazineIssuesOptimized } from '@/lib/strapi-optimized';
+import { getStrapiMedia } from '@/components/custom/strapi-image';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -12,6 +16,24 @@ interface MobileMenuProps {
 
 export default function MobileMenu({ isOpen, onClose, headerData }: MobileMenuProps) {
   const router = useRouter();
+  const [latestIssue, setLatestIssue] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchLatestIssue = async () => {
+      try {
+        const response = await getMagazineIssuesOptimized();
+        if (response?.data && response.data.length > 0) {
+          setLatestIssue(response.data[0]);
+        }
+      } catch (error) {
+        console.error('Error fetching latest magazine issue:', error);
+      }
+    };
+
+    if (isOpen) {
+      fetchLatestIssue();
+    }
+  }, [isOpen]);
 
   const handleLinkClick = () => {
     onClose();
@@ -61,6 +83,29 @@ export default function MobileMenu({ isOpen, onClose, headerData }: MobileMenuPr
             {headerData.loginButton?.text}
           </Button>
         </div>
+
+        {/* Current Issue Section */}
+        {latestIssue && (
+          <div className="px-4 pb-4">
+            <h3 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wider font-['IBM_Plex_Sans_Arabic']">
+              العدد الحالي
+            </h3>
+            <StrapiLink
+              href="/magazine"
+              className="block"
+              onClick={handleLinkClick}
+            >
+              <div className="w-56 h-72 relative bg-gray-100 shadow-lg mx-auto hover:shadow-xl transition-shadow">
+                <Image
+                  src={getStrapiMedia(latestIssue.cover_image?.url) || '/placeholder-magazine.jpg'}
+                  alt={latestIssue.cover_image?.alternativeText || latestIssue.title}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            </StrapiLink>
+          </div>
+        )}
 
         {/* CTA in sheet */}
         {/* <div className="px-4">

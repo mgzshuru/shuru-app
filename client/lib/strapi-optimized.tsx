@@ -447,3 +447,86 @@ export async function getPageBySlug(slug: string) {
     return null;
   }
 }
+
+// =====================
+// MAGAZINE ISSUE FUNCTIONS (OPTIMIZED)
+// =====================
+
+// Minimal population for magazine listings
+const MAGAZINE_LIST_POPULATE = {
+  cover_image: {
+    fields: ["url", "alternativeText", "width", "height"]
+  },
+  pdf_attachment: {
+    fields: ["name", "url"]
+  }
+};
+
+// Full population for magazine detail pages
+const MAGAZINE_DETAIL_POPULATE = {
+  cover_image: {
+    fields: ["url", "alternativeText", "width", "height"]
+  },
+  pdf_attachment: {
+    fields: ["name", "url"]
+  },
+  articles: {
+    fields: ['title', 'slug', 'description', 'publish_date', 'is_featured'],
+    populate: {
+      cover_image: {
+        fields: ["url", "alternativeText", "width", "height"]
+      },
+      author: {
+        fields: ['name']
+      }
+    }
+  },
+  SEO: {
+    fields: ["meta_title", "meta_description", "meta_keywords"],
+    populate: {
+      og_image: {
+        fields: ["url", "alternativeText", "width", "height"]
+      }
+    }
+  }
+};
+
+export async function getMagazineIssuesOptimized() {
+  const query = {
+    sort: ['issue_number:desc'],
+    populate: MAGAZINE_LIST_POPULATE
+  };
+
+  const issues = await client.collection("magazine-issues").find(query);
+  return issues;
+}
+
+export async function getMagazineIssueBySlugOptimized(slug: string) {
+  const query = {
+    filters: { slug: { $eq: slug } },
+    populate: MAGAZINE_DETAIL_POPULATE
+  };
+
+  try {
+    const response = await client.collection("magazine-issues").find(query);
+    if (response && Array.isArray(response.data) && response.data.length > 0) {
+      return response.data[0];
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching magazine issue:", error);
+    return null;
+  }
+}
+
+export async function getFeaturedMagazineIssuesOptimized(limit?: number) {
+  const query = {
+    filters: { is_featured: { $eq: true } },
+    sort: ['publish_date:desc'],
+    ...(limit && { pagination: { limit } }),
+    populate: MAGAZINE_LIST_POPULATE
+  };
+
+  const issues = await client.collection("magazine-issues").find(query);
+  return issues;
+}
