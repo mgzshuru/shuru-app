@@ -3,12 +3,22 @@
 import { StrapiImage } from '@/components/custom/strapi-image';
 import { StrapiLink } from '@/components/custom/strapi-link';
 import { useState, useEffect } from 'react';
-import { Menu, Search } from 'lucide-react';
+import { Menu, Search, User, Settings, LogOut, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { HeaderData } from '@/lib/types';
 import SearchOverlay from './SearchOverlay';
 import MobileMenu from './MobileMenu';
+import Link from 'next/link';
+import { useAuth } from '@/hooks/use-auth';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { logoutAction } from '@/app/actions/auth';
 
 interface HeaderProps {
   headerData: HeaderData;
@@ -20,6 +30,16 @@ export default function Header({ headerData }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const router = useRouter();
+  const { isAuthenticated, user, loading } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logoutAction();
+      router.refresh();
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
 
   // Handle scroll events
   useEffect(() => {
@@ -69,14 +89,57 @@ export default function Header({ headerData }: HeaderProps) {
           >
             <Menu className="h-5 w-5" />
           </Button>
-          <Button
-            variant="link"
-            size="sm"
-            className="max-lg:hidden text-white"
-            onClick={() => router.push(headerData.loginButton?.url || '/login')}
-          >
-            {headerData.loginButton?.text}
-          </Button>
+
+          {!loading && (
+            <>
+              {isAuthenticated && user ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="max-lg:hidden text-white flex items-center gap-2 hover:bg-white/10"
+                    >
+                      <User className="h-4 w-4" />
+                      <span className="hidden md:inline">{user.username}</span>
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-56">
+                    <DropdownMenuItem asChild>
+                      <Link href="/profile" className="flex items-center gap-2 w-full">
+                        <User className="h-4 w-4" />
+                        <span>الملف الشخصي</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/auth/change-password" className="flex items-center gap-2 w-full">
+                        <Settings className="h-4 w-4" />
+                        <span>الإعدادات</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={handleLogout}
+                      className="flex items-center gap-2 text-red-600 focus:text-red-600 focus:bg-red-50"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      <span>تسجيل الخروج</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Button
+                  variant="link"
+                  size="sm"
+                  className="max-lg:hidden text-white"
+                  onClick={() => router.push('/auth/login')}
+                >
+                  {'تسجيل الدخول'}
+                </Button>
+              )}
+            </>
+          )}
         </div>
 
         {/* Center Logo */}
@@ -96,15 +159,15 @@ export default function Header({ headerData }: HeaderProps) {
 
         {/* Right Section */}
         <div className="grid-column-3 flex justify-end items-center gap-6">
-          {/* <StrapiLink href={headerData.subscription.url}>
+          <Link href="/subscribe" >
             <Button
               variant="default"
               size="lg"
               className="text-black/90 rounded-none"
             >
-              {headerData.subscription.text}
+              {'اشترك الآن'}
             </Button>
-          </StrapiLink> */}
+          </Link>
           <Button
             variant="ghost"
             size="icon"

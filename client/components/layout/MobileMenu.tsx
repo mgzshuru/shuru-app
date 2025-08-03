@@ -7,6 +7,10 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { getMagazineIssuesOptimized } from '@/lib/strapi-optimized';
 import { getStrapiMedia } from '@/components/custom/strapi-image';
+import Link from 'next/dist/client/link';
+import { useAuth } from '@/hooks/use-auth';
+import { logoutAction } from '@/app/actions/auth';
+import { User, Settings, LogOut } from 'lucide-react';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -17,6 +21,17 @@ interface MobileMenuProps {
 export default function MobileMenu({ isOpen, onClose, headerData }: MobileMenuProps) {
   const router = useRouter();
   const [latestIssue, setLatestIssue] = useState<any>(null);
+  const { isAuthenticated, user, loading } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logoutAction();
+      onClose();
+      router.refresh();
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
 
   useEffect(() => {
     const fetchLatestIssue = async () => {
@@ -39,8 +54,12 @@ export default function MobileMenu({ isOpen, onClose, headerData }: MobileMenuPr
     onClose();
   };
 
+  const handleSubscribeClick = () => {
+    router.push('/subscribe');
+    onClose();
+  };
   const handleLoginClick = () => {
-    router.push(headerData.loginButton?.url || '/login');
+    router.push('/auth/login');
     onClose();
   };
 
@@ -72,15 +91,80 @@ export default function MobileMenu({ isOpen, onClose, headerData }: MobileMenuPr
           ))}
         </div>
 
-        {/* Login button in sheet */}
-        <div className="px-4 pb-2">
+        {/* Authentication buttons in sheet */}
+        <div className="px-4 pb-2 mb-20">
+          {!loading && (
+            <>
+              {isAuthenticated && user ? (
+                <div className="space-y-2">
+                  {/* User Info */}
+                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg mb-4">
+                    <User className="h-8 w-8 text-gray-600" />
+                    <div>
+                      <p className="font-medium text-gray-900">{user.username}</p>
+                      <p className="text-sm text-gray-600">{user.email}</p>
+                    </div>
+                  </div>
+
+                  {/* Profile Button */}
+                  <Button
+                    variant="outline"
+                    size="default"
+                    className="justify-start mb-2 text-gray-900 border-gray-300 w-full"
+                    onClick={() => {
+                      router.push('/profile');
+                      onClose();
+                    }}
+                  >
+                    <User className="h-4 w-4 mr-2" />
+                    {'الملف الشخصي'}
+                  </Button>
+
+                  {/* Settings Button */}
+                  <Button
+                    variant="outline"
+                    size="default"
+                    className="justify-start mb-2 text-gray-900 border-gray-300 w-full"
+                    onClick={() => {
+                      router.push('/auth/change-password');
+                      onClose();
+                    }}
+                  >
+                    <Settings className="h-4 w-4 mr-2" />
+                    {'الإعدادات'}
+                  </Button>
+
+                  {/* Logout Button */}
+                  <Button
+                    variant="outline"
+                    size="default"
+                    className="justify-start mb-4 text-red-600 border-red-300 w-full hover:bg-red-50"
+                    onClick={handleLogout}
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    {'تسجيل الخروج'}
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="default"
+                  className="justify-center mb-4 text-gray-900 border-gray-300 w-full"
+                  onClick={handleLoginClick}
+                >
+                  {'تسجيل الدخول'}
+                </Button>
+              )}
+            </>
+          )}
+
           <Button
-            variant="outline"
-            size="default"
-            className="justify-center mb-4 text-gray-900 border-gray-300 w-full"
-            onClick={handleLoginClick}
+            variant="default"
+            size="lg"
+            className="justify-center text-black w-full bg-primary hover:bg-primary/90"
+            onClick={handleSubscribeClick}
           >
-            {headerData.loginButton?.text}
+            {'اشترك الآن'}
           </Button>
         </div>
 
@@ -106,23 +190,6 @@ export default function MobileMenu({ isOpen, onClose, headerData }: MobileMenuPr
             </StrapiLink>
           </div>
         )}
-
-        {/* CTA in sheet */}
-        {/* <div className="px-4">
-          <StrapiLink
-            href={headerData.subscription.url}
-            className="block"
-            onClick={handleLinkClick}
-          >
-            <Button
-              variant="default"
-              size="lg"
-              className="justify-center text-black w-full bg-primary hover:bg-primary/90"
-            >
-              {headerData.subscription.text}
-            </Button>
-          </StrapiLink>
-        </div> */}
       </SheetContent>
     </Sheet>
   );

@@ -8,6 +8,8 @@ import type { GlobalData, SocialLink } from '@/lib/types';
 import { getStrapiMedia } from '@/components/custom/strapi-image';
 import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics'
 import Script from 'next/script'
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
   subsets: ["arabic"],
@@ -432,6 +434,18 @@ export default async function RootLayout({
         {GA_MEASUREMENT_ID && <GoogleAnalytics GA_MEASUREMENT_ID={GA_MEASUREMENT_ID} />}
 
         <MainLayout globalData={globalData as GlobalData}>
+          <ToastContainer
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
           {children}
         </MainLayout>
       </body>
