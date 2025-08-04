@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { getArticlesOptimized, getGlobalCached } from '@/lib/strapi-optimized';
-import { getAllCategories } from '@/lib/strapi-client';
+import { getAllCategories, getCategoryBySlug } from '@/lib/strapi-client';
 import { getStrapiMedia } from '@/components/custom/strapi-image';
 import { formatDate } from '@/lib/utils';
 import { Article, Category } from '@/lib/types';
@@ -25,9 +25,16 @@ export async function generateMetadata({ searchParams }: ArticlesPageProps): Pro
   try {
     const { page, search, category } = await searchParams;
     let globalData;
+    let categoryName = category;
 
     try {
       globalData = await getGlobalCached();
+
+      // If we have a category slug, fetch the specific category to get the name
+      if (category) {
+        const categoryData = await getCategoryBySlug(category) as unknown as Category | null;
+        categoryName = categoryData?.name || category;
+      }
     } catch (error) {
       console.error('Error fetching global data for metadata:', error);
       globalData = null;
@@ -43,9 +50,9 @@ export async function generateMetadata({ searchParams }: ArticlesPageProps): Pro
     if (search) {
       title = `البحث: ${search} - المقالات`;
       description = `نتائج البحث عن "${search}" في مقالات مجلة شروع`;
-    } else if (category) {
-      title = `${category} - المقالات`;
-      description = `مقالات فئة ${category} في مجلة شروع`;
+    } else if (categoryName) {
+      title = `${categoryName} - المقالات`;
+      description = `مقالات فئة ${categoryName} في مجلة شروع`;
     } else if (page && parseInt(page) > 1) {
       title = `المقالات - الصفحة ${page}`;
     }
@@ -314,11 +321,11 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
     const currentPage = parseInt(page);
     const pageSize = 12;
 
-    // Fetch data in parallel using optimized functions
+    // Prepare parallel data fetching
     const [articlesResponse, featuredArticlesResponse, categoriesResponse] = await Promise.all([
       getArticlesOptimized({ page: currentPage, pageSize }),
       getArticlesOptimized({ featured: true, pageSize: 3 }), // Get top 3 featured articles
-      getAllCategories(),
+      getAllCategories(), // Still need all categories for SearchAndFilterClient
     ]);
 
     if (!articlesResponse || !articlesResponse.data) {
@@ -332,13 +339,25 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
     const featuredArticles = (featuredArticlesResponse?.data as Article[]) || [];
     const categories = (categoriesResponse?.data as Category[]) || [];
 
+    // Find category name from the specific category if needed
+    let categoryName: string | undefined;
+    if (category) {
+      try {
+        const categoryData = await getCategoryBySlug(category) as unknown as Category | null;
+        categoryName = categoryData?.name || category;
+      } catch (error) {
+        console.error('Error fetching category:', error);
+        categoryName = category;
+      }
+    }
+
     // Show featured articles only on first page when no search/filter
     const showFeatured = currentPage === 1 && !search && !category && featuredArticles.length > 0;
 
     return (
       <div className="min-h-screen bg-white">
-        <Breadcrumbs search={search} category={category} />
-        <PageHeader search={search} category={category} />
+        <Breadcrumbs search={search} category={categoryName} />
+        <PageHeader search={search} category={categoryName} />
 
         <main className="max-w-7xl mx-auto px-6 py-12">
           {/* Search and Filter */}
@@ -359,7 +378,7 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
               <div className="flex items-center gap-3">
                 <div className="w-1 h-8 bg-gray-600"></div>
                 <h2 className="text-2xl font-bold text-gray-900">
-                  {search ? 'نتائج البحث' : category ? 'المقالات' : 'جميع المقالات'}
+                  {search ? 'نتائج البحث' : categoryName ? 'المقالات' : 'جميع المقالات'}
                 </h2>
                 {pagination?.total && (
                   <span className="text-base font-normal text-gray-500">
