@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useActionState, useEffect } from "react";
-import { redirect, useSearchParams } from "next/navigation";
+import { redirect } from "next/navigation";
 import { changePasswordAction } from "@/app/actions/auth";
 import { FormState } from "@/lib/types";
 import { toast } from "react-toastify";
