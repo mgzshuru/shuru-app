@@ -197,9 +197,9 @@ export default function Header({ headerData }: HeaderProps) {
         </div>
       </div>
 
-      {/* Horizontal Categories */}
+      {/* Horizontal Categories - Hidden on mobile */}
       <div
-        className={`flex flex-row items-center justify-center gap-2 sm:gap-4 uppercase text-white overflow-hidden transition-all duration-300 ${
+        className={`hidden lg:flex flex-row items-center justify-center gap-2 sm:gap-4 uppercase text-white overflow-hidden transition-all duration-300 ${
           isScrolled && !isHovered ? 'h-0 opacity-0' : 'h-[20px] sm:h-[23px] opacity-100'
         }`}
       >
