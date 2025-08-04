@@ -8,7 +8,7 @@ const nextConfig = {
   },
   images: {
     unoptimized: true,
-    domains: ['localhost', 'gorgeous-friends-86d3c26cfb.strapiapp.com'], // Add your Strapi domains
+    domains: ['localhost', 'cms.shuru.sa'], // Add your Strapi domains
     // Add image optimization
     formats: ['image/webp', 'image/avif'],
     minimumCacheTTL: 60,
