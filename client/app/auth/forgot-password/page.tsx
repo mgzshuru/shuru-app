@@ -4,7 +4,7 @@ import React, { useActionState, useEffect } from "react";
 import { forgotPasswordAction } from "@/app/actions/auth";
 import { FormState } from "@/lib/types";
 import { toast } from "react-toastify";
-import { KeyRound, Mail, ArrowLeft, AlertCircle, CheckCircle } from "lucide-react";
+import { Mail, ArrowLeft, AlertCircle, CheckCircle } from "lucide-react";
 import Link from "next/link";
 
 export default function ForgotPassword() {

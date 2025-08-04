@@ -5,12 +5,12 @@
 import { resendConfirmEmailAction } from "@/app/actions/auth";
 import { FormState } from "@/lib/types";
 import { useSearchParams } from "next/navigation";
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, Suspense } from "react";
 import { toast } from "react-toastify";
 import { MailCheck, Mail, AlertCircle, CheckCircle } from "lucide-react";
 import Link from "next/link";
 
-export default function ConfirmEmail() {
+function ConfirmEmailForm() {
   // create initial state
   const initialState: FormState = {
     errors: {},
@@ -124,5 +124,15 @@ export default function ConfirmEmail() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ConfirmEmail() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
+    </div>}>
+      <ConfirmEmailForm />
+    </Suspense>
   );
 }

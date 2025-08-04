@@ -1,15 +1,15 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, Suspense } from "react";
 import { redirect, useSearchParams } from "next/navigation";
 import { resetPasswordAction } from "@/app/actions/auth";
 import { FormState } from "@/lib/types";
 import { toast } from "react-toastify";
-import { Shield, Lock, Eye, EyeOff, AlertCircle, CheckCircle } from "lucide-react";
+import { Lock, Eye, EyeOff, AlertCircle, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
-export default function ResetPassword() {
+function ResetPasswordForm() {
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
   const searchParams = useSearchParams();
@@ -162,5 +162,15 @@ export default function ResetPassword() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ResetPassword() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
+    </div>}>
+      <ResetPasswordForm />
+    </Suspense>
   );
 }
