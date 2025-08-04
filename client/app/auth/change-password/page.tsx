@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useActionState, useEffect } from "react";
+import React, { useActionState, useEffect, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { changePasswordAction } from "@/app/actions/auth";
 import { FormState } from "@/lib/types";
@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import { Lock, Eye, EyeOff, AlertCircle, CheckCircle } from "lucide-react";
 import Link from "next/link";
 
-export default function ChangePassword() {
+function ChangePasswordForm() {
   const router = useRouter();
   const [showCurrentPassword, setShowCurrentPassword] = React.useState(false);
   const [showNewPassword, setShowNewPassword] = React.useState(false);
@@ -189,5 +189,15 @@ export default function ChangePassword() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ChangePassword() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
+    </div>}>
+      <ChangePasswordForm />
+    </Suspense>
   );
 }
