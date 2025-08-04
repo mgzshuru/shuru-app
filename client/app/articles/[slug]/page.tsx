@@ -8,7 +8,7 @@ import { getArticleForDetail, getArticleForSEO, getRelatedArticlesOptimized, get
 import { getStrapiMedia } from '@/components/custom/strapi-image';
 import { SocialShare } from '@/components/custom/social-share';
 import { TableOfContents } from '@/components/custom/table-of-contents';
-import { formatDate } from '@/lib/utils';
+import { formatDate, extractTextFromRichContent } from '@/lib/utils';
 import { Article, Block } from '@/lib/types';
 import styles from '@/components/article-content.module.css';
 
@@ -39,8 +39,9 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     const articleUrl = `${baseUrl}/articles/${article.slug}`;
 
     // Extract text content for description if not provided
+    const richTextBlock = article.blocks?.find((block: Block) => block.__component === 'content.rich-text');
     const extractedDescription = article.description ||
-      article.blocks?.find((block: Block) => block.__component === 'content.rich-text')?.content?.substring(0, 160) ||
+      (richTextBlock?.content ? extractTextFromRichContent(richTextBlock.content, 160) : '') ||
       'مقال في مجلة شروع للابتكار وريادة الأعمال';
 
     // Get SEO data from article or fallback

@@ -7,7 +7,7 @@ import { ContentRenderer } from '@/components/blocks/content/ContentRenderer';
 import { getPageBySlug, getAllPages, getGlobalCached } from '@/lib/strapi-optimized';
 import { getStrapiMedia } from '@/components/custom/strapi-image';
 import { SocialShare } from '@/components/custom/social-share';
-import { formatDate, safeBuildTimeApiCall } from '@/lib/utils';
+import { formatDate, safeBuildTimeApiCall, extractTextFromRichContent } from '@/lib/utils';
 import { Block, Page } from '@/lib/types';
 import styles from '@/components/article-content.module.css';
 // Use the Page type from types.ts with additional fields
@@ -91,8 +91,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const pageUrl = `${baseUrl}/p/${page.slug}`;
 
   // Extract text content for description if not provided
+  const richTextBlock = page.blocks?.find(block => block.__component === 'content.rich-text');
   const extractedDescription = page.description ||
-    page.blocks?.find(block => block.__component === 'content.rich-text')?.content?.substring(0, 160) ||
+    (richTextBlock?.content ? extractTextFromRichContent(richTextBlock.content, 160) : '') ||
     'صفحة في موقع شروع للابتكار وريادة الأعمال';
 
   // Get SEO data from page or fallback

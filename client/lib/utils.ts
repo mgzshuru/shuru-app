@@ -71,3 +71,39 @@ export const safeBuildTimeApiCall = async <T>(
     return fallback;
   }
 };
+
+// Extract clean text from rich-text content for SEO descriptions
+export const extractTextFromRichContent = (content: string, maxLength: number = 160): string => {
+  if (!content) return '';
+
+  // First, check if content is markdown and convert to HTML if needed
+  let htmlContent = content;
+  const isMarkdown = content.includes('#') || content.includes('**') || content.includes('- ');
+
+  if (isMarkdown) {
+    // Simple markdown to text conversion for common patterns
+    htmlContent = content
+      .replace(/#{1,6}\s+/g, '') // Remove markdown headers
+      .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold
+      .replace(/\*(.*?)\*/g, '$1') // Remove italic
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Convert links to text
+      .replace(/^[-*+]\s+/gm, ''); // Remove list bullets
+  }
+
+  // Strip HTML tags and get clean text
+  const cleanText = htmlContent
+    .replace(/<[^>]*>/g, '') // Remove HTML tags
+    .replace(/&[#\w]+;/g, ' ') // Remove HTML entities
+    .replace(/\s+/g, ' ') // Normalize whitespace
+    .trim();
+
+  // Truncate to desired length while preserving word boundaries
+  if (cleanText.length <= maxLength) {
+    return cleanText;
+  }
+
+  const truncated = cleanText.substring(0, maxLength);
+  const lastSpace = truncated.lastIndexOf(' ');
+
+  return lastSpace > maxLength * 0.8 ? truncated.substring(0, lastSpace) + '...' : truncated + '...';
+};
