@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useActionState, useEffect } from "react";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { changePasswordAction } from "@/app/actions/auth";
 import { FormState } from "@/lib/types";
 import { toast } from "react-toastify";
@@ -9,6 +9,7 @@ import { Lock, Eye, EyeOff, AlertCircle, CheckCircle } from "lucide-react";
 import Link from "next/link";
 
 export default function ChangePassword() {
+  const router = useRouter();
   const [showCurrentPassword, setShowCurrentPassword] = React.useState(false);
   const [showNewPassword, setShowNewPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
@@ -28,9 +29,9 @@ export default function ChangePassword() {
   useEffect(() => {
     if (state.success) {
       toast.success(state.message, { position: "top-center" });
-      redirect("/profile");
+      router.push("/profile");
     }
-  }, [state.success]);
+  }, [state.success, router]);
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-4" dir="rtl">
