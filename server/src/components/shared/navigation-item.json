@@ -20,13 +20,17 @@
       "type": "boolean",
       "default": false
     },
-    "isActive": {
-      "type": "boolean",
-      "default": false
-    },
     "order": {
       "type": "integer",
       "default": 0
+    },
+    "onHeader": {
+      "type": "boolean",
+      "default": false
+    },
+    "onSideBar": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

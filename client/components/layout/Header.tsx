@@ -204,7 +204,9 @@ export default function Header({ headerData }: HeaderProps) {
         }`}
       >
         <ul className="flex flex-row justify-center gap-2 sm:gap-4 text-xs sm:text-sm font-normal leading-4 tracking-[1px] sm:tracking-[1.4px]">
-          {headerData.navigation.primaryMenuItems && headerData.navigation.primaryMenuItems.map((item) => (
+          {headerData.navigation.primaryMenuItems && headerData.navigation.primaryMenuItems
+            .filter((item) => item.onHeader)
+            .map((item) => (
             <li
               key={item.order}
               className="border-b-[4px] sm:border-b-[6px] border-transparent transition-colors duration-500 hover:border-orange-500"

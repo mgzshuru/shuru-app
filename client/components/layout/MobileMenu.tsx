@@ -72,7 +72,9 @@ export default function MobileMenu({ isOpen, onClose, headerData }: MobileMenuPr
 
         {/* Menu items */}
         <div className="border-b border-gray-200 pb-3 mb-3 pt-4">
-          {headerData.navigation.primaryMenuItems && headerData.navigation.primaryMenuItems.map((item) => (
+          {headerData.navigation.primaryMenuItems && headerData.navigation.primaryMenuItems
+            .filter((item) => item.onSideBar)
+            .map((item) => (
             <StrapiLink
               key={item.order}
               href={item.url}

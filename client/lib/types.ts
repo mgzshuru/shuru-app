@@ -56,13 +56,7 @@ export interface HeaderData {
     };
     alt: string;
   };
-  navigation: {
-    primaryMenuItems: NavigationItem[];
-  };
-  loginButton?: {
-    text: string;
-    url?: string;
-  };
+  navigation: NavigationMenu;
 }
 
 export interface FooterData {
@@ -96,8 +90,13 @@ export interface NavigationItem {
   label: string;
   url: string;
   openInNewTab: boolean;
-  isActive: boolean;
   order: number;
+  onHeader: boolean;
+  onSideBar: boolean;
+}
+
+export interface NavigationMenu {
+  primaryMenuItems: NavigationItem[];
 }
 
 export interface SocialLink {

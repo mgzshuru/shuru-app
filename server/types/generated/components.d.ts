@@ -555,7 +555,6 @@ export interface LayoutHeader extends Struct.ComponentSchema {
     icon: 'layout';
   };
   attributes: {
-    loginButton: Schema.Attribute.Component<'shared.login-button', false>;
     logo: Schema.Attribute.Component<'shared.header-logo', false> &
       Schema.Attribute.Required;
     navigation: Schema.Attribute.Component<'shared.navigation-menu', false> &
@@ -683,12 +682,13 @@ export interface SharedNavigationItem extends Struct.ComponentSchema {
     icon: 'link';
   };
   attributes: {
-    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     label: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 50;
       }>;
+    onHeader: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    onSideBar: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     openInNewTab: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     url: Schema.Attribute.String & Schema.Attribute.Required;

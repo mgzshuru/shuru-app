@@ -16,11 +16,6 @@
       "type": "component",
       "component": "shared.navigation-menu",
       "required": true
-    },
-    "loginButton": {
-      "type": "component",
-      "component": "shared.login-button",
-      "required": false
     }
   }
 }
