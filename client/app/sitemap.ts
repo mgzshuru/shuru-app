@@ -9,6 +9,13 @@ export const revalidate = 3600 // Revalidate every hour
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shuru.sa'
 
+  // Helper function to safely create dates
+  const safeDate = (dateString?: string | null): Date => {
+    if (!dateString) return new Date()
+    const date = new Date(dateString)
+    return isNaN(date.getTime()) ? new Date() : date
+  }
+
   // Static routes
   const staticRoutes = [
     {
@@ -46,41 +53,51 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ])
 
     // Articles
-    const articleRoutes = (articlesResult?.data || []).map((article: any) => ({
-      url: `${baseUrl}/articles/${article.slug}`,
-      lastModified: new Date(article.updatedAt || article.publishedAt),
-      changeFrequency: 'monthly' as const,
-      priority: 0.7,
-    }))
+    const articleRoutes = (articlesResult?.data || [])
+      .filter((article: any) => article && article.slug) // Filter out invalid articles
+      .map((article: any) => ({
+        url: `${baseUrl}/articles/${article.slug}`,
+        lastModified: safeDate(article.updatedAt || article.publishedAt),
+        changeFrequency: 'monthly' as const,
+        priority: 0.7,
+      }))
 
     // Magazine issues
-    const magazineRoutes = (magazineResult?.data || []).map((issue: any) => ({
-      url: `${baseUrl}/magazine/${issue.slug}`,
-      lastModified: new Date(issue.updatedAt || issue.publishedAt),
-      changeFrequency: 'monthly' as const,
-      priority: 0.6,
-    }))
+    const magazineRoutes = (magazineResult?.data || [])
+      .filter((issue: any) => issue && issue.slug) // Filter out invalid issues
+      .map((issue: any) => ({
+        url: `${baseUrl}/magazine/${issue.slug}`,
+        lastModified: safeDate(issue.updatedAt || issue.publishedAt),
+        changeFrequency: 'monthly' as const,
+        priority: 0.6,
+      }))
 
     // Categories
-    const categoryRoutes = (categoriesResult?.data || []).map((category: any) => ({
-      url: `${baseUrl}/categories/${category.slug}`,
-      lastModified: new Date(category.updatedAt || category.publishedAt),
-      changeFrequency: 'weekly' as const,
-      priority: 0.6,
-    }))
+    const categoryRoutes = (categoriesResult?.data || [])
+      .filter((category: any) => category && category.slug) // Filter out invalid categories
+      .map((category: any) => ({
+        url: `${baseUrl}/categories/${category.slug}`,
+        lastModified: safeDate(category.updatedAt || category.publishedAt),
+        changeFrequency: 'weekly' as const,
+        priority: 0.6,
+      }))
 
-    // Try to fetch pages - this might not exist yet
+    // Try to fetch pages - handle gracefully if not available
     let pageRoutes: any[] = []
     try {
       const pagesResult = await getAllPages()
-      pageRoutes = (pagesResult?.data || []).map((page: any) => ({
-        url: `${baseUrl}/p/${page.slug}`,
-        lastModified: new Date(page.updatedAt || page.publishedAt),
-        changeFrequency: 'monthly' as const,
-        priority: 0.5,
-      }))
+      if (pagesResult?.data && Array.isArray(pagesResult.data)) {
+        pageRoutes = pagesResult.data
+          .filter((page: any) => page && page.slug) // Filter out invalid pages
+          .map((page: any) => ({
+            url: `${baseUrl}/p/${page.slug}`,
+            lastModified: safeDate(page.updatedAt || page.publishedAt),
+            changeFrequency: 'monthly' as const,
+            priority: 0.5,
+          }))
+      }
     } catch (error) {
-      console.log('Pages not available for sitemap')
+      console.log('Pages not available for sitemap:', error instanceof Error ? error.message : 'Unknown error')
     }
 
     return [
