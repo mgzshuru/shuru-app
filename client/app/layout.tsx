@@ -176,7 +176,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   // Fallback to static metadata if Strapi is not available
   return {
-    metadataBase: new URL('https://www.shuru.sa'),
+    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shuru.sa'),
     title: {
       default: 'شروع - منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال',
       template: '%s | شروع',
@@ -205,28 +205,28 @@ export async function generateMetadata(): Promise<Metadata> {
     category: 'business',
     classification: 'Business & Professional',
 
-    openGraph: {
-      type: 'website',
-      locale: 'ar_SA',
-      url: 'https://www.shuru.sa',
-      siteName: 'شروع',
-      title: 'شروع - منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال',
-      description: 'منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال والقيادة والتحول الرقمي والتقنيات الناشئة والشركات الناشئة والاستثمار والتطوير المؤسسي',
-      images: [
-        {
-          url: '/og-image.svg',
-          width: 1200,
-          height: 630,
-          alt: 'شروع - منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال',
-        },
-      ],
-    },
+      openGraph: {
+        type: 'website',
+        locale: 'ar_SA',
+        url: process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shuru.sa',
+        siteName: 'شروع',
+        title: 'شروع - منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال',
+        description: 'منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال والقيادة والتحول الرقمي والتقنيات الناشئة والشركات الناشئة والاستثمار والتطوير المؤسسي',
+        images: [
+          {
+            url: '/og-image.jpg',
+            width: 1200,
+            height: 630,
+            alt: 'شروع - منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال',
+          },
+        ],
+      },
 
     twitter: {
       card: 'summary_large_image',
       title: 'شروع - منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال',
       description: 'منصة إعلامية عربية متخصصة في الابتكار وريادة الأعمال والقيادة والتحول الرقمي والتقنيات الناشئة والشركات الناشئة والاستثمار والتطوير المؤسسي',
-      images: ['/twitter-image.svg'],
+      images: ['/twitter-image.jpg'],
       creator: '@shurumag',
       site: '@shurumag',
     },
@@ -249,7 +249,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
 
     alternates: {
-      canonical: 'https://www.shuru.sa',
+      canonical: process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shuru.sa',
       languages: {
         'ar': 'https://www.shuru.sa',
         'en': 'https://www.shuru.sa/en',

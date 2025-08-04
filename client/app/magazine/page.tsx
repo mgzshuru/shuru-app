@@ -49,6 +49,7 @@ export async function generateMetadata({ searchParams }: MagazinePageProps): Pro
       : title;
 
     return {
+      metadataBase: new URL(baseUrl),
       title: fullTitle,
       description,
       keywords: [

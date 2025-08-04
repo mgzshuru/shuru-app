@@ -61,6 +61,7 @@ export async function generateMetadata({ searchParams }: ArticlesPageProps): Pro
     const fullTitle = `${title} | ${siteName}`;
 
     return {
+      metadataBase: new URL(baseUrl),
       title: fullTitle,
       description: description,
       keywords: [

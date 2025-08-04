@@ -8,6 +8,7 @@ import { getGlobalCached, getMagazineIssueBySlugOptimized, getMagazineIssuesOpti
 import { getStrapiMedia } from '@/components/custom/strapi-image';
 import { formatDate, safeBuildTimeApiCall } from '@/lib/utils';
 import { MagazineIssue, Article } from '@/lib/types';
+import { MagazineStructuredData } from '@/components/seo/StructuredData';
 
 // Generate static params for all magazine issues
 export async function generateStaticParams() {
@@ -64,6 +65,7 @@ export async function generateMetadata({ params }: MagazineIssuePageProps): Prom
       : title;
 
     return {
+      metadataBase: new URL(baseUrl),
       title: fullTitle,
       description,
       keywords: issue.SEO?.meta_keywords?.split(',').map((k: string) => k.trim()) || [
@@ -129,11 +131,21 @@ export default async function MagazineIssuePage({ params }: MagazineIssuePagePro
       notFound();
     }
 
+    // Get global data for structured data
+    let globalData;
+    try {
+      globalData = await getGlobalCached();
+    } catch (error) {
+      console.error('Error fetching global data for structured data:', error);
+      globalData = null;
+    }
+
     // Cast the issue to MagazineIssue type
     const magazineIssue = issue as unknown as MagazineIssue;
 
     return (
       <div className="min-h-screen bg-white">
+        <MagazineStructuredData issue={magazineIssue} globalData={globalData} />
         {/* Breadcrumb */}
         <nav className="bg-gray-50 border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">

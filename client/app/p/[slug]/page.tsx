@@ -10,6 +10,7 @@ import { SocialShare } from '@/components/custom/social-share';
 import { formatDate, safeBuildTimeApiCall, extractTextFromRichContent } from '@/lib/utils';
 import { Block, Page } from '@/lib/types';
 import styles from '@/components/article-content.module.css';
+import { PageStructuredData } from '@/components/seo/StructuredData';
 // Use the Page type from types.ts with additional fields
 interface PageData extends Omit<Page, 'blocks'> {
   description?: string;
@@ -87,7 +88,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  const baseUrl = 'https://www.shuru.sa';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shuru.sa';
   const pageUrl = `${baseUrl}/p/${page.slug}`;
 
   // Extract text content for description if not provided
@@ -118,6 +119,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     `${baseUrl}/og-image.jpg`;
 
   return {
+    metadataBase: new URL(baseUrl),
     title: seoTitle,
     description: seoDescription,
     keywords: seoKeywords,
@@ -193,8 +195,18 @@ export default async function PageComponent({ params }: PageProps) {
     notFound();
   }
 
+  // Get global data for structured data
+  let globalData;
+  try {
+    globalData = await getGlobalCached();
+  } catch (error) {
+    console.error('Error fetching global data for structured data:', error);
+    globalData = null;
+  }
+
   return (
     <div className="min-h-screen bg-white" dir="rtl">
+      <PageStructuredData page={page} globalData={globalData} />
       {/* Breadcrumb Navigation */}
       <nav className="bg-white border-b border-gray-200 top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">

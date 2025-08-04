@@ -11,6 +11,7 @@ import { TableOfContents } from '@/components/custom/table-of-contents';
 import { formatDate, extractTextFromRichContent } from '@/lib/utils';
 import { Article, Block } from '@/lib/types';
 import styles from '@/components/article-content.module.css';
+import { ArticleStructuredData } from '@/components/seo/StructuredData';
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;
@@ -35,7 +36,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       };
     }
 
-    const baseUrl = 'https://www.shuru.sa';
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shuru.sa';
     const articleUrl = `${baseUrl}/articles/${article.slug}`;
 
     // Extract text content for description if not provided
@@ -67,6 +68,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       `${baseUrl}/og-image.jpg`;
 
     return {
+      metadataBase: new URL(baseUrl),
       title: seoTitle,
       description: seoDescription,
       keywords: seoKeywords,
@@ -228,6 +230,15 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     notFound();
   }
 
+  // Get global data for structured data
+  let globalData;
+  try {
+    globalData = await getGlobalCached();
+  } catch (error) {
+    console.error('Error fetching global data for structured data:', error);
+    globalData = null;
+  }
+
   // Fetch related articles if category exists
   const relatedArticles = article.category
     ? await getRelatedArticlesData(article.documentId, article.category.slug)
@@ -235,6 +246,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
   return (
     <div className="min-h-screen bg-white" dir="rtl">
+      <ArticleStructuredData article={article} globalData={globalData} />
       {/* Breadcrumb Navigation */}
       <nav className="bg-white/95 backdrop-blur-md border-b border-gray-200 top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4">

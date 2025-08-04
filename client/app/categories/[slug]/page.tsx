@@ -7,6 +7,7 @@ import { getCategoryBySlug, getArticlesOptimized, getGlobalCached } from '@/lib/
 import { getStrapiMedia } from '@/components/custom/strapi-image';
 import { formatDate } from '@/lib/utils';
 import { Article, Category } from '@/lib/types';
+import { CategoryStructuredData } from '@/components/seo/StructuredData';
 
 interface CategoryPageProps {
   params: {
@@ -22,12 +23,16 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   const { slug } = await params;
 
   try {
-    const category = await getCategoryBySlug(slug);
+    const [category, globalData] = await Promise.all([
+      getCategoryBySlug(slug),
+      getGlobalCached().catch(() => null)
+    ]);
 
     if (!category) {
       return {
         title: 'الفئة غير موجودة | شروع',
         description: 'الفئة التي تبحث عنها غير موجودة',
+        robots: { index: false, follow: false },
       };
     }
 
@@ -38,6 +43,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
     if (category.SEO) {
       const seo = category.SEO;
       return {
+        metadataBase: new URL(baseUrl),
         title: seo.meta_title || `${category.name} | شروع`,
         description: seo.meta_description || category.description || `تصفح مقالات فئة ${category.name} في مجلة شروع`,
         keywords: seo.meta_keywords?.split(',').map((k: string) => k.trim()) || undefined,
@@ -73,6 +79,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
 
     // Fallback metadata if no SEO data
     return {
+      metadataBase: new URL(baseUrl),
       title: `${category.name} | شروع`,
       description: category.description || `تصفح مقالات فئة ${category.name} في مجلة شروع للابتكار وريادة الأعمال`,
       openGraph: {
@@ -228,8 +235,11 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   const { page = '1' } = await searchParams;
 
   try {
-    // Fetch category data
-    const categoryResponse = await getCategoryBySlug(slug);
+    // Fetch category data and global data in parallel
+    const [categoryResponse, globalData] = await Promise.all([
+      getCategoryBySlug(slug),
+      getGlobalCached().catch(() => null)
+    ]);
     const category = categoryResponse as Category;
 
     if (!category) {
@@ -250,6 +260,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
 
     return (
       <div className="min-h-screen bg-white">
+        <CategoryStructuredData category={category} globalData={globalData} />
         <Breadcrumbs category={category} />
         <CategoryHeader category={category} />
 

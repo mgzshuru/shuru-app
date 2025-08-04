@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next'
-import { getGlobal } from '@/lib/strapi-client'
+import { getAllArticles, getAllPages, getAllMagazineIssues, getAllCategories } from '@/lib/strapi-client'
+import { getArticlesOptimized, getMagazineIssuesOptimized, getAllCategories as getCategoriesOptimized } from '@/lib/strapi-optimized'
 
 // Force static generation for sitemap
 export const dynamic = 'force-static'
@@ -8,55 +9,13 @@ export const revalidate = 3600 // Revalidate every hour
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shuru.sa'
 
-  // Get dynamic data from Strapi
-  let articles: any[] = []
-  let pages: any[] = []
-
-  try {
-    // Fetch articles from Strapi
-    const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337'
-    const articlesResponse = await fetch(`${strapiUrl}/api/articles?populate=*&pagination[pageSize]=100`, {
-      next: { revalidate: 3600 }, // Revalidate every hour
-    })
-
-    if (articlesResponse.ok) {
-      const articlesData = await articlesResponse.json()
-      articles = articlesData.data || []
-    }
-
-    // Fetch pages from Strapi if you have them
-    const pagesResponse = await fetch(`${strapiUrl}/api/pages?populate=*&pagination[pageSize]=100`, {
-      next: { revalidate: 3600 },
-    })
-
-    if (pagesResponse.ok) {
-      const pagesData = await pagesResponse.json()
-      pages = pagesData.data || []
-    }
-  } catch (error) {
-    console.error('Error fetching data for sitemap:', error)
-    // Continue with empty arrays - site will still build with static pages
-  }
-
-  // Static pages
-  const staticPages = [
+  // Static routes
+  const staticRoutes = [
     {
       url: baseUrl,
       lastModified: new Date(),
       changeFrequency: 'daily' as const,
       priority: 1,
-    },
-    {
-      url: `${baseUrl}/about`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/contact`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
-      priority: 0.7,
     },
     {
       url: `${baseUrl}/articles`,
@@ -65,60 +24,75 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/subscribe`,
+      url: `${baseUrl}/categories`,
       lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
-      priority: 0.6,
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/magazine`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
     },
   ]
 
-  // Dynamic article pages
-  const articlePages = articles.map((article) => {
-    // Safely parse dates with fallback
-    let lastModified = new Date()
-    try {
-      const dateStr = article.attributes?.updatedAt || article.attributes?.publishedAt
-      if (dateStr && dateStr !== 'Invalid Date') {
-        const parsedDate = new Date(dateStr)
-        if (!isNaN(parsedDate.getTime())) {
-          lastModified = parsedDate
-        }
-      }
-    } catch (error) {
-      console.warn('Invalid date in article:', article.id, error)
-    }
+  try {
+    // Fetch all content in parallel
+    const [articlesResult, magazineResult, categoriesResult] = await Promise.all([
+      getArticlesOptimized({ pageSize: 1000 }).catch(() => getAllArticles()),
+      getMagazineIssuesOptimized().catch(() => getAllMagazineIssues()),
+      getCategoriesOptimized().catch(() => getAllCategories()),
+    ])
 
-    return {
-      url: `${baseUrl}/articles/${article.attributes?.slug || article.id}`,
-      lastModified,
-      changeFrequency: 'weekly' as const,
-      priority: 0.8,
-    }
-  })
-
-  // Dynamic pages
-  const dynamicPages = pages.map((page) => {
-    // Safely parse dates with fallback
-    let lastModified = new Date()
-    try {
-      const dateStr = page.attributes?.updatedAt || page.attributes?.publishedAt
-      if (dateStr && dateStr !== 'Invalid Date') {
-        const parsedDate = new Date(dateStr)
-        if (!isNaN(parsedDate.getTime())) {
-          lastModified = parsedDate
-        }
-      }
-    } catch (error) {
-      console.warn('Invalid date in page:', page.id, error)
-    }
-
-    return {
-      url: `${baseUrl}/p/${page.attributes?.slug || page.id}`,
-      lastModified,
+    // Articles
+    const articleRoutes = (articlesResult?.data || []).map((article: any) => ({
+      url: `${baseUrl}/articles/${article.slug}`,
+      lastModified: new Date(article.updatedAt || article.publishedAt),
       changeFrequency: 'monthly' as const,
       priority: 0.7,
-    }
-  })
+    }))
 
-  return [...staticPages, ...articlePages, ...dynamicPages]
+    // Magazine issues
+    const magazineRoutes = (magazineResult?.data || []).map((issue: any) => ({
+      url: `${baseUrl}/magazine/${issue.slug}`,
+      lastModified: new Date(issue.updatedAt || issue.publishedAt),
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
+    }))
+
+    // Categories
+    const categoryRoutes = (categoriesResult?.data || []).map((category: any) => ({
+      url: `${baseUrl}/categories/${category.slug}`,
+      lastModified: new Date(category.updatedAt || category.publishedAt),
+      changeFrequency: 'weekly' as const,
+      priority: 0.6,
+    }))
+
+    // Try to fetch pages - this might not exist yet
+    let pageRoutes: any[] = []
+    try {
+      const pagesResult = await getAllPages()
+      pageRoutes = (pagesResult?.data || []).map((page: any) => ({
+        url: `${baseUrl}/p/${page.slug}`,
+        lastModified: new Date(page.updatedAt || page.publishedAt),
+        changeFrequency: 'monthly' as const,
+        priority: 0.5,
+      }))
+    } catch (error) {
+      console.log('Pages not available for sitemap')
+    }
+
+    return [
+      ...staticRoutes,
+      ...articleRoutes,
+      ...magazineRoutes,
+      ...categoryRoutes,
+      ...pageRoutes,
+    ]
+  } catch (error) {
+    console.error('Error generating sitemap:', error)
+    // Return at least static routes if dynamic content fails
+    return staticRoutes
+  }
 }

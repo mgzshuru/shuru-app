@@ -17,6 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
     const description = 'تصفح جميع فئات المقالات في مجلة شروع للابتكار وريادة الأعمال والتقنيات الناشئة';
 
     return {
+      metadataBase: new URL(baseUrl),
       title,
       description,
       openGraph: {
