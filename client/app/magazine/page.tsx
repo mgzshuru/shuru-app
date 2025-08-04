@@ -48,6 +48,9 @@ export async function generateMetadata({ searchParams }: MagazinePageProps): Pro
       ? `${title} | ${globalData.siteName}`
       : title;
 
+    const defaultImage = globalData?.defaultSeo?.og_image ?
+      (getStrapiMedia(globalData.defaultSeo.og_image.url) || `${baseUrl}/og-image.jpg`) :
+      `${baseUrl}/og-image.jpg`;
     return {
       metadataBase: new URL(baseUrl),
       title: fullTitle,
@@ -73,7 +76,7 @@ export async function generateMetadata({ searchParams }: MagazinePageProps): Pro
         siteName: globalData?.siteName || 'شروع',
         images: [
           {
-            url: '/og-image.jpg',
+            url: defaultImage,
             width: 1200,
             height: 630,
             alt: title,
@@ -84,7 +87,7 @@ export async function generateMetadata({ searchParams }: MagazinePageProps): Pro
         card: 'summary_large_image',
         title: fullTitle,
         description,
-        images: ['/twitter-image.jpg'],
+        images: [defaultImage],
       },
       alternates: {
         canonical: magazineUrl,

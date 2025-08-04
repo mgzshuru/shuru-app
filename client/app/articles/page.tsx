@@ -46,7 +46,9 @@ export async function generateMetadata({ searchParams }: ArticlesPageProps): Pro
     // Dynamic title based on search parameters
     let title = 'المقالات';
     let description = 'تصفح جميع المقالات في مجلة شروع للابتكار وريادة الأعمال';
-
+    const defaultImage = globalData?.defaultSeo?.og_image ?
+          (getStrapiMedia(globalData.defaultSeo.og_image.url) || `${baseUrl}/og-image.jpg`) :
+          `${baseUrl}/og-image.jpg`;
     if (search) {
       title = `البحث: ${search} - المقالات`;
       description = `نتائج البحث عن "${search}" في مقالات مجلة شروع`;
@@ -76,6 +78,7 @@ export async function generateMetadata({ searchParams }: ArticlesPageProps): Pro
       openGraph: {
         title: fullTitle,
         description: description,
+        images: [{url: defaultImage}],
         url: articlesUrl,
         siteName: siteName,
         type: 'website',

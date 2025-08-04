@@ -61,11 +61,14 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     ].filter(Boolean) as string[];
 
     // Article image for social sharing
-    const articleImage = article.SEO?.og_image ?
-      (getStrapiMedia(article.SEO.og_image.url) || `${baseUrl}/og-image.jpg`) :
-      article.cover_image ?
-      (getStrapiMedia(article.cover_image.url) || `${baseUrl}/og-image.jpg`) :
+    const defaultImage = getStrapiMedia(article.SEO?.og_image?.url) ||
+      getStrapiMedia(article.cover_image?.url) ||
       `${baseUrl}/og-image.jpg`;
+    const articleImage = article.SEO?.og_image ?
+      (getStrapiMedia(article.SEO.og_image.url) || defaultImage) :
+      article.cover_image ?
+      (getStrapiMedia(article.cover_image.url) || defaultImage) :
+      defaultImage;
 
     return {
       metadataBase: new URL(baseUrl),

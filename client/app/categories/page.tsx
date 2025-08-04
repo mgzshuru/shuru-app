@@ -16,6 +16,9 @@ export async function generateMetadata(): Promise<Metadata> {
     const title = 'الفئات | شروع';
     const description = 'تصفح جميع فئات المقالات في مجلة شروع للابتكار وريادة الأعمال والتقنيات الناشئة';
 
+    const defaultImage = globalData?.defaultSeo?.og_image ?
+      (getStrapiMedia(globalData.defaultSeo.og_image.url) || `${baseUrl}/og-image.jpg`) :
+      `${baseUrl}/og-image.jpg`;
     return {
       metadataBase: new URL(baseUrl),
       title,
@@ -27,11 +30,13 @@ export async function generateMetadata(): Promise<Metadata> {
         type: 'website',
         locale: 'ar_SA',
         siteName: globalData?.siteName || 'شروع',
+        images: [{ url: defaultImage }],
       },
       twitter: {
         card: 'summary_large_image',
         title,
         description,
+        images: [defaultImage],
       },
       alternates: {
         canonical: categoriesUrl,

@@ -64,6 +64,10 @@ export async function generateMetadata({ params }: MagazineIssuePageProps): Prom
       ? `${title} | ${globalData.siteName}`
       : title;
 
+    const defaultImage = globalData?.defaultSeo?.og_image ?
+      (getStrapiMedia(globalData.defaultSeo.og_image.url) || `${baseUrl}/og-image.jpg`) :
+      `${baseUrl}/og-image.jpg`;
+
     return {
       metadataBase: new URL(baseUrl),
       title: fullTitle,
@@ -93,7 +97,7 @@ export async function generateMetadata({ params }: MagazineIssuePageProps): Prom
           },
         ] : [
           {
-            url: '/og-image.jpg',
+            url: defaultImage,
             width: 1200,
             height: 630,
             alt: title,
@@ -107,7 +111,7 @@ export async function generateMetadata({ params }: MagazineIssuePageProps): Prom
         description,
         images: issue.cover_image && getStrapiMedia(issue.cover_image.url)
           ? [getStrapiMedia(issue.cover_image.url)!]
-          : ['/twitter-image.jpg'],
+          : [defaultImage],
       },
       alternates: {
         canonical: issueUrl,

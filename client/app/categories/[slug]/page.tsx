@@ -38,7 +38,9 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
 
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shuru.sa';
     const categoryUrl = `${baseUrl}/categories/${slug}`;
-
+    const defaultImage = globalData?.defaultSeo?.og_image ?
+      (getStrapiMedia(globalData.defaultSeo.og_image.url) || `${baseUrl}/og-image.jpg`) :
+      `${baseUrl}/og-image.jpg`;
     // Check if category has SEO data
     if (category.SEO) {
       const seo = category.SEO;
@@ -56,7 +58,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
           siteName: 'شروع',
           ...(seo.og_image && {
             images: [{
-              url: getStrapiMedia(seo.og_image.url) || '',
+              url: getStrapiMedia(seo.og_image.url) || defaultImage,
               width: seo.og_image.width || 1200,
               height: seo.og_image.height || 630,
               alt: seo.og_image.alternativeText || category.name,
@@ -68,7 +70,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
           title: seo.meta_title || `${category.name} | شروع`,
           description: seo.meta_description || category.description || `تصفح مقالات فئة ${category.name} في مجلة شروع`,
           ...(seo.og_image && {
-            images: [getStrapiMedia(seo.og_image.url) || ''],
+            images: [getStrapiMedia(seo.og_image.url) || defaultImage],
           }),
         },
         alternates: {
@@ -89,11 +91,13 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
         type: 'website',
         locale: 'ar_SA',
         siteName: 'شروع',
+        images: [{ url: defaultImage }],
       },
       twitter: {
         card: 'summary_large_image',
         title: `${category.name} | شروع`,
         description: category.description || `تصفح مقالات فئة ${category.name} في مجلة شروع للابتكار وريادة الأعمال`,
+        images: [defaultImage],
       },
       alternates: {
         canonical: categoryUrl,

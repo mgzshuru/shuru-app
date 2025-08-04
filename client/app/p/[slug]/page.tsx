@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { ContentRenderer } from '@/components/blocks/content/ContentRenderer';
 import { getPageBySlug, getAllPages, getGlobalCached } from '@/lib/strapi-optimized';
 import { getStrapiMedia } from '@/components/custom/strapi-image';
-import { SocialShare } from '@/components/custom/social-share';
 import { formatDate, safeBuildTimeApiCall, extractTextFromRichContent } from '@/lib/utils';
 import { Block, Page } from '@/lib/types';
 import styles from '@/components/article-content.module.css';
@@ -112,11 +111,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   ].filter(Boolean) as string[];
 
   // Page image for social sharing
-  const pageImage = page.SEO?.og_image ?
-    (getStrapiMedia(page.SEO.og_image.url) || `${baseUrl}/og-image.jpg`) :
-    page.featured_image ?
-    (getStrapiMedia(page.featured_image.url) || `${baseUrl}/og-image.jpg`) :
+  const defaultImage = globalData?.defaultSeo?.og_image ?
+    (getStrapiMedia(globalData.defaultSeo.og_image.url) || `${baseUrl}/og-image.jpg`) :
     `${baseUrl}/og-image.jpg`;
+
+  const pageImage = page.SEO?.og_image ?
+    (getStrapiMedia(page.SEO.og_image.url) || defaultImage) :
+    page.featured_image ?
+    (getStrapiMedia(page.featured_image.url) || defaultImage) :
+    defaultImage;
 
   return {
     metadataBase: new URL(baseUrl),
