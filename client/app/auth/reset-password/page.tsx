@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, Suspense } from "react";
-import { redirect, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { resetPasswordAction } from "@/app/actions/auth";
 import { FormState } from "@/lib/types";
 import { toast } from "react-toastify";
@@ -10,6 +10,7 @@ import Link from "next/link";
 import React from "react";
 
 function ResetPasswordForm() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
   const searchParams = useSearchParams();
@@ -30,9 +31,9 @@ function ResetPasswordForm() {
   useEffect(() => {
     if (state.success) {
       toast.success(state.message, { position: "top-center" });
-      redirect("/auth/login");
+      router.push("/auth/login");
     }
-  }, [state.success]);
+  }, [state.success, router]);
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-4" dir="rtl">
