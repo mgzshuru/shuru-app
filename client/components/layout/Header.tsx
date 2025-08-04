@@ -72,7 +72,7 @@ export default function Header({ headerData }: HeaderProps) {
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 flex flex-col bg-black/90 px-3 lg:px-5 shadow-md transition-all duration-300"
+      className="fixed top-0 left-0 right-0 flex flex-col bg-black/80 px-3 lg:px-5 shadow-md transition-all duration-300"
       style={{ zIndex: 1000 }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
