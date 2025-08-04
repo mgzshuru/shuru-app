@@ -1,6 +1,6 @@
 import { strapi } from "@strapi/client";
 import { getStrapiURL } from "./utils";
-import { GlobalData } from "./types";
+import { GlobalData, NewsletterPageData } from "./types";
 
 const PATH = "/api";
 const STRAPI_BASE_URL = getStrapiURL();
@@ -608,4 +608,125 @@ export async function getFeaturedMagazineIssuesOptimized(limit?: number) {
 
   const issues = await client.collection("magazine-issues").find(query);
   return issues;
+}
+
+// =====================
+// NEWSLETTER PAGE FUNCTIONS (OPTIMIZED)
+// =====================
+
+// Minimal population for newsletter page (for SEO metadata only)
+const NEWSLETTER_PAGE_SEO_POPULATE = {
+  seo: {
+    fields: ["meta_title", "meta_description", "meta_keywords"],
+    populate: {
+      og_image: {
+        fields: ["url", "alternativeText", "width", "height"]
+      }
+    }
+  }
+};
+
+// Full population for newsletter page
+const NEWSLETTER_PAGE_FULL_POPULATE = {
+  seo: {
+    fields: ["meta_title", "meta_description", "meta_keywords"],
+    populate: {
+      og_image: {
+        fields: ["url", "alternativeText", "width", "height"]
+      }
+    }
+  },
+  heroSection: {
+    fields: ["title", "subtitle", "backgroundColor"],
+    populate: {
+      newsletterCategories: {
+        fields: ["name", "content"]
+      }
+    }
+  },
+  subscriptionSection: {
+    fields: [
+      "formTitle",
+      "formSubtitle",
+      "emailPlaceholder",
+      "namePlaceholder",
+      "submitButtonText",
+      "loadingText",
+      "successTitle",
+      "successMessage",
+      "privacyPolicyText",
+      "termsOfServiceText",
+      "privacyPolicyUrl",
+      "termsOfServiceUrl"
+    ],
+    populate: {
+      mainImage: {
+        fields: ["url", "alternativeText", "width", "height"]
+      },
+      features: {
+        fields: ["icon", "text"]
+      }
+    }
+  }
+};
+
+// Get newsletter page data with full population
+export async function getNewsletterPageDataOptimized(): Promise<NewsletterPageData | null> {
+  try {
+    const response = await client.single("newsletter-page").find({
+      populate: NEWSLETTER_PAGE_FULL_POPULATE
+    });
+
+    if (response && response.data) {
+      return response.data as unknown as NewsletterPageData;
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching newsletter page data:", error);
+    return null;
+  }
+}
+
+// Get newsletter page data for SEO only (lighter payload)
+export async function getNewsletterPageSEOOptimized(): Promise<Pick<NewsletterPageData, 'seo' | 'id' | 'documentId'> | null> {
+  try {
+    const response = await client.single("newsletter-page").find({
+      fields: ["id", "documentId"],
+      populate: NEWSLETTER_PAGE_SEO_POPULATE
+    });
+
+    if (response && response.data) {
+      return response.data as unknown as Pick<NewsletterPageData, 'seo' | 'id' | 'documentId'>;
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching newsletter page SEO data:", error);
+    return null;
+  }
+}
+
+// =====================
+// CACHED NEWSLETTER PAGE DATA
+// =====================
+
+let newsletterPageCache: NewsletterPageData | null = null;
+let newsletterPageCacheTime = 0;
+const NEWSLETTER_CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
+
+export async function getNewsletterPageCached(): Promise<NewsletterPageData | null> {
+  const now = Date.now();
+
+  // Return cached data if still valid
+  if (newsletterPageCache && (now - newsletterPageCacheTime) < NEWSLETTER_CACHE_DURATION) {
+    return newsletterPageCache;
+  }
+
+  // Fetch fresh data
+  const freshData = await getNewsletterPageDataOptimized();
+
+  // Update cache
+  newsletterPageCache = freshData;
+  newsletterPageCacheTime = now;
+
+  return freshData;
 }

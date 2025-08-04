@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_newsletter_features",
+  "info": {
+    "displayName": "Newsletter Feature",
+    "description": "Feature item for newsletter subscription section",
+    "icon": "bulletList"
+  },
+  "options": {},
+  "attributes": {
+    "icon": {
+      "type": "string",
+      "required": true
+    },
+    "text": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

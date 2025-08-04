@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_newsletter_categories",
+  "info": {
+    "displayName": "Newsletter Category",
+    "description": "Newsletter category with content preview",
+    "icon": "layer"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "content": {
+      "type": "richtext",
+      "required": false
+    }
+  }
+}

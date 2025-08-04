@@ -442,3 +442,56 @@ export interface Page {
   blocks?: Block[]
   SEO?: SEOComponent
 }
+
+export interface NewsletterCategory {
+  name: string;
+  content?: string; // Rich text content as HTML string
+}
+
+export interface NewsletterFeature {
+  icon: string;
+  text: string;
+}
+
+export interface NewsletterHeroSection {
+  title: string;
+  subtitle: string;
+  backgroundColor: string;
+  newsletterCategories?: NewsletterCategory[];
+}
+
+export interface NewsletterSubscriptionSection {
+  formTitle: string;
+  formSubtitle: string;
+  emailPlaceholder: string;
+  namePlaceholder: string;
+  submitButtonText: string;
+  loadingText: string;
+  successTitle: string;
+  successMessage: string;
+  privacyPolicyText?: string;
+  termsOfServiceText?: string;
+  privacyPolicyUrl?: string;
+  termsOfServiceUrl?: string;
+  mainImage?: {
+    id: number;
+    documentId: string;
+    url: string;
+    alternativeText?: string;
+    width?: number;
+    height?: number;
+  };
+  features?: NewsletterFeature[];
+}
+
+export interface NewsletterPageData {
+  id: number;
+  documentId: string;
+  seo?: SEOComponent;
+  heroSection: NewsletterHeroSection;
+  subscriptionSection: NewsletterSubscriptionSection;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt?: string;
+}

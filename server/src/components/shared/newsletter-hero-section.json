@@ -1,0 +1,30 @@
+{
+  "collectionName": "components_newsletter_hero_sections",
+  "info": {
+    "displayName": "Newsletter Hero Section",
+    "description": "Hero section for newsletter page",
+    "icon": "star"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "text",
+      "required": true
+    },
+    "subtitle": {
+      "type": "text",
+      "required": true
+    },
+    "backgroundColor": {
+      "type": "string",
+      "required": true,
+      "default": "#ff6b5a"
+    },
+    "newsletterCategories": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.newsletter-category",
+      "required": false
+    }
+  }
+}

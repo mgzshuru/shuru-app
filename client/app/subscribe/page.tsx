@@ -1,13 +1,41 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Mail, User, TrendingUp, CheckCircle } from 'lucide-react';
 import { subscribe } from '@/lib/strapi-client';
+import { getNewsletterPageCached } from '@/lib/strapi-optimized';
+import { NewsletterPageData } from '@/lib/types';
+import { renderLucideIcon, getIconName } from '@/lib/icon-utils';
 
 const NewsletterPage = () => {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [newsletterData, setNewsletterData] = useState<NewsletterPageData | null>(null);
+  const [dataLoading, setDataLoading] = useState(true);
+
+  // Utility function to strip HTML tags for preview text
+  const stripHtml = (html: string) => {
+    const temp = document.createElement('div');
+    temp.innerHTML = html;
+    return temp.textContent || temp.innerText || '';
+  };
+
+  // Fetch newsletter page data
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getNewsletterPageCached();
+        setNewsletterData(data);
+      } catch (error) {
+        console.error('Error fetching newsletter data:', error);
+      } finally {
+        setDataLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleSubmit = async () => {
     if (email && name) {
@@ -16,6 +44,8 @@ const NewsletterPage = () => {
         const result = await subscribe(email, name);
         if (result.success) {
           setIsSubmitted(true);
+          setEmail('');
+          setName('');
           setTimeout(() => setIsSubmitted(false), 3000);
         } else {
           console.error('Subscription failed:', result.error);
@@ -28,101 +58,117 @@ const NewsletterPage = () => {
     }
   };
 
-  // Sample categories for the preview cards (you can replace with actual categories from your data)
-  const newsletterCategories = [
-    { name: 'COMPASS', content: ['نصائح الاستثمار', 'أفكار ريادية', 'تحليلات السوق'] },
-    { name: 'CO.DESIGN', content: ['التصميم المبتكر', 'تجربة المستخدم', 'الإبداع الرقمي'] },
-    { name: 'IMPACT', content: ['التأثير الاجتماعي', 'الاستدامة', 'الابتكار المسؤول'] },
-    { name: 'PLUGGED IN', content: ['أخبار التكنولوجيا', 'الذكاء الاصطناعي', 'ريادة الأعمال'] },
-    { name: 'MODERN CEO', content: ['القيادة الحديثة', 'استراتيجيات الأعمال', 'إدارة الفرق'] }
-  ];
+  // Loading state
+  if (dataLoading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center" dir="rtl">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <p className="text-gray-600">جاري التحميل...</p>
+        </div>
+      </div>
+    );
+  }
 
+  // Get data with fallbacks
+  const heroData = newsletterData?.heroSection;
+  const subscriptionData = newsletterData?.subscriptionSection;
+  const newsletterCategories = heroData?.newsletterCategories || [];
   return (
     <div className="min-h-screen bg-white" dir="rtl">
-      {/* Hero Section - More Compact */}
-      <section className="relative overflow-hidden" style={{ backgroundColor: '#ff6b5a' }}>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+      {/* Hero Section - Mobile Optimized */}
+      <section className="relative overflow-hidden" style={{ backgroundColor: heroData?.backgroundColor || '#ff6b5a' }}>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
           <div className="text-center">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-black mb-3 tracking-tight uppercase leading-tight">
-              استكشف النشرات الإخبارية
-              <br />
-              للشركات السريعة
+            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black text-black mb-3 sm:mb-4 tracking-tight uppercase leading-tight px-2">
+              {heroData?.title || 'استكشف النشرات الإخبارية للشركات السريعة'}
             </h1>
-            <p className="text-sm sm:text-base text-white mb-8 max-w-2xl mx-auto font-normal">
-              اكتشف وجهات نظر جديدة. اشترك للحصول على أهم التغطيات الإخبارية في صندوق الوارد الخاص بك.
-            </p>
+            <p className="text-sm sm:text-base text-white mb-6 sm:mb-8 max-w-2xl mx-auto font-normal px-4">
+              {heroData?.subtitle || 'اكتشف وجهات نظر جديدة. اشترك للحصول على أهم التغطيات الإخبارية في صندوق الوارد الخاص بك.'}
+            </p>            {/* Newsletter Preview Cards - Mobile Responsive */}
+            {newsletterCategories.length > 0 && (
+              <div className="flex justify-center items-end gap-1 sm:gap-2 md:gap-3 mt-4 sm:mt-6 px-2 overflow-x-auto sm:overflow-x-visible pb-2">
+                {newsletterCategories.slice(0, 5).map((newsletter, index) => (
+                  <div
+                    key={index}
+                    className={`
+                      flex-shrink-0 w-14 sm:w-16 md:w-20 lg:w-24 xl:w-28
+                      h-20 sm:h-24 md:h-32 lg:h-36 xl:h-40 bg-white
+                      transform transition-all duration-300 hover:scale-105
+                      ${index === 2 ? 'scale-105 sm:scale-110 z-10 -rotate-1 sm:-rotate-2' : ''}
+                      ${index === 1 ? 'scale-100 sm:scale-105 rotate-0.5 sm:rotate-1' : ''}
+                      ${index === 3 ? 'scale-100 sm:scale-105 -rotate-0.5 sm:-rotate-1' : ''}
+                      ${index === 0 ? 'rotate-1 sm:rotate-2' : ''}
+                      ${index === 4 ? '-rotate-1 sm:-rotate-2' : ''}
+                    `}
+                    style={{
+                      transform: `
+                        translateY(${index === 2 ? '0px' : index === 1 || index === 3 ? '2px' : '4px'})
+                        scale(${index === 2 ? '1.05' : index === 1 || index === 3 ? '1.02' : '1'})
+                        rotate(${index === 0 ? '1deg' : index === 1 ? '0.5deg' : index === 2 ? '-1deg' : index === 3 ? '-0.5deg' : '-1deg'})
+                      `,
+                      border: '1px solid #e5e7eb'
+                    }}
+                  >
+                    <div className="p-1 sm:p-1.5 md:p-2 h-full flex flex-col">
+                      {/* Header with browser chrome */}
+                      <div className="flex items-center gap-0.5 mb-0.5 sm:mb-1 md:mb-2">
+                        <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 md:w-1.5 md:h-1.5 bg-red-400 rounded-full"></div>
+                        <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 md:w-1.5 md:h-1.5 bg-yellow-400 rounded-full"></div>
+                        <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 md:w-1.5 md:h-1.5 bg-green-400 rounded-full"></div>
+                      </div>
 
-            {/* Newsletter Preview Cards - Exact Fast Company Style */}
-            <div className="flex justify-center items-end gap-2 sm:gap-3 mt-6 perspective-1000">
-              {newsletterCategories.map((newsletter, index) => (
-                <div
-                  key={index}
-                  className={`
-                    w-20 sm:w-24 lg:w-28 h-32 sm:h-36 lg:h-40 bg-white
-                    transform transition-all duration-300 hover:scale-105
-                    ${index === 2 ? 'scale-110 z-10 -rotate-2' : ''}
-                    ${index === 1 ? 'scale-105 rotate-1' : ''}
-                    ${index === 3 ? 'scale-105 -rotate-1' : ''}
-                    ${index === 0 ? 'rotate-2' : ''}
-                    ${index === 4 ? '-rotate-2' : ''}
-                  `}
-                  style={{
-                    transform: `
-                      translateY(${index === 2 ? '0px' : index === 1 || index === 3 ? '6px' : '12px'})
-                      scale(${index === 2 ? '1.1' : index === 1 || index === 3 ? '1.05' : '1'})
-                      rotate(${index === 0 ? '2deg' : index === 1 ? '1deg' : index === 2 ? '-2deg' : index === 3 ? '-1deg' : '-2deg'})
-                    `,
-                    border: '1px solid #e5e7eb'
-                  }}
-                >
-                  <div className="p-2 h-full flex flex-col">
-                    {/* Header with browser chrome */}
-                    <div className="flex items-center gap-0.5 mb-2">
-                      <div className="w-1.5 h-1.5 bg-red-400"></div>
-                      <div className="w-1.5 h-1.5 bg-yellow-400"></div>
-                      <div className="w-1.5 h-1.5 bg-green-400"></div>
-                    </div>
+                      {/* Newsletter name */}
+                      <h3 className="font-bold text-gray-800 mb-0.5 sm:mb-1 md:mb-1.5 text-xs sm:text-xs md:text-xs uppercase tracking-wide leading-tight" style={{ fontSize: '8px' }}>
+                        {newsletter.name}
+                      </h3>
 
-                    {/* Newsletter name */}
-                    <h3 className="font-bold text-gray-800 mb-1.5 text-xs uppercase tracking-wide">
-                      {newsletter.name}
-                    </h3>
+                      {/* Content preview */}
+                      <div className="space-y-1 sm:space-y-1.5 md:space-y-2 mb-1 sm:mb-2 md:mb-3 flex-1">
+                        {/* Main content header */}
+                        <div className="h-3 sm:h-4 md:h-5 lg:h-6 bg-gray-300 rounded-none mb-2"></div>
 
-                    {/* Content preview */}
-                    <div className="space-y-1.5 mb-2">
-                      <div className="h-6 bg-gray-300"></div>
-                      <div className="space-y-0.5">
-                        {newsletter.content.map((item, i) => (
-                          <div key={i} className="text-xs text-gray-600 truncate">{item}</div>
-                        ))}
+                        {newsletter.content ? (
+                          <div className="text-xs text-gray-600 leading-tight">
+                            <div className="text-xs leading-tight mb-2 hidden sm:block">
+                              {stripHtml(newsletter.content).substring(0, 50)}...
+                            </div>
+                            {/* Content lines */}
+                            <div className="space-y-1">
+                              <div className="h-1 sm:h-1.5 bg-gray-200 rounded-none"></div>
+                              <div className="h-1 sm:h-1.5 bg-gray-200 rounded-none w-3/4"></div>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="space-y-1">
+                            <div className="h-1 sm:h-1.5 bg-gray-200 rounded-none"></div>
+                            <div className="h-1 sm:h-1.5 bg-gray-200 rounded-none w-3/4"></div>
+                          </div>
+                        )}
                       </div>
                     </div>
-
-                    {/* Mock content lines */}
-                    <div className="mt-auto space-y-0.5">
-                      <div className="h-1 bg-gray-200"></div>
-                      <div className="h-1 bg-gray-200 w-4/5"></div>
-                      <div className="h-1 bg-gray-200 w-3/5"></div>
-                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </section>
 
-      {/* Subscription Section - Enhanced with Images */}
-      <section className="py-8 bg-gray-50">
+      {/* Subscription Section - Mobile Optimized */}
+      <section className="py-6 sm:py-8 lg:py-8 bg-gray-50">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-8 items-center">
+          <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 items-center">
              {/* Left Side - Images */}
             <div className="relative hidden lg:block">
-              {/* Main Image - Use first newsletter's featured image if available */}
+              {/* Main Image - Use mainImage from Strapi if available */}
               <div className="relative">
                 <img
-                  src="https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
-                  alt="Business meeting"
+                  src={
+                    subscriptionData?.mainImage?.url ||
+                    "https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+                  }
+                  alt={subscriptionData?.mainImage?.alternativeText || "Business meeting"}
                   className="w-full h-80 object-cover"
                   style={{ border: '1px solid #e5e7eb' }}
                 />
@@ -150,129 +196,160 @@ const NewsletterPage = () => {
                   </div>
                 </div>
               </div>
-
-              {/* Small images grid - Use other newsletter images if available */}
-              <div className="grid grid-cols-2 gap-4 mt-6">
-                <img
-                  src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-                  alt="Working on laptop"
-                  className="w-full h-24 object-cover"
-                  style={{ border: '1px solid #e5e7eb' }}
-                />
-                <img
-                  src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-                  alt="Business analytics"
-                  className="w-full h-24 object-cover"
-                  style={{ border: '1px solid #e5e7eb' }}
-                />
-              </div>
             </div>
 
             {/* Right Side - Form */}
             <div className="relative">
-              {/* Mobile Image */}
-              <div className="lg:hidden mb-6">
+              {/* Mobile Image - Improved */}
+              <div className="lg:hidden mb-4 sm:mb-6">
                 <img
-                  src="https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-                  alt="Business meeting"
-                  className="w-full h-48 object-cover"
+                  src={
+                    subscriptionData?.mainImage?.url ||
+                    "https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                  }
+                  alt={subscriptionData?.mainImage?.alternativeText || "Business meeting"}
+                  className="w-full h-40 sm:h-48 object-cover rounded-none"
                   style={{ border: '1px solid #e5e7eb' }}
                 />
               </div>
 
               {isSubmitted ? (
-                <div className="bg-white p-8 text-center" style={{ border: '1px solid #e5e7eb' }}>
+                <div className="bg-white p-6 sm:p-8 text-center rounded-none" style={{ border: '1px solid #e5e7eb' }}>
                   <div className="relative">
-                    <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-6" />
-                    <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-100 animate-ping"></div>
+                    <CheckCircle className="w-12 h-12 sm:w-16 sm:h-16 text-green-500 mx-auto mb-4 sm:mb-6" />
+                    <div className="absolute -top-1 sm:-top-2 -right-1 sm:-right-2 w-4 h-4 sm:w-6 sm:h-6 bg-green-100 animate-ping"></div>
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-800 mb-4">تم الاشتراك بنجاح!</h3>
-                  <p className="text-gray-600 leading-relaxed">شكراً لك. ستصلك أحدث النشرات قريباً في صندوق الوارد.</p>
+                  <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3 sm:mb-4">
+                    {subscriptionData?.successTitle || 'تم الاشتراك بنجاح!'}
+                  </h3>
+                  <p className="text-sm sm:text-base text-gray-600 leading-relaxed px-2">
+                    {subscriptionData?.successMessage || 'شكراً لك. ستصلك أحدث النشرات قريباً في صندوق الوارد.'}
+                  </p>
 
                   {/* Success decoration */}
-                  <div className="mt-6 flex justify-center space-x-2">
+                  <div className="mt-4 sm:mt-6 flex justify-center space-x-2">
                     <div className="w-2 h-2 bg-green-400 animate-bounce"></div>
                     <div className="w-2 h-2 bg-green-400 animate-bounce" style={{animationDelay: '0.1s'}}></div>
                     <div className="w-2 h-2 bg-green-400 animate-bounce" style={{animationDelay: '0.2s'}}></div>
                   </div>
                 </div>
               ) : (
-                <div className="bg-white p-8 relative overflow-hidden" style={{ border: '1px solid #e5e7eb' }}>
+                <div className="bg-white p-6 sm:p-8 relative overflow-hidden rounded-none" style={{ border: '1px solid #e5e7eb' }}>
                   {/* Background decoration */}
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-gray-50 to-transparent -translate-y-16 translate-x-16"></div>
+                  <div className="absolute top-0 right-0 w-24 sm:w-32 h-24 sm:h-32 bg-gradient-to-br from-gray-50 to-transparent -translate-y-12 sm:-translate-y-16 translate-x-12 sm:translate-x-16"></div>
 
                   <div className="relative">
                     {/* Header */}
-                    <div className="text-center mb-8">
-                      <div className="inline-flex items-center justify-center w-16 h-16 bg-black mb-4">
-                        <Mail className="w-8 h-8 text-white" />
+                    <div className="text-center mb-6 sm:mb-8">
+                      <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-black mb-3 sm:mb-4">
+                        <Mail className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                       </div>
-                      <h3 className="text-2xl font-bold text-gray-800 mb-2">انضم إلى مجتمعنا</h3>
-                      <p className="text-gray-600">احصل على أحدث الأخبار والتحليلات</p>
+                      <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">
+                        {subscriptionData?.formTitle || 'انضم إلى مجتمعنا'}
+                      </h3>
+                      <p className="text-sm sm:text-base text-gray-600 px-2">
+                        {subscriptionData?.formSubtitle || 'احصل على أحدث الأخبار والتحليلات'}
+                      </p>
                     </div>
 
-                    <div className="space-y-6">
-                      {/* Email Input */}
+                    <div className="space-y-4 sm:space-y-6">
+                      {/* Email Input - Mobile Optimized */}
                       <div className="relative">
-                        <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400">
-                          <Mail className="w-5 h-5" />
+                        <div className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                          <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
                         </div>
                         <input
                           type="email"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          className="w-full pr-12 pl-4 py-4 border-2 border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 focus:border-gray-400 text-base transition-all duration-200 bg-gray-50 focus:bg-white"
-                          placeholder="البريد الإلكتروني *"
+                          className="w-full pr-10 sm:pr-12 pl-3 sm:pl-4 py-3 sm:py-4 border-2 border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 focus:border-gray-400 text-sm sm:text-base transition-all duration-200 bg-gray-50 focus:bg-white rounded-none"
+                          placeholder={subscriptionData?.emailPlaceholder || "البريد الإلكتروني *"}
                           required
                           style={{ border: '1px solid #e5e7eb' }}
                         />
                       </div>
 
-                      {/* Name Input */}
+                      {/* Name Input - Mobile Optimized */}
                       <div className="relative">
-                        <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400">
-                          <User className="w-5 h-5" />
+                        <div className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                          <User className="w-4 h-4 sm:w-5 sm:h-5" />
                         </div>
                         <input
                           type="text"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
-                          className="w-full pr-12 pl-4 py-4 border-2 border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 focus:border-gray-400 text-base transition-all duration-200 bg-gray-50 focus:bg-white"
-                          placeholder="الاسم *"
+                          className="w-full pr-10 sm:pr-12 pl-3 sm:pl-4 py-3 sm:py-4 border-2 border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 focus:border-gray-400 text-sm sm:text-base transition-all duration-200 bg-gray-50 focus:bg-white rounded-none"
+                          placeholder={subscriptionData?.namePlaceholder || "الاسم *"}
                           required
                           style={{ border: '1px solid #e5e7eb' }}
                         />
                       </div>
 
-                      {/* Submit Button */}
+                      {/* Submit Button - Mobile Optimized */}
                       <button
                         onClick={handleSubmit}
                         disabled={isLoading || !email || !name}
-                        className="w-full bg-black hover:bg-gray-800 text-white font-bold py-4 px-6 text-base transition-all duration-200 transform hover:scale-105 uppercase tracking-wide disabled:bg-gray-400 disabled:cursor-not-allowed disabled:transform-none"
+                        className="w-full bg-black hover:bg-gray-800 text-white font-bold py-3 sm:py-4 px-4 sm:px-6 text-sm sm:text-base transition-all duration-200 transform hover:scale-105 uppercase tracking-wide disabled:bg-gray-400 disabled:cursor-not-allowed disabled:transform-none rounded-none touch-manipulation"
                       >
-                        {isLoading ? 'جاري الاشتراك...' : 'اشترك الآن'}
+                        {isLoading
+                          ? (subscriptionData?.loadingText || 'جاري الاشتراك...')
+                          : (subscriptionData?.submitButtonText || 'اشترك الآن')
+                        }
                       </button>
 
-                      {/* Privacy Notice */}
-                      <div className="text-xs text-gray-500 leading-relaxed text-center bg-gray-50 p-4">
-                        <a href="#" className="text-gray-800 hover:text-black mx-1 underline">سياسة الخصوصية</a>
-                        <a href="#" className="text-gray-800 hover:text-black mx-1 underline">شروط الخدمة</a>
+                      {/* Privacy Notice - Mobile Optimized */}
+                      <div className="text-xs text-gray-500 leading-relaxed text-center bg-gray-50 p-3 sm:p-4 rounded-none">
+                        {subscriptionData?.privacyPolicyUrl && (
+                          <a
+                            href={subscriptionData.privacyPolicyUrl}
+                            className="text-gray-800 hover:text-black mx-1 underline"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {subscriptionData?.privacyPolicyText || 'سياسة الخصوصية'}
+                          </a>
+                        )}
+                        {subscriptionData?.termsOfServiceUrl && (
+                          <a
+                            href={subscriptionData.termsOfServiceUrl}
+                            className="text-gray-800 hover:text-black mx-1 underline"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {subscriptionData?.termsOfServiceText || 'شروط الخدمة'}
+                          </a>
+                        )}
                       </div>
 
-                      {/* Features */}
-                      <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-100">
-                        <div className="flex items-center space-x-2">
-                          <div className="w-6 h-6 bg-gray-100 flex items-center justify-center">
-                            <CheckCircle className="w-4 h-4 text-gray-600" />
-                          </div>
-                          <span className="text-xs text-gray-600">محتوى حصري</span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <div className="w-6 h-6 bg-gray-100 flex items-center justify-center">
-                            <Mail className="w-4 h-4 text-gray-600" />
-                          </div>
-                          <span className="text-xs text-gray-600">أسبوعياً</span>
-                        </div>
+                      {/* Features - Mobile Optimized */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pt-3 sm:pt-4 border-t border-gray-100">
+                        {subscriptionData?.features && subscriptionData.features.length > 0 ? (
+                          subscriptionData.features.slice(0, 2).map((feature, index) => (
+                            <div key={index} className="flex items-center space-x-2 justify-center sm:justify-start">
+                              <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gray-100 flex items-center justify-center flex-shrink-0">
+                                {renderLucideIcon(getIconName(feature.icon), 14, "text-gray-600") || (
+                                  <span className="text-xs sm:text-sm">{feature.icon}</span>
+                                )}
+                              </div>
+                              <span className="text-xs sm:text-xs text-gray-600">{feature.text}</span>
+                            </div>
+                          ))
+                        ) : (
+                          <>
+                            <div className="flex items-center space-x-2 justify-center sm:justify-start">
+                              <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gray-100 flex items-center justify-center flex-shrink-0">
+                                <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600" />
+                              </div>
+                              <span className="text-xs sm:text-xs text-gray-600">محتوى حصري</span>
+                            </div>
+                            <div className="flex items-center space-x-2 justify-center sm:justify-start">
+                              <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gray-100 flex items-center justify-center flex-shrink-0">
+                                <Mail className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600" />
+                              </div>
+                              <span className="text-xs sm:text-xs text-gray-600">أسبوعياً</span>
+                            </div>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>

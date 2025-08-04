@@ -1,0 +1,81 @@
+{
+  "collectionName": "components_newsletter_subscription_sections",
+  "info": {
+    "displayName": "Newsletter Subscription Section",
+    "description": "Subscription form section for newsletter page",
+    "icon": "envelope"
+  },
+  "options": {},
+  "attributes": {
+    "formTitle": {
+      "type": "string",
+      "required": true,
+      "default": "انضم إلى مجتمعنا"
+    },
+    "formSubtitle": {
+      "type": "string",
+      "required": true,
+      "default": "احصل على أحدث الأخبار والتحليلات"
+    },
+    "emailPlaceholder": {
+      "type": "string",
+      "required": true,
+      "default": "البريد الإلكتروني *"
+    },
+    "namePlaceholder": {
+      "type": "string",
+      "required": true,
+      "default": "الاسم *"
+    },
+    "submitButtonText": {
+      "type": "string",
+      "required": true,
+      "default": "اشترك الآن"
+    },
+    "loadingText": {
+      "type": "string",
+      "required": true,
+      "default": "جاري الاشتراك..."
+    },
+    "successTitle": {
+      "type": "string",
+      "required": true,
+      "default": "تم الاشتراك بنجاح!"
+    },
+    "successMessage": {
+      "type": "text",
+      "required": true,
+      "default": "شكراً لك. ستصلك أحدث النشرات قريباً في صندوق الوارد."
+    },
+    "privacyPolicyText": {
+      "type": "string",
+      "required": false,
+      "default": "سياسة الخصوصية"
+    },
+    "termsOfServiceText": {
+      "type": "string",
+      "required": false,
+      "default": "شروط الخدمة"
+    },
+    "privacyPolicyUrl": {
+      "type": "string",
+      "required": false
+    },
+    "termsOfServiceUrl": {
+      "type": "string",
+      "required": false
+    },
+    "mainImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "features": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.newsletter-feature",
+      "required": false
+    }
+  }
+}

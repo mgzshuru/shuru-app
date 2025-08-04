@@ -1,6 +1,6 @@
 import { strapi } from "@strapi/client";
 import { getStrapiURL } from "./utils";
-import { Article, Author, Category, GlobalData, MagazineIssue } from "./types";
+import { Article, Author, Category, GlobalData, MagazineIssue, NewsletterPageData } from "./types";
 
 const PATH = "/api";
 const STRAPI_BASE_URL = getStrapiURL();
@@ -561,6 +561,67 @@ export async function getPageBySlug(slug: string) {
     return null;
   } catch (error) {
     console.error("Error fetching page:", error);
+    return null;
+  }
+}
+
+// =====================
+// NEWSLETTER PAGE FUNCTIONS
+// =====================
+
+export async function getNewsletterPageData(): Promise<NewsletterPageData | null> {
+  try {
+    const response = await client.single("newsletter-page").find({
+      populate: {
+        seo: {
+          fields: ["meta_title", "meta_description", "meta_keywords"],
+          populate: {
+            og_image: {
+              fields: ["url", "alternativeText", "width", "height"]
+            }
+          }
+        },
+        heroSection: {
+          fields: ["title", "subtitle", "backgroundColor"],
+          populate: {
+            newsletterCategories: {
+              fields: ["name", "content"]
+            }
+          }
+        },
+        subscriptionSection: {
+          fields: [
+            "formTitle",
+            "formSubtitle",
+            "emailPlaceholder",
+            "namePlaceholder",
+            "submitButtonText",
+            "loadingText",
+            "successTitle",
+            "successMessage",
+            "privacyPolicyText",
+            "termsOfServiceText",
+            "privacyPolicyUrl",
+            "termsOfServiceUrl"
+          ],
+          populate: {
+            mainImage: {
+              fields: ["url", "alternativeText", "width", "height"]
+            },
+            features: {
+              fields: ["icon", "text"]
+            }
+          }
+        }
+      }
+    });
+
+    if (response && response.data) {
+      return response.data as unknown as NewsletterPageData;
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching newsletter page data:", error);
     return null;
   }
 }

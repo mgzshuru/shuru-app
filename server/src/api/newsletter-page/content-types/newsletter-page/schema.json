@@ -1,0 +1,38 @@
+{
+  "kind": "singleType",
+  "collectionName": "newsletter_pages",
+  "info": {
+    "singularName": "newsletter-page",
+    "pluralName": "newsletter-pages",
+    "displayName": "Newsletter Page",
+    "description": "Newsletter subscription page content"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    },
+    "heroSection": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.newsletter-hero-section",
+      "required": true
+    },
+    "subscriptionSection": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.newsletter-subscription-section",
+      "required": true
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true,
+      "required": true
+    }
+  }
+}

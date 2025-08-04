@@ -717,6 +717,96 @@ export interface SharedNavigationMenu extends Struct.ComponentSchema {
   };
 }
 
+export interface SharedNewsletterCategory extends Struct.ComponentSchema {
+  collectionName: 'components_newsletter_categories';
+  info: {
+    description: 'Newsletter category with content preview';
+    displayName: 'Newsletter Category';
+    icon: 'layer';
+  };
+  attributes: {
+    content: Schema.Attribute.RichText;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface SharedNewsletterFeature extends Struct.ComponentSchema {
+  collectionName: 'components_newsletter_features';
+  info: {
+    description: 'Feature item for newsletter subscription section';
+    displayName: 'Newsletter Feature';
+    icon: 'bulletList';
+  };
+  attributes: {
+    icon: Schema.Attribute.String & Schema.Attribute.Required;
+    text: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface SharedNewsletterHeroSection extends Struct.ComponentSchema {
+  collectionName: 'components_newsletter_hero_sections';
+  info: {
+    description: 'Hero section for newsletter page';
+    displayName: 'Newsletter Hero Section';
+    icon: 'star';
+  };
+  attributes: {
+    backgroundColor: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'#ff6b5a'>;
+    newsletterCategories: Schema.Attribute.Component<
+      'shared.newsletter-category',
+      true
+    >;
+    subtitle: Schema.Attribute.Text & Schema.Attribute.Required;
+    title: Schema.Attribute.Text & Schema.Attribute.Required;
+  };
+}
+
+export interface SharedNewsletterSubscriptionSection
+  extends Struct.ComponentSchema {
+  collectionName: 'components_newsletter_subscription_sections';
+  info: {
+    description: 'Subscription form section for newsletter page';
+    displayName: 'Newsletter Subscription Section';
+    icon: 'envelope';
+  };
+  attributes: {
+    emailPlaceholder: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'\u0627\u0644\u0628\u0631\u064A\u062F \u0627\u0644\u0625\u0644\u0643\u062A\u0631\u0648\u0646\u064A *'>;
+    features: Schema.Attribute.Component<'shared.newsletter-feature', true>;
+    formSubtitle: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'\u0627\u062D\u0635\u0644 \u0639\u0644\u0649 \u0623\u062D\u062F\u062B \u0627\u0644\u0623\u062E\u0628\u0627\u0631 \u0648\u0627\u0644\u062A\u062D\u0644\u064A\u0644\u0627\u062A'>;
+    formTitle: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'\u0627\u0646\u0636\u0645 \u0625\u0644\u0649 \u0645\u062C\u062A\u0645\u0639\u0646\u0627'>;
+    loadingText: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'\u062C\u0627\u0631\u064A \u0627\u0644\u0627\u0634\u062A\u0631\u0627\u0643...'>;
+    mainImage: Schema.Attribute.Media<'images'>;
+    namePlaceholder: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'\u0627\u0644\u0627\u0633\u0645 *'>;
+    privacyPolicyText: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'\u0633\u064A\u0627\u0633\u0629 \u0627\u0644\u062E\u0635\u0648\u0635\u064A\u0629'>;
+    privacyPolicyUrl: Schema.Attribute.String;
+    submitButtonText: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'\u0627\u0634\u062A\u0631\u0643 \u0627\u0644\u0622\u0646'>;
+    successMessage: Schema.Attribute.Text &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'\u0634\u0643\u0631\u0627\u064B \u0644\u0643. \u0633\u062A\u0635\u0644\u0643 \u0623\u062D\u062F\u062B \u0627\u0644\u0646\u0634\u0631\u0627\u062A \u0642\u0631\u064A\u0628\u0627\u064B \u0641\u064A \u0635\u0646\u062F\u0648\u0642 \u0627\u0644\u0648\u0627\u0631\u062F.'>;
+    successTitle: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'\u062A\u0645 \u0627\u0644\u0627\u0634\u062A\u0631\u0627\u0643 \u0628\u0646\u062C\u0627\u062D!'>;
+    termsOfServiceText: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'\u0634\u0631\u0648\u0637 \u0627\u0644\u062E\u062F\u0645\u0629'>;
+    termsOfServiceUrl: Schema.Attribute.String;
+  };
+}
+
 export interface SharedSecondaryNavigation extends Struct.ComponentSchema {
   collectionName: 'components_shared_secondary_navigations';
   info: {
@@ -861,6 +951,10 @@ declare module '@strapi/strapi' {
       'shared.login-button': SharedLoginButton;
       'shared.navigation-item': SharedNavigationItem;
       'shared.navigation-menu': SharedNavigationMenu;
+      'shared.newsletter-category': SharedNewsletterCategory;
+      'shared.newsletter-feature': SharedNewsletterFeature;
+      'shared.newsletter-hero-section': SharedNewsletterHeroSection;
+      'shared.newsletter-subscription-section': SharedNewsletterSubscriptionSection;
       'shared.secondary-navigation': SharedSecondaryNavigation;
       'shared.seo': SharedSeo;
       'shared.social-link': SharedSocialLink;

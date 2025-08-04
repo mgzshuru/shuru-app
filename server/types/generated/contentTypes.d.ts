@@ -711,6 +711,49 @@ export interface ApiNewsletterEditionNewsletterEdition
   };
 }
 
+export interface ApiNewsletterPageNewsletterPage
+  extends Struct.SingleTypeSchema {
+  collectionName: 'newsletter_pages';
+  info: {
+    description: 'Newsletter subscription page content';
+    displayName: 'Newsletter Page';
+    pluralName: 'newsletter-pages';
+    singularName: 'newsletter-page';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    heroSection: Schema.Attribute.Component<
+      'shared.newsletter-hero-section',
+      false
+    > &
+      Schema.Attribute.Required;
+    isActive: Schema.Attribute.Boolean &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::newsletter-page.newsletter-page'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<'shared.seo', false>;
+    subscriptionSection: Schema.Attribute.Component<
+      'shared.newsletter-subscription-section',
+      false
+    > &
+      Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiPagePage extends Struct.CollectionTypeSchema {
   collectionName: 'pages';
   info: {
@@ -1303,6 +1346,7 @@ declare module '@strapi/strapi' {
       'api::global.global': ApiGlobalGlobal;
       'api::magazine-issue.magazine-issue': ApiMagazineIssueMagazineIssue;
       'api::newsletter-edition.newsletter-edition': ApiNewsletterEditionNewsletterEdition;
+      'api::newsletter-page.newsletter-page': ApiNewsletterPageNewsletterPage;
       'api::page.page': ApiPagePage;
       'api::subscriber.subscriber': ApiSubscriberSubscriber;
       'plugin::content-releases.release': PluginContentReleasesRelease;
