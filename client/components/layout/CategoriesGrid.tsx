@@ -51,21 +51,30 @@ const StrapiLink: React.FC<StrapiLinkProps> = ({
   );
 };
 
-const CategoriesGrid: React.FC = () => {
+interface CategoriesGridProps {
+  categoriesData?: any[];
+}
+
+const CategoriesGrid: React.FC<CategoriesGridProps> = ({ categoriesData }) => {
   const [categories, setCategories] = useState<CategoryGroup[]>([]);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchCategories = async () => {
+    const processCategories = async () => {
       try {
         setLoading(true);
-        const response = await getAllCategories();
 
-        if (response && response.data) {
-          const categoryGroups = transformCategoriesToGroups(response.data as Category[]);
-          // Only set categories if there are valid ordered categories
+        // Use passed data if available, otherwise fetch
+        let data = categoriesData;
+        if (!data) {
+          const response = await getAllCategories();
+          data = response?.data;
+        }
+
+        if (data && Array.isArray(data)) {
+          const categoryGroups = transformCategoriesToGroups(data as Category[]);
           setCategories(categoryGroups);
         } else {
           setCategories([]);
@@ -78,8 +87,8 @@ const CategoriesGrid: React.FC = () => {
       }
     };
 
-    fetchCategories();
-  }, []);
+    processCategories();
+  }, [categoriesData]);
 
   // Transform Strapi categories into grouped format
   const transformCategoriesToGroups = (strapiCategories: any[]): CategoryGroup[] => {

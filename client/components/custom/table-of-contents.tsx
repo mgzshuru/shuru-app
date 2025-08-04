@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface TocItem {
   id: string;
@@ -15,7 +16,9 @@ interface TableOfContentsProps {
 export function TableOfContents({ articleContentId = 'article-content' }: TableOfContentsProps) {
   const [tocItems, setTocItems] = useState<TocItem[]>([]);
   const [activeId, setActiveId] = useState<string>('');
+  const [isExpanded, setIsExpanded] = useState(false);
   const tocNavRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const articleElement = document.getElementById(articleContentId);
@@ -104,15 +107,81 @@ export function TableOfContents({ articleContentId = 'article-content' }: TableO
 
   if (tocItems.length === 0) {
     return (
-      <div className="bg-gray-50 p-6 border border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 text-right" dir="rtl">في هذا المقال</h3>
-        <p className="text-gray-500 text-sm text-right" dir="rtl">
+      <div className="bg-gray-50 p-4 md:p-6 border border-gray-200">
+        <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-3 md:mb-4 text-right" dir="rtl">في هذا المقال</h3>
+        <p className="text-gray-500 text-xs md:text-sm text-right" dir="rtl">
           جاري تحميل المحتويات...
         </p>
       </div>
     );
   }
 
+  // Mobile version with always expanded design (no collapse)
+  if (isMobile) {
+    return (
+      <div className="bg-white border border-gray-200 mb-6 shadow-sm">
+        <div className="p-4 bg-gray-50" dir="rtl">
+          <div className="flex items-center gap-2">
+            <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+            </svg>
+            <h3 className="text-base font-semibold text-gray-900">في هذا المقال</h3>
+          </div>
+        </div>
+
+        <nav className="p-4 space-y-1 max-h-80 overflow-y-auto scrollbar-none" dir="rtl" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          {tocItems.map((item) => {
+            const isActive = activeId === item.id;
+            const paddingRight = Math.max(0, (item.level - 1) * 12);
+
+            return (
+              <button
+                key={item.id}
+                data-heading-id={item.id}
+                onClick={() => {
+                  scrollToHeading(item.id);
+                  // Note: Removed setIsExpanded(false) to keep it always open
+                }}
+                className={`
+                  block w-full text-right py-2 px-2 text-sm transition-all duration-300 border-r-2 hover:bg-gray-50 hover:border-gray-400
+                  ${isActive
+                    ? 'text-gray-900 border-gray-700 bg-gray-100 font-semibold'
+                    : 'text-gray-600 border-transparent hover:text-gray-900'
+                  }
+                `}
+                style={{ paddingRight: `${paddingRight + 8}px` }}
+                title={item.text}
+              >
+                <span className="block leading-tight text-right break-words">
+                  {item.text}
+                </span>
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* Mobile Reading Progress */}
+        <div className="p-4 pt-0 border-t border-gray-200">
+          <div className="flex items-center gap-2 text-xs text-gray-500 mb-2 justify-end" dir="rtl">
+            <span>تقدم القراءة</span>
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div className="w-full bg-gray-200 h-1.5" dir="rtl">
+            <div
+              className="bg-gray-600 h-1.5 transition-all duration-500 ease-out ml-auto"
+              style={{
+                width: `${Math.min(100, Math.max(0, (tocItems.findIndex(item => item.id === activeId) + 1) / tocItems.length * 100))}%`
+              }}
+            ></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop version (original design)
   return (
     <div className="bg-white border border-gray-200 p-6 shadow-sm">
       <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2 text-right" dir="rtl">

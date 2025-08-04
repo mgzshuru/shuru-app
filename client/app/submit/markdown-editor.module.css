@@ -1,0 +1,75 @@
+/* Custom styles for the markdown editor */
+.md-editor-arabic {
+  font-family: 'IBM Plex Sans Arabic', 'Noto Sans Arabic', 'Tajawal', sans-serif;
+}
+
+.md-editor-arabic .w-md-editor {
+  background-color: #f9fafb !important;
+}
+
+.md-editor-arabic .w-md-editor-text-input,
+.md-editor-arabic .w-md-editor-text-textarea,
+.md-editor-arabic .w-md-editor-text {
+  direction: rtl !important;
+  text-align: right !important;
+  font-family: 'IBM Plex Sans Arabic', 'Noto Sans Arabic', 'Tajawal', sans-serif !important;
+  font-size: 16px !important;
+  line-height: 1.6 !important;
+}
+
+.md-editor-arabic .w-md-editor-toolbar {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  padding: 8px 12px !important;
+}
+
+.md-editor-arabic .w-md-editor-toolbar ul {
+  direction: ltr !important;
+}
+
+.md-editor-arabic .w-md-editor-focus {
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.md-editor-arabic .w-md-editor-text-container {
+  background-color: #f9fafb !important;
+}
+
+.md-editor-arabic .w-md-editor-text-container .w-md-editor-text {
+  padding: 16px !important;
+}
+
+/* Improve button styling */
+.md-editor-arabic .w-md-editor-toolbar button {
+  border-radius: 4px !important;
+  padding: 4px 8px !important;
+  margin: 0 2px !important;
+}
+
+.md-editor-arabic .w-md-editor-toolbar button:hover {
+  background-color: #f3f4f6 !important;
+}
+
+/* Hide preview by default in edit mode */
+.md-editor-arabic .w-md-editor.w-md-editor-focus .w-md-editor-preview {
+  display: none !important;
+}
+
+/* Custom scrollbar */
+.md-editor-arabic .w-md-editor-text::-webkit-scrollbar {
+  width: 8px;
+}
+
+.md-editor-arabic .w-md-editor-text::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.md-editor-arabic .w-md-editor-text::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.md-editor-arabic .w-md-editor-text::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}

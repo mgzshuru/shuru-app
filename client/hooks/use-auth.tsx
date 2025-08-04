@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from 'react';
 
-export interface User {
-  id: string;
+interface User {
+  id: number;
   username: string;
   email: string;
 }
 
-export interface AuthState {
+interface AuthState {
   isAuthenticated: boolean;
   user: User | null;
   loading: boolean;
@@ -22,9 +22,9 @@ export function useAuth(): AuthState {
   });
 
   useEffect(() => {
-    // Check if user is authenticated by making a request to verify session
     const checkAuth = async () => {
       try {
+        // Make a request to check authentication status
         const response = await fetch('/api/auth/verify', {
           method: 'GET',
           credentials: 'include',
@@ -32,11 +32,19 @@ export function useAuth(): AuthState {
 
         if (response.ok) {
           const data = await response.json();
-          setAuthState({
-            isAuthenticated: true,
-            user: data.user,
-            loading: false,
-          });
+          if (data.isAuthenticated && data.user) {
+            setAuthState({
+              isAuthenticated: true,
+              user: data.user,
+              loading: false,
+            });
+          } else {
+            setAuthState({
+              isAuthenticated: false,
+              user: null,
+              loading: false,
+            });
+          }
         } else {
           setAuthState({
             isAuthenticated: false,

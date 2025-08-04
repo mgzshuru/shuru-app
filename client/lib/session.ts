@@ -20,12 +20,40 @@ export async function encrypt(payload: SessionPayload) {
 // Verifies and decodes the JWT session token
 export async function decrypt(session: string | undefined = "") {
   try {
+    // Check if session exists and is not empty
+    if (!session || session.trim() === "" || session === "undefined" || session === "null") {
+      console.log("Session is empty or invalid:", { session: session?.substring(0, 20) });
+      return null;
+    }
+
+    // Check if the secret key is properly configured
+    if (!secretKey) {
+      console.error("SESSION_SECRET environment variable is not set");
+      return null;
+    }
+
+    // Validate that the session looks like a JWT (contains dots)
+    if (!session.includes('.') || session.split('.').length !== 3) {
+      console.error("Invalid JWT format in session. Expected 3 parts separated by dots, got:", {
+        parts: session.split('.').length,
+        sessionStart: session.substring(0, 50)
+      });
+      return null;
+    }
+
     const { payload } = await jwtVerify(session, encodedKey, {
       algorithms: ["HS256"],
     });
+    console.log("Successfully decrypted session for user:", (payload as any).user?.id || 'unknown');
     return payload;
   } catch (error) {
-    console.log(error);
+    console.log("JWT verification failed:", {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      sessionLength: session?.length || 0,
+      sessionStart: session?.substring(0, 50) || 'empty'
+    });
+    // Return null instead of undefined to indicate invalid session
+    return null;
   }
 }
 

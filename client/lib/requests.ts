@@ -8,8 +8,9 @@ const STRAPI_BASE_URL = getStrapiURL();
 
 export const signUpRequest = async (credentials: Credentials) => {
   try {
-    const PATH = "/auth/local/register";
+    const PATH = "/api/auth/local/register";
     const url = new URL(PATH, STRAPI_BASE_URL);
+    console.log("Sign Up URL:", url.toString());
     const response = await axios.post(
       url.toString(),
       {
@@ -28,7 +29,7 @@ export const signUpRequest = async (credentials: Credentials) => {
 export const confirmEmailRequest = async (email: string) => {
   try {
 
-    const PATH = "/auth/send-email-confirmation";
+    const PATH = "/api/auth/send-email-confirmation";
     const url = new URL(PATH, STRAPI_BASE_URL);
     const response = await axios.post(
       url.toString(),
@@ -48,7 +49,7 @@ export const confirmEmailRequest = async (email: string) => {
 
 export const signInRequest = async (credentials: Credentials) => {
   try {
-    const PATH = "/auth/local";
+    const PATH = "/api/auth/local";
     const url = new URL(PATH, STRAPI_BASE_URL);
     const response = await axios.post(url.toString(), {
       identifier: credentials.identifier,
@@ -63,7 +64,7 @@ export const signInRequest = async (credentials: Credentials) => {
 
 export const forgotPasswordRequest = async (email: string) => {
   try {
-    const PATH = "/auth/forgot-password";
+    const PATH = "/api/auth/forgot-password";
     const url = new URL(PATH, STRAPI_BASE_URL);
     const response = await axios.post(
       url.toString(),
@@ -83,7 +84,7 @@ export const forgotPasswordRequest = async (email: string) => {
 
 export const resetPasswordRequest = async (credentials: Credentials) => {
   try {
-    const PATH = "/auth/reset-password";
+    const PATH = "/api/auth/reset-password";
     const url = new URL(PATH, STRAPI_BASE_URL);
     const response = await axios.post(
       url.toString(),
@@ -106,7 +107,7 @@ export const changePasswordRequest = async (credentials: Credentials) => {
       session: { jwt },
     }: any = await verifySession();
 
-    const PATH = "/auth/change-password";
+    const PATH = "/api/auth/change-password";
     const url = new URL(PATH, STRAPI_BASE_URL);
     const response = await axios.post(
       url.toString(),

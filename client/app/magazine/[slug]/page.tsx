@@ -6,22 +6,28 @@ import { notFound } from 'next/navigation';
 import { getMagazineIssueBySlug, getAllMagazineIssues } from '@/lib/strapi-client';
 import { getGlobalCached, getMagazineIssueBySlugOptimized, getMagazineIssuesOptimized } from '@/lib/strapi-optimized';
 import { getStrapiMedia } from '@/components/custom/strapi-image';
-import { formatDate } from '@/lib/utils';
+import { formatDate, safeBuildTimeApiCall } from '@/lib/utils';
 import { MagazineIssue, Article } from '@/lib/types';
 
 // Generate static params for all magazine issues
 export async function generateStaticParams() {
-  try {
-    const issuesResponse = await getMagazineIssuesOptimized().catch(() => getAllMagazineIssues());
-    const issues = issuesResponse?.data || [];
+  const fallbackResult: { slug: string }[] = [];
 
+  const result = await safeBuildTimeApiCall(
+    () => getMagazineIssuesOptimized().catch(() => getAllMagazineIssues()),
+    { data: [], meta: { pagination: { page: 1, pageSize: 0, pageCount: 0, total: 0 } } } as any,
+    8000 // 8 second timeout
+  );
+
+  const issues = result?.data || [];
+
+  if (Array.isArray(issues)) {
     return issues.map((issue: any) => ({
       slug: issue.slug,
     }));
-  } catch (error) {
-    console.error('Error generating static params:', error);
-    return [];
   }
+
+  return fallbackResult;
 }
 
 interface MagazineIssuePageProps {

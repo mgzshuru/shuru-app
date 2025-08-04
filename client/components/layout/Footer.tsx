@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { FooterData } from '@/lib/types';
 import { getStrapiURL } from '@/lib/utils';
+import { getAllCategories } from '@/lib/strapi-client';
 import CategoriesGrid from './CategoriesGrid';
 
 interface FooterProps {
@@ -14,6 +15,9 @@ export default function Footer({ footerData }: FooterProps) {
   // Prepare logo URLs
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [mobileLogoUrl, setMobileLogoUrl] = useState<string | null>(null);
+  const [hasCategories, setHasCategories] = useState<boolean>(false);
+  const [categoriesLoading, setCategoriesLoading] = useState<boolean>(true);
+  const [categoriesData, setCategoriesData] = useState<any[]>([]);
 
   useEffect(() => {
     if (footerData.logo.logoImage?.url) {
@@ -23,6 +27,35 @@ export default function Footer({ footerData }: FooterProps) {
       setMobileLogoUrl(getStrapiURL() + footerData.logo.mobileImage.url);
     }
   }, [footerData.logo]);
+
+  // Check if categories exist and store the data
+  useEffect(() => {
+    const checkCategories = async () => {
+      try {
+        const response = await getAllCategories();
+        if (response?.data && Array.isArray(response.data)) {
+          setCategoriesData(response.data);
+          // Check if there are root categories with valid order
+          const rootCategories = response.data.filter((cat: any) => !cat.parent_category);
+          const orderedCategories = rootCategories.filter((cat: any) =>
+            cat.order !== null && cat.order !== undefined
+          );
+          setHasCategories(orderedCategories.length > 0);
+        } else {
+          setCategoriesData([]);
+          setHasCategories(false);
+        }
+      } catch (error) {
+        console.error('Error checking categories:', error);
+        setCategoriesData([]);
+        setHasCategories(false);
+      } finally {
+        setCategoriesLoading(false);
+      }
+    };
+
+    checkCategories();
+  }, []);
 
   // Sort social links and bottom links by order
   const sortedSocialLinks = footerData?.socialLinks ? [...footerData.socialLinks].sort((a, b) => a.order - b.order) : [];
@@ -37,10 +70,12 @@ export default function Footer({ footerData }: FooterProps) {
   return (
     <footer className="footer-container mt-8 grid gap-[40px] lg:mt-12">
 
-      {/* Categories Grid Section */}
-      <div className="categories-section bg-gray-50 py-8 md:py-12">
-        <CategoriesGrid />
-      </div>
+      {/* Categories Grid Section - Only render if categories exist */}
+      {!categoriesLoading && hasCategories && (
+        <div className="categories-section bg-gray-50 py-8 md:py-12">
+          <CategoriesGrid categoriesData={categoriesData} />
+        </div>
+      )}
 
       {/* Bottom Section with Logo Background */}
       <div

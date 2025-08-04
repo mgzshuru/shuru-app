@@ -4,13 +4,13 @@
 
 import { resendConfirmEmailAction } from "@/app/actions/auth";
 import { FormState } from "@/lib/types";
-
 import { useSearchParams } from "next/navigation";
 import { useActionState, useEffect } from "react";
-
 import { toast } from "react-toastify";
+import { MailCheck, Mail, AlertCircle, CheckCircle } from "lucide-react";
+import Link from "next/link";
 
-export default function PleaseConfirmEmail() {
+export default function ConfirmEmail() {
   // create initial state
   const initialState: FormState = {
     errors: {},
@@ -36,38 +36,92 @@ export default function PleaseConfirmEmail() {
   }, [state.success]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100 px-4">
-      <div className="w-full max-w-md p-6 space-y-6 bg-white rounded-lg shadow-md text-center">
-        <h2 className="text-2xl font-semibold">Confirm Your Email</h2>
-        <p className="text-red-500">{!state.success && state.message}</p>
-        <p className="text-gray-700 text-sm">
-          We’ve sent a confirmation link to your email address. Please check
-          your inbox and click the link to verify your account before logging
-          in.
-        </p>
+    <div className="min-h-screen bg-white flex items-center justify-center p-4" dir="rtl">
+      <div className="w-full max-w-md">
+        <div className="bg-white border border-gray-300 p-8 md:p-10">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-3xl md:text-4xl font-black text-black mb-3 uppercase tracking-tight">
+              تأكيد البريد الإلكتروني
+            </h1>
+            <p className="text-gray-600 text-sm md:text-base">
+              يرجى فحص بريدك الإلكتروني وإتباع الرابط لتأكيد حسابك
+            </p>
+          </div>
 
-        <p className="text-gray-500 text-sm">
-          Didn’t receive the email? Check your spam folder or try resending it
-          below.
-        </p>
+          {/* Success Message */}
+          {state.success && state.message && (
+            <div className="mb-6 p-4 bg-green-50 border border-green-300 flex items-start gap-3">
+              <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+              <span className="text-green-700 text-sm leading-relaxed">{state.message}</span>
+            </div>
+          )}
 
-        {/* Resend Email Button */}
-        <form action={formAction}>
-          <input
-            type="email"
-            name="email"
-            defaultValue={userEmail}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            disabled={isPending}
-            type="submit"
-            className="w-full my-4 py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
-          >
-            Resend Confirmation Email
-          </button>
-          {/* <input type="hidden" name="email" value={userEmail as string} /> */}
-        </form>
+          {/* Error Message */}
+          {!state.success && state.message && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-300 flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+              <span className="text-red-700 text-sm leading-relaxed">{state.message}</span>
+            </div>
+          )}
+          {/* Email Confirmation Instructions */}
+          <div className="text-center space-y-6">
+            <div className="p-6 bg-blue-50 border border-blue-300">
+              <MailCheck className="w-12 h-12 text-blue-600 mx-auto mb-4" />
+              <p className="text-blue-800 text-sm leading-relaxed">
+                لقد أرسلنا رابط تأكيد إلى عنوان بريدك الإلكتروني. يرجى فحص بريدك الوارد والنقر على الرابط لتأكيد حسابك قبل تسجيل الدخول.
+              </p>
+            </div>
+
+            <p className="text-gray-600 text-sm">
+              لم تستلم البريد الإلكتروني؟ تحقق من مجلد الرسائل غير المرغوب فيها أو حاول إعادة الإرسال أدناه.
+            </p>
+
+            {/* Resend Email Form */}
+            <form action={formAction} className="space-y-4">
+              <div>
+                <div className="relative">
+                  <Mail className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    id="email"
+                    type="email"
+                    name="email"
+                    defaultValue={userEmail}
+                    disabled={isPending}
+                    className={`w-full pr-10 pl-4 py-3 border transition-all duration-200 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed border-gray-300 focus:border-black`}
+                    placeholder="البريد الإلكتروني"
+                    autoComplete="email"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isPending}
+                className="w-full bg-black hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-bold py-3 px-6 text-base transition-all duration-200 uppercase tracking-wide"
+              >
+                {isPending ? (
+                  <div className="flex items-center justify-center">
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent animate-spin ml-2"></div>
+                    جاري الإرسال...
+                  </div>
+                ) : (
+                  'إعادة إرسال رسالة التأكيد'
+                )}
+              </button>
+            </form>
+          </div>
+
+          {/* Back to Login Link */}
+          <div className="mt-8 pt-6 border-t border-gray-200 text-center">
+            <Link
+              href="/auth/login"
+              className="text-sm text-gray-600 hover:text-black transition-colors"
+            >
+              العودة إلى تسجيل الدخول
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );

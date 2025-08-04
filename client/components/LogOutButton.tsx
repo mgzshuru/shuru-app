@@ -4,16 +4,20 @@
 
 import React from "react";
 import { logoutAction } from "@/app/actions/auth";
+import { Button } from "@/components/ui/button";
+import { LogOut } from "lucide-react";
 
-export default function LogOut() {
+export default function LogOutButton() {
   return (
-    <button
+    <Button
       onClick={() => {
         logoutAction();
       }}
-      className="cursor-pointer w-full sm:w-auto px-6 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition"
+      variant="destructive"
+      className="w-full sm:w-auto flex items-center gap-2"
     >
-      Sign Out
-    </button>
+      <LogOut className="h-4 w-4" />
+      تسجيل الخروج
+    </Button>
   );
 }

@@ -10,7 +10,6 @@ import { HeaderData } from '@/lib/types';
 import SearchOverlay from './SearchOverlay';
 import MobileMenu from './MobileMenu';
 import Link from 'next/link';
-import { useAuth } from '@/hooks/use-auth';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { logoutAction } from '@/app/actions/auth';
+import { useAuth } from '@/hooks/use-auth';
 
 interface HeaderProps {
   headerData: HeaderData;
@@ -72,22 +72,34 @@ export default function Header({ headerData }: HeaderProps) {
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 flex flex-col bg-black/90 px-5 shadow-md transition-all duration-300"
+      className="fixed top-0 left-0 right-0 flex flex-col bg-black/90 px-3 lg:px-5 shadow-md transition-all duration-300"
       style={{ zIndex: 1000 }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Top Navigation Bar */}
-      <div className="grid min-h-[44px] grid-cols-3 items-center justify-between overflow-hidden">
+      <div className="grid min-h-[40px] sm:min-h-[44px] lg:min-h-[50px] grid-cols-3 items-center justify-between overflow-hidden">
         {/* Left Section */}
-        <div className="grid-column-1 flex justify-start items-center gap-6 text-white rounded-none">
+        <div className="grid-column-1 flex justify-start items-center gap-1 sm:gap-2 lg:gap-6 text-white rounded-none">
           <Button
             aria-label="Hamburger menu button"
             variant="ghost"
             size="icon"
+            className="h-8 w-8 lg:h-10 lg:w-10"
             onClick={() => setIsMenuOpen(true)}
           >
-            <Menu className="h-5 w-5" />
+            <Menu className="h-4 w-4 lg:h-5 lg:w-5" />
+          </Button>
+
+          {/* Mobile Search Icon - positioned next to hamburger menu */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="lg:hidden text-white h-8 w-8"
+            onClick={() => setIsSearchOpen(!isSearchOpen)}
+            aria-label="Search button"
+          >
+            <Search className="h-4 w-4" />
           </Button>
 
           {!loading && (
@@ -98,14 +110,15 @@ export default function Header({ headerData }: HeaderProps) {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="max-lg:hidden text-white flex items-center gap-2 hover:bg-white/10"
+                      className="text-white flex items-center gap-1 lg:gap-2 hover:bg-white/10 h-8 lg:h-10 px-2 lg:px-3"
                     >
                       <User className="h-4 w-4" />
-                      <span className="hidden md:inline">{user.username}</span>
-                      <ChevronDown className="h-4 w-4" />
+                      {/* Only show username on larger screens */}
+                      <span className="hidden xl:inline text-xs lg:text-sm">{user.username}</span>
+                      <ChevronDown className="h-3 w-3 lg:h-4 lg:w-4 hidden lg:block" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="w-56">
+                  <DropdownMenuContent align="start" className="w-56 z-[1100]">
                     <DropdownMenuItem asChild>
                       <Link href="/profile" className="flex items-center gap-2 w-full">
                         <User className="h-4 w-4" />
@@ -132,10 +145,12 @@ export default function Header({ headerData }: HeaderProps) {
                 <Button
                   variant="link"
                   size="sm"
-                  className="max-lg:hidden text-white"
+                  className="text-white h-8 lg:h-10 px-2 lg:px-3"
                   onClick={() => router.push('/auth/login')}
                 >
-                  {'تسجيل الدخول'}
+                  {/* Show full text on larger screens, just icon on mobile */}
+                  <span className="hidden lg:inline text-xs lg:text-sm">{'تسجيل الدخول'}</span>
+                  <User className="h-4 w-4 lg:hidden" />
                 </Button>
               )}
             </>
@@ -151,46 +166,48 @@ export default function Header({ headerData }: HeaderProps) {
                 alt={headerData.logo.logoImage.alternativeText || headerData.logo.alt}
                 width={200}
                 height={32}
-                className="py-2 max-lg:w-[150px] h-[60px]"
+                className="py-2 w-[120px] sm:w-[150px] lg:w-[200px] h-[50px] lg:h-[60px]"
               />
             </StrapiLink>
           </div>
         </div>
 
         {/* Right Section */}
-        <div className="grid-column-3 flex justify-end items-center gap-6">
-          <Link href="/subscribe" >
+        <div className="grid-column-3 flex justify-end items-stretch gap-1 sm:gap-2 lg:gap-6 h-full">
+          <Link href="/subscribe" className="flex items-stretch">
             <Button
               variant="default"
-              size="lg"
-              className="text-black/90 rounded-none"
+              size="sm"
+              className="text-black/90 rounded-none text-xs sm:text-sm lg:text-base px-2 sm:px-3 lg:px-6 h-full min-h-[40px] sm:min-h-[44px] lg:min-h-[50px] flex items-center"
             >
               {'اشترك الآن'}
             </Button>
           </Link>
+
+          {/* Desktop Search Icon */}
           <Button
             variant="ghost"
             size="icon"
-            className="mastheadSearch max-lg:absolute max-lg:left-14 max-lg:top-3 text-white"
+            className="hidden lg:flex text-white h-8 w-8 lg:h-10 lg:w-10"
             onClick={() => setIsSearchOpen(!isSearchOpen)}
             aria-label="Search button"
           >
-            <Search className="h-5 w-5" />
+            <Search className="h-4 w-4 lg:h-5 lg:w-5" />
           </Button>
         </div>
       </div>
 
       {/* Horizontal Categories */}
       <div
-        className={`flex flex-row items-center justify-center gap-4 uppercase text-white max-lg:hidden overflow-hidden transition-all duration-300 ${
-          isScrolled && !isHovered ? 'h-0 opacity-0' : 'h-[23px] opacity-100'
+        className={`flex flex-row items-center justify-center gap-2 sm:gap-4 uppercase text-white overflow-hidden transition-all duration-300 ${
+          isScrolled && !isHovered ? 'h-0 opacity-0' : 'h-[20px] sm:h-[23px] opacity-100'
         }`}
       >
-        <ul className="flex flex-row justify-center gap-4 text-sm font-normal leading-4 tracking-[1.4px]">
+        <ul className="flex flex-row justify-center gap-2 sm:gap-4 text-xs sm:text-sm font-normal leading-4 tracking-[1px] sm:tracking-[1.4px]">
           {headerData.navigation.primaryMenuItems && headerData.navigation.primaryMenuItems.map((item) => (
             <li
               key={item.order}
-              className="border-b-[6px] border-transparent transition-colors duration-500 hover:border-orange-500"
+              className="border-b-[4px] sm:border-b-[6px] border-transparent transition-colors duration-500 hover:border-orange-500"
             >
               <StrapiLink
                 href={item.url}

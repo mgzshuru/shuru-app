@@ -1,4 +1,4 @@
-// Path: src/app/actions/auth.ts
+// Path: app/actions/auth.ts
 
 "use server";
 

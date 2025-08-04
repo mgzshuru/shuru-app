@@ -178,4 +178,37 @@
   .scrollbar-track-gray-100::-webkit-scrollbar-track {
     background: #f3f4f6;
   }
+
+  /* Hide scrollbars on mobile devices */
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Global mobile scrollbar hiding */
+  @media (max-width: 768px) {
+    html, body {
+      scrollbar-width: none !important;
+      -ms-overflow-style: none !important;
+    }
+
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar {
+      display: none !important;
+    }
+
+    /* Hide scrollbars for all scrollable elements on mobile */
+    * {
+      scrollbar-width: none !important;
+      -ms-overflow-style: none !important;
+    }
+
+    *::-webkit-scrollbar {
+      display: none !important;
+    }
+  }
 }

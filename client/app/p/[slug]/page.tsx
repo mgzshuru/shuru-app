@@ -7,8 +7,7 @@ import { ContentRenderer } from '@/components/blocks/content/ContentRenderer';
 import { getPageBySlug, getAllPages, getGlobalCached } from '@/lib/strapi-optimized';
 import { getStrapiMedia } from '@/components/custom/strapi-image';
 import { SocialShare } from '@/components/custom/social-share';
-import { TableOfContents } from '@/components/custom/table-of-contents';
-import { formatDate } from '@/lib/utils';
+import { formatDate, safeBuildTimeApiCall } from '@/lib/utils';
 import { Block, Page } from '@/lib/types';
 import styles from '@/components/article-content.module.css';
 // Use the Page type from types.ts with additional fields
@@ -30,7 +29,13 @@ interface PageProps {
 // Fetch page data from Strapi using the service
 async function getPageData(slug: string): Promise<PageData | null> {
   try {
-    const page = await getPageBySlug(slug);
+    // Add timeout for runtime page data fetching as well
+    const page = await safeBuildTimeApiCall(
+      () => getPageBySlug(slug),
+      null,
+      15000 // 15 second timeout for runtime
+    );
+
     if (!page) return null;
 
     // Map the Strapi response to PageData
@@ -162,16 +167,21 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 // Generate static params for static generation (optional)
 export async function generateStaticParams() {
-  try {
-    const pages = await getAllPages();
+  const fallbackResult: { slug: string }[] = [];
 
-    return pages.data.map((page: any) => ({
+  const result = await safeBuildTimeApiCall(
+    () => getAllPages(),
+    { data: [], meta: { pagination: { page: 1, pageSize: 0, pageCount: 0, total: 0 } } } as any,
+    8000 // 8 second timeout
+  );
+
+  if (result?.data && Array.isArray(result.data)) {
+    return result.data.map((page: any) => ({
       slug: page.slug,
     }));
-  } catch (error) {
-    console.error('Error generating static params:', error);
-    return [];
   }
+
+  return fallbackResult;
 }
 
 export default async function PageComponent({ params }: PageProps) {
@@ -186,67 +196,43 @@ export default async function PageComponent({ params }: PageProps) {
     <div className="min-h-screen bg-white" dir="rtl">
       {/* Breadcrumb Navigation */}
       <nav className="bg-white border-b border-gray-200 top-0 z-40">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center text-sm" dir="rtl">
             <Link href="/" className="text-gray-500 hover:text-gray-700 transition-colors font-medium">
               الرئيسية
             </Link>
-            <svg className="w-4 h-4 mx-3 text-gray-300 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 mx-2 sm:mx-3 text-gray-300 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
-            <span className="text-gray-900 font-medium">{page.title}</span>
+            <span className="text-gray-900 font-medium truncate">{page.title}</span>
           </div>
         </div>
       </nav>
 
       <div className="max-w-7xl mx-auto">
         {/* Page Header */}
-        <header className="px-6 pt-16 pb-12">
+        <header className="px-4 sm:px-6 pt-8 sm:pt-16 pb-8 sm:pb-12 border-b border-gray-200">
           <div className="max-w-4xl mx-auto" dir="rtl">
             {/* Page Title */}
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 leading-[1] mb-8 tracking-normal text-right" dir="rtl" style={{ lineHeight: '1.8', wordSpacing: '0.1em' }}>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-gray-900 leading-tight mb-6 sm:mb-8 tracking-normal text-right" dir="rtl" style={{ lineHeight: '1.2', wordSpacing: '0.1em' }}>
               {page.title}
             </h1>
 
             {/* Page Description */}
             {page.description && (
-              <p className="text-xl md:text-2xl text-gray-600 leading-relaxed mb-12 max-w-4xl font-light text-right">
+              <p className="text-lg sm:text-xl md:text-2xl text-gray-600 leading-relaxed mb-8 sm:mb-12 max-w-4xl font-light text-right">
                 {page.description}
               </p>
             )}
 
-            {/* Page Meta */}
-            <div className="flex flex-wrap items-center gap-8 pb-8 border-b border-gray-200 justify-end" dir="rtl">
-              {/* Publication Date */}
-              <div className="flex items-center gap-2 text-gray-500">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <time dateTime={page.publishedAt} className="font-medium">
-                  {page.publishedAt && formatDate(page.publishedAt)}
-                </time>
-              </div>
-
-              {/* Updated Date */}
-              {page.updatedAt !== page.publishedAt && (
-                <div className="flex items-center gap-2 text-gray-500">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                  </svg>
-                  <span className="font-medium">
-                    آخر تحديث: {formatDate(page.updatedAt)}
-                  </span>
-                </div>
-              )}
-            </div>
           </div>
         </header>
 
         {/* Featured Image */}
         {page.featured_image && (
-          <div className="px-6 mb-16">
+          <div className="px-4 sm:px-6 mb-8 sm:mb-16">
             <div className="max-w-6xl mx-auto">
-              <div className="relative aspect-[16/9] bg-gray-100 overflow-hidden">
+              <div className="relative aspect-[16/9] bg-gray-100 overflow-hidden rounded-lg">
                 <Image
                   src={getStrapiMedia(page.featured_image.url) || page.featured_image.url}
                   alt={page.featured_image.alternativeText || page.title}
@@ -257,7 +243,7 @@ export default async function PageComponent({ params }: PageProps) {
                 />
               </div>
               {page.featured_image.alternativeText && (
-                <p className="text-sm text-gray-500 mt-3 text-center italic">
+                <p className="text-sm text-gray-500 mt-3 text-center italic px-2">
                   {page.featured_image.alternativeText}
                 </p>
               )}
@@ -265,55 +251,51 @@ export default async function PageComponent({ params }: PageProps) {
           </div>
         )}
 
-        {/* Main Content Grid */}
-        <div className="px-6">
-          <div className="max-w-6xl mx-auto grid lg:grid-cols-12 gap-16">
+        {/* Main Content */}
+        <div className="px-4 sm:px-6">
+          <div className="max-w-4xl mx-auto">
             {/* Page Content */}
-            <main className="lg:col-span-8" dir="rtl">
-              {/* Page Content */}
+            <main dir="rtl">
               <div id="page-content" className={styles.articleContent}>
                 {page.blocks && page.blocks.length > 0 ? (
                   <ContentRenderer blocks={page.blocks} />
                 ) : (
-                  <div className="text-center py-24 bg-gray-50">
-                    <div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
-                      <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="text-center py-16 sm:py-24 bg-gray-50 rounded-lg">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                      <svg className="w-8 h-8 sm:w-10 sm:h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
                     </div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">لا يوجد محتوى متاح</h3>
-                    <p className="text-gray-500">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">لا يوجد محتوى متاح</h3>
+                    <p className="text-gray-500 text-sm sm:text-base px-4">
                       المحتوى غير متوفر لهذه الصفحة في الوقت الحالي.
                     </p>
                   </div>
                 )}
               </div>
-            </main>
 
-            {/* Enhanced Sidebar */}
-            <aside className="lg:col-span-4 space-y-8">
-              {/* Page Info Card */}
-              <div className="bg-white p-8 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-2 h-16 bg-gray-600"></div>
-                  <h3 className="text-xl font-bold text-gray-900">معلومات الصفحة</h3>
+              {/* Page Info Card - Mobile Optimized */}
+              <div className="mt-12 sm:mt-16 bg-white p-6 sm:p-8 border border-gray-200 shadow-sm hover:shadow-md transition-shadow rounded-lg">
+                <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+                  <div className="w-2 h-12 sm:h-16 bg-gray-600"></div>
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900">معلومات الصفحة</h3>
                 </div>
-                <div className="space-y-4" dir="rtl">
-                  <div className="flex items-center justify-between text-sm">
+                <div className="space-y-3 sm:space-y-4" dir="rtl">
+                  <div className="flex items-center justify-between text-sm sm:text-base">
                     <span className="text-gray-500">تاريخ النشر:</span>
                     <span className="font-medium text-gray-900">
                       {page.publishedAt && formatDate(page.publishedAt)}
                     </span>
                   </div>
                   {page.updatedAt !== page.publishedAt && (
-                    <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center justify-between text-sm sm:text-base">
                       <span className="text-gray-500">آخر تحديث:</span>
                       <span className="font-medium text-gray-900">
                         {formatDate(page.updatedAt)}
                       </span>
                     </div>
                   )}
-                  <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center justify-between text-sm sm:text-base">
                     <span className="text-gray-500">وقت القراءة:</span>
                     <span className="font-medium text-gray-900">
                       {page.blocks ? Math.max(1, Math.ceil(page.blocks.reduce((acc, block) => {
@@ -326,12 +308,7 @@ export default async function PageComponent({ params }: PageProps) {
                   </div>
                 </div>
               </div>
-
-              {/* Sticky Table of Contents */}
-              <div className="sticky top-24">
-                <TableOfContents articleContentId="page-content" />
-              </div>
-            </aside>
+            </main>
           </div>
         </div>
       </div>

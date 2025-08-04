@@ -7,10 +7,10 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { getMagazineIssuesOptimized } from '@/lib/strapi-optimized';
 import { getStrapiMedia } from '@/components/custom/strapi-image';
-import Link from 'next/dist/client/link';
+import Link from 'next/link';
 import { useAuth } from '@/hooks/use-auth';
 import { logoutAction } from '@/app/actions/auth';
-import { User, Settings, LogOut } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -65,13 +65,13 @@ export default function MobileMenu({ isOpen, onClose, headerData }: MobileMenuPr
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent side="right" className="space-y-1 p-2 z-[1100]">
+      <SheetContent side="right" className="space-y-1 p-3 z-[1100] w-[280px] sm:w-[320px]">
         <SheetTitle className="sr-only">
           Menu
         </SheetTitle>
 
         {/* Menu items */}
-        <div className="border-b border-gray-200 pb-4 mb-4 pt-8">
+        <div className="border-b border-gray-200 pb-3 mb-3 pt-4">
           {headerData.navigation.primaryMenuItems && headerData.navigation.primaryMenuItems.map((item) => (
             <StrapiLink
               key={item.order}
@@ -83,7 +83,7 @@ export default function MobileMenu({ isOpen, onClose, headerData }: MobileMenuPr
               <Button
                 variant="ghost"
                 size="default"
-                className="justify-start px-4 py-3 text-base font-medium text-gray-900 hover:bg-gray-100 text-right w-full"
+                className="justify-start px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 text-right w-full"
               >
                 {item.label}
               </Button>
@@ -92,53 +92,16 @@ export default function MobileMenu({ isOpen, onClose, headerData }: MobileMenuPr
         </div>
 
         {/* Authentication buttons in sheet */}
-        <div className="px-4 pb-2 mb-20">
+        <div className="px-2 pb-2 mb-4">
           {!loading && (
             <>
               {isAuthenticated && user ? (
                 <div className="space-y-2">
-                  {/* User Info */}
-                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg mb-4">
-                    <User className="h-8 w-8 text-gray-600" />
-                    <div>
-                      <p className="font-medium text-gray-900">{user.username}</p>
-                      <p className="text-sm text-gray-600">{user.email}</p>
-                    </div>
-                  </div>
-
-                  {/* Profile Button */}
-                  <Button
-                    variant="outline"
-                    size="default"
-                    className="justify-start mb-2 text-gray-900 border-gray-300 w-full"
-                    onClick={() => {
-                      router.push('/profile');
-                      onClose();
-                    }}
-                  >
-                    <User className="h-4 w-4 mr-2" />
-                    {'الملف الشخصي'}
-                  </Button>
-
-                  {/* Settings Button */}
-                  <Button
-                    variant="outline"
-                    size="default"
-                    className="justify-start mb-2 text-gray-900 border-gray-300 w-full"
-                    onClick={() => {
-                      router.push('/auth/change-password');
-                      onClose();
-                    }}
-                  >
-                    <Settings className="h-4 w-4 mr-2" />
-                    {'الإعدادات'}
-                  </Button>
-
                   {/* Logout Button */}
                   <Button
                     variant="outline"
                     size="default"
-                    className="justify-start mb-4 text-red-600 border-red-300 w-full hover:bg-red-50"
+                    className="justify-start mb-3 text-red-600 border-red-300 w-full hover:bg-red-50 text-sm py-2"
                     onClick={handleLogout}
                   >
                     <LogOut className="h-4 w-4 mr-2" />
@@ -149,7 +112,7 @@ export default function MobileMenu({ isOpen, onClose, headerData }: MobileMenuPr
                 <Button
                   variant="outline"
                   size="default"
-                  className="justify-center mb-4 text-gray-900 border-gray-300 w-full"
+                  className="justify-center mb-3 text-gray-900 border-gray-300 w-full text-sm py-2"
                   onClick={handleLoginClick}
                 >
                   {'تسجيل الدخول'}
@@ -160,8 +123,8 @@ export default function MobileMenu({ isOpen, onClose, headerData }: MobileMenuPr
 
           <Button
             variant="default"
-            size="lg"
-            className="justify-center text-black w-full bg-primary hover:bg-primary/90"
+            size="default"
+            className="justify-center text-black w-full bg-primary hover:bg-primary/90 text-sm py-2"
             onClick={handleSubscribeClick}
           >
             {'اشترك الآن'}
@@ -170,8 +133,8 @@ export default function MobileMenu({ isOpen, onClose, headerData }: MobileMenuPr
 
         {/* Current Issue Section */}
         {latestIssue && (
-          <div className="px-4 pb-4">
-            <h3 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wider font-['IBM_Plex_Sans_Arabic']">
+          <div className="px-2 pb-4">
+            <h3 className="text-xs font-bold text-gray-900 mb-2 uppercase tracking-wider">
               العدد الحالي
             </h3>
             <StrapiLink
@@ -179,7 +142,7 @@ export default function MobileMenu({ isOpen, onClose, headerData }: MobileMenuPr
               className="block"
               onClick={handleLinkClick}
             >
-              <div className="w-56 h-72 relative bg-gray-100 shadow-lg mx-auto hover:shadow-xl transition-shadow">
+              <div className="w-40 h-52 relative bg-gray-100 shadow-lg mx-auto hover:shadow-xl transition-shadow rounded-none overflow-hidden">
                 <Image
                   src={getStrapiMedia(latestIssue.cover_image?.url) || '/placeholder-magazine.jpg'}
                   alt={latestIssue.cover_image?.alternativeText || latestIssue.title}
