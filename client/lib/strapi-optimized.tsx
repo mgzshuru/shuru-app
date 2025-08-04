@@ -1,5 +1,6 @@
 import { strapi } from "@strapi/client";
 import { getStrapiURL } from "./utils";
+import { GlobalData } from "./types";
 
 const PATH = "/api";
 const STRAPI_BASE_URL = getStrapiURL();
@@ -196,11 +197,11 @@ export async function getRelatedArticlesOptimized(articleId: string, categorySlu
 // CACHED GLOBAL DATA
 // =====================
 
-let globalDataCache: any = null;
+let globalDataCache: GlobalData | null = null;
 let globalDataCacheTime = 0;
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-export async function getGlobalCached() {
+export async function getGlobalCached(): Promise<GlobalData | null> {
   const now = Date.now();
 
   // Return cached data if still valid
@@ -234,7 +235,7 @@ export async function getGlobalCached() {
           navigation: {
             populate: {
               primaryMenuItems: {
-                fields: ["label", "url", "openInNewTab", "isActive", "order"]
+                fields: ["label", "url", "openInNewTab", "order", "onHeader", "onSideBar"]
               }
             }
           }
@@ -275,10 +276,88 @@ export async function getGlobalCached() {
   });
 
   // Update cache
-  globalDataCache = response?.data || null;
+  globalDataCache = (response?.data as unknown as GlobalData) || null;
   globalDataCacheTime = now;
 
   return globalDataCache;
+}
+
+// Non-cached version for when fresh data is needed
+export async function getGlobal(): Promise<GlobalData | null> {
+  try {
+    const response = await client.single("global").find({
+      populate: {
+        favicon: {
+          fields: ["url", "alternativeText"]
+        },
+        defaultSeo: {
+          fields: ["meta_title", "meta_description", "meta_keywords"],
+          populate: {
+            og_image: {
+              fields: ["url", "alternativeText", "width", "height"]
+            }
+          }
+        },
+        header: {
+          populate: {
+            logo: {
+              populate: {
+                logoImage: {
+                  fields: ["url", "alternativeText", "width", "height"]
+                }
+              }
+            },
+            navigation: {
+              populate: {
+                primaryMenuItems: {
+                  fields: ["label", "url", "openInNewTab", "order", "onHeader", "onSideBar"]
+                }
+              }
+            },
+          }
+        },
+        footer: {
+          populate: {
+            logo: {
+              populate: {
+                logoImage: {
+                  fields: ["url", "alternativeText", "width", "height"]
+                },
+                mobileImage: {
+                  fields: ["url", "alternativeText", "width", "height"]
+                }
+              }
+            },
+            socialLinks: {
+              populate: {
+                link: {
+                  fields: ["text", "href", "openInNewTab"]
+                }
+              }
+            },
+            bottomLinks: {
+              populate: {
+                link: {
+                  fields: ["text", "href", "openInNewTab"]
+                }
+              }
+            },
+            copyright: {
+              fields: ["companyName", "year", "allRightsReserved", "customText", "showCurrentYear"]
+            }
+          }
+        }
+      }
+    });
+
+    if (response && response.data) {
+      return response.data as unknown as GlobalData;
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching global data:", error);
+    return null;
+  }
 }
 
 // =====================

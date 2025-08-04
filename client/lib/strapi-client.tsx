@@ -675,7 +675,7 @@ export async function getGlobal(): Promise<GlobalData | null> {
             navigation: {
               populate: {
                 primaryMenuItems: {
-                  fields: ["label", "url", "openInNewTab", "isActive", "order"]
+                  fields: ["label", "url", "openInNewTab", "order", "onHeader", "onSideBar"]
                 }
               }
             },
