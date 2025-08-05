@@ -50,131 +50,137 @@ export default async function Profile() {
       });
 
   return (
-    <div className="min-h-screen bg-gray-50" dir="rtl">
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="min-h-screen bg-white" dir="rtl">
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">الملف الشخصي</h1>
-          <p className="text-gray-600">إدارة معلوماتك الشخصية وإعداداتك</p>
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">الملف الشخصي</h1>
+          <p className="text-gray-600 max-w-2xl mx-auto">إدارة معلوماتك الشخصية وإعداداتك</p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-8 lg:grid-cols-3">
           {/* Profile Overview Card */}
-          <div className="md:col-span-1">
-            <Card>
-              <CardHeader className="text-center">
-                <div className="flex justify-center mb-4">
-                  <Avatar className="h-24 w-24">
+          <div className="lg:col-span-1">
+            <Card className="bg-white border-gray-200 shadow-sm">
+              <CardHeader className="text-center pb-6">
+                <div className="flex justify-center mb-6">
+                  <Avatar className="h-28 w-28 border-4 border-gray-100">
                     <AvatarImage src={user?.avatar || ""} alt={user?.username || "مستخدم"} />
-                    <AvatarFallback className="text-2xl font-bold bg-primary text-primary-foreground">
+                    <AvatarFallback className="text-2xl font-bold bg-gradient-to-br from-blue-500 to-purple-600 text-white">
                       {userInitials}
                     </AvatarFallback>
                   </Avatar>
                 </div>
-                <CardTitle className="text-xl font-bold text-gray-900">
+                <CardTitle className="text-2xl font-bold text-gray-900 truncate max-w-full mb-3" title={user?.username || "مستخدم"}>
                   {user?.username || "مستخدم"}
                 </CardTitle>
-                <div className="flex justify-center mt-2">
-                  <Badge variant="secondary" className="flex items-center gap-1">
-                    <User className="h-3 w-3" />
+                <div className="flex justify-center">
+                  <Badge variant="secondary" className="flex items-center gap-2 px-3 py-1">
+                    <User className="h-4 w-4" />
                     عضو نشط
                   </Badge>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center gap-3 text-sm text-gray-600">
-                  <Mail className="h-4 w-4 text-gray-400" />
-                  <span className="truncate">{user?.email || "البريد الإلكتروني غير متوفر"}</span>
-                </div>
-                <div className="flex items-center gap-3 text-sm text-gray-600">
-                  <Calendar className="h-4 w-4 text-gray-400" />
-                  <span>انضم في {joinDate}</span>
-                </div>
-                <div className="flex items-center gap-3 text-sm text-gray-600">
-                  <Clock className="h-4 w-4 text-gray-400" />
-                  <span>آخر نشاط: اليوم</span>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 text-sm text-gray-600 p-3 bg-gray-50 rounded-lg">
+                    <Mail className="h-5 w-5 text-gray-400 flex-shrink-0" />
+                    <span className="truncate flex-1" title={user?.email || "البريد الإلكتروني غير متوفر"}>
+                      {user?.email || "البريد الإلكتروني غير متوفر"}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3 text-sm text-gray-600 p-3 bg-gray-50 rounded-lg">
+                    <Calendar className="h-5 w-5 text-gray-400 flex-shrink-0" />
+                    <span>انضم في {joinDate}</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-sm text-gray-600 p-3 bg-gray-50 rounded-lg">
+                    <Clock className="h-5 w-5 text-gray-400 flex-shrink-0" />
+                    <span>آخر نشاط: اليوم</span>
+                  </div>
                 </div>
               </CardContent>
             </Card>
           </div>
 
           {/* Main Content */}
-          <div className="md:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-8">
             {/* Quick Actions Card */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Settings className="h-5 w-5 text-primary" />
+            <Card className="bg-white border-gray-200 shadow-sm">
+              <CardHeader className="border-b border-gray-100">
+                <CardTitle className="flex items-center gap-3 text-xl">
+                  <div className="p-2 bg-blue-50 rounded-lg">
+                    <Settings className="h-6 w-6 text-blue-600" />
+                  </div>
                   إجراءات سريعة
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <Button asChild variant="outline" className="h-auto p-4 justify-start">
+              <CardContent className="pt-6">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <Button asChild variant="outline" className="h-auto p-6 justify-start border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all">
                     <Link href="/auth/change-password">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-blue-50 rounded-lg">
-                          <Shield className="h-5 w-5 text-blue-600" />
+                      <div className="flex items-center gap-4 text-right">
+                        <div className="p-3 bg-blue-100 rounded-xl flex-shrink-0">
+                          <Shield className="h-6 w-6 text-blue-600" />
                         </div>
-                        <div className="text-right">
-                          <div className="font-medium">تغيير كلمة المرور</div>
-                          <div className="text-sm text-gray-500">تحديث كلمة المرور الخاصة بك</div>
+                        <div>
+                          <div className="font-semibold text-gray-900">تغيير كلمة المرور</div>
+                          <div className="text-sm text-gray-600 mt-1">تحديث كلمة المرور الخاصة بك</div>
                         </div>
                       </div>
                     </Link>
                   </Button>
 
-                  <Button asChild variant="outline" className="h-auto p-4 justify-start">
+                  <Button asChild variant="outline" className="h-auto p-6 justify-start border-gray-200 hover:border-green-300 hover:bg-green-50 transition-all">
                     <Link href="/submit">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-green-50 rounded-lg">
-                          <Edit3 className="h-5 w-5 text-green-600" />
+                      <div className="flex items-center gap-4 text-right">
+                        <div className="p-3 bg-green-100 rounded-xl flex-shrink-0">
+                          <Edit3 className="h-6 w-6 text-green-600" />
                         </div>
-                        <div className="text-right">
-                          <div className="font-medium">اكتب معنا</div>
-                          <div className="text-sm text-gray-500">شارك مقالاً أو فكرة</div>
+                        <div>
+                          <div className="font-semibold text-gray-900">اكتب معنا</div>
+                          <div className="text-sm text-gray-600 mt-1">شارك مقالاً أو فكرة</div>
                         </div>
                       </div>
                     </Link>
                   </Button>
 
-                  <Button asChild variant="outline" className="h-auto p-4 justify-start">
+                  <Button asChild variant="outline" className="h-auto p-6 justify-start border-gray-200 hover:border-purple-300 hover:bg-purple-50 transition-all">
                     <Link href="/profile/saved-articles">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-blue-50 rounded-lg">
-                          <Bookmark className="h-5 w-5 text-blue-600" />
+                      <div className="flex items-center gap-4 text-right">
+                        <div className="p-3 bg-purple-100 rounded-xl flex-shrink-0">
+                          <Bookmark className="h-6 w-6 text-purple-600" />
                         </div>
-                        <div className="text-right">
-                          <div className="font-medium">المقالات المحفوظة</div>
-                          <div className="text-sm text-gray-500">المقالات التي قمت بحفظها</div>
+                        <div>
+                          <div className="font-semibold text-gray-900">المقالات المحفوظة</div>
+                          <div className="text-sm text-gray-600 mt-1">المقالات التي قمت بحفظها</div>
                         </div>
                       </div>
                     </Link>
                   </Button>
 
-                  <Button asChild variant="outline" className="h-auto p-4 justify-start">
+                  <Button asChild variant="outline" className="h-auto p-6 justify-start border-gray-200 hover:border-orange-300 hover:bg-orange-50 transition-all">
                     <Link href="/subscribe">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-purple-50 rounded-lg">
-                          <Star className="h-5 w-5 text-purple-600" />
+                      <div className="flex items-center gap-4 text-right">
+                        <div className="p-3 bg-orange-100 rounded-xl flex-shrink-0">
+                          <Star className="h-6 w-6 text-orange-600" />
                         </div>
-                        <div className="text-right">
-                          <div className="font-medium">اشترك الآن</div>
-                          <div className="text-sm text-gray-500">احصل على محتوى حصري</div>
+                        <div>
+                          <div className="font-semibold text-gray-900">اشترك الآن</div>
+                          <div className="text-sm text-gray-600 mt-1">احصل على محتوى حصري</div>
                         </div>
                       </div>
                     </Link>
                   </Button>
 
-                  <Button asChild variant="outline" className="h-auto p-4 justify-start">
+                  <Button asChild variant="outline" className="h-auto p-6 justify-start border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all sm:col-span-2">
                     <Link href="/magazine">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-orange-50 rounded-lg">
-                          <BookOpen className="h-5 w-5 text-orange-600" />
+                      <div className="flex items-center gap-4 text-right">
+                        <div className="p-3 bg-blue-100 rounded-xl flex-shrink-0">
+                          <BookOpen className="h-6 w-6 text-blue-600" />
                         </div>
-                        <div className="text-right">
-                          <div className="font-medium">المجلة</div>
-                          <div className="text-sm text-gray-500">تصفح الأعداد السابقة</div>
+                        <div>
+                          <div className="font-semibold text-gray-900">المجلة</div>
+                          <div className="text-sm text-gray-600 mt-1">تصفح الأعداد السابقة</div>
                         </div>
                       </div>
                     </Link>
@@ -184,46 +190,40 @@ export default async function Profile() {
             </Card>
 
             {/* Account Information Card */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <User className="h-5 w-5 text-primary" />
+            <Card className="bg-white border-gray-200 shadow-sm">
+              <CardHeader className="border-b border-gray-100">
+                <CardTitle className="flex items-center gap-3 text-xl">
+                  <div className="p-2 bg-gray-50 rounded-lg">
+                    <User className="h-6 w-6 text-gray-600" />
+                  </div>
                   معلومات الحساب
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid gap-4">
-                  <div className="flex justify-between items-center py-3 border-b border-gray-100">
-                    <div>
-                      <label className="text-sm font-medium text-gray-700">اسم المستخدم</label>
-                      <p className="text-gray-900">{user?.username || "غير محدد"}</p>
+              <CardContent className="pt-6 space-y-6">
+                <div className="space-y-6">
+                  <div className="py-4 border-b border-gray-100">
+                    <div className="min-w-0 flex-1">
+                      <label className="text-sm font-semibold text-gray-700 block mb-2">اسم المستخدم</label>
+                      <p className="text-gray-900 text-lg truncate" title={user?.username || "غير محدد"}>{user?.username || "غير محدد"}</p>
                     </div>
-                    <Button variant="ghost" size="sm">
-                      <Edit3 className="h-4 w-4" />
-                    </Button>
                   </div>
 
-                  <div className="flex justify-between items-center py-3 border-b border-gray-100">
-                    <div>
-                      <label className="text-sm font-medium text-gray-700">البريد الإلكتروني</label>
-                      <p className="text-gray-900">{user?.email || "غير محدد"}</p>
+                  <div className="py-4 border-b border-gray-100">
+                    <div className="min-w-0 flex-1">
+                      <label className="text-sm font-semibold text-gray-700 block mb-2">البريد الإلكتروني</label>
+                      <p className="text-gray-900 text-lg truncate" title={user?.email || "غير محدد"}>{user?.email || "غير محدد"}</p>
                     </div>
-                    <Button variant="ghost" size="sm">
-                      <Edit3 className="h-4 w-4" />
-                    </Button>
                   </div>
 
-                  <div className="flex justify-between items-center py-3">
-                    <div>
-                      <label className="text-sm font-medium text-gray-700">حالة الحساب</label>
-                      <div className="flex items-center gap-2 mt-1">
-                        <Badge variant="outline" className="text-green-600 border-green-600">
-                          نشط
-                        </Badge>
-                        <Badge variant="outline" className="text-blue-600 border-blue-600">
-                          مُتحقق
-                        </Badge>
-                      </div>
+                  <div className="py-4">
+                    <label className="text-sm font-semibold text-gray-700 block mb-3">حالة الحساب</label>
+                    <div className="flex items-center gap-3">
+                      <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50 px-3 py-1">
+                        ✓ نشط
+                      </Badge>
+                      <Badge variant="outline" className="text-blue-600 border-blue-200 bg-blue-50 px-3 py-1">
+                        ✓ مُتحقق
+                      </Badge>
                     </div>
                   </div>
                 </div>
@@ -232,13 +232,13 @@ export default async function Profile() {
 
 
             {/* Logout Section */}
-            <Card>
+            <Card className="bg-white border-gray-200 shadow-sm">
               <CardContent className="pt-6">
                 <Separator className="mb-6" />
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
                   <div>
-                    <h3 className="font-medium text-gray-900">تسجيل الخروج</h3>
-                    <p className="text-sm text-gray-600">إنهاء الجلسة الحالية والعودة إلى الصفحة الرئيسية</p>
+                    <h3 className="font-semibold text-gray-900 text-lg mb-2">تسجيل الخروج</h3>
+                    <p className="text-gray-600">إنهاء الجلسة الحالية والعودة إلى الصفحة الرئيسية</p>
                   </div>
                   <LogOutButton />
                 </div>
