@@ -9,6 +9,17 @@ const url = new URL(PATH, STRAPI_BASE_URL);
 const client = strapi({ baseURL: url.toString() });
 
 // =====================
+// HELPER FUNCTIONS
+// =====================
+
+// Helper function to get current date filter to exclude future content
+function getCurrentDateFilter() {
+  return {
+    publish_date: { $lte: new Date().toISOString() }
+  };
+}
+
+// =====================
 // OPTIMIZED POPULATION STRATEGIES
 // =====================
 
@@ -99,7 +110,9 @@ export async function getArticlesOptimized(options: {
 } = {}) {
   const { page = 1, pageSize = 12, categorySlug, featured, authorId } = options;
 
-  const filters: any = {};
+  const filters: any = {
+    ...getCurrentDateFilter()
+  };
 
   if (categorySlug) {
     filters.category = { slug: { $eq: categorySlug } };
@@ -126,7 +139,10 @@ export async function getArticlesOptimized(options: {
 // Get single article for detail page
 export async function getArticleForDetail(slug: string, status: "draft" | "published" = "published") {
   const query = {
-    filters: { slug: { $eq: slug } },
+    filters: {
+      slug: { $eq: slug },
+      ...getCurrentDateFilter()
+    },
     status: status,
     populate: ARTICLE_DETAIL_POPULATE
   };
@@ -141,7 +157,10 @@ export async function getArticleForDetail(slug: string, status: "draft" | "publi
 // Get article for SEO metadata only
 export async function getArticleForSEO(slug: string, status: "draft" | "published" = "published") {
   const query = {
-    filters: { slug: { $eq: slug } },
+    filters: {
+      slug: { $eq: slug },
+      ...getCurrentDateFilter()
+    },
     status: status,
     populate: ARTICLE_SEO_POPULATE
   };
@@ -181,8 +200,9 @@ export async function getRelatedArticlesOptimized(articleId: string, categorySlu
   const query = {
     filters: {
       $and: [
-        { id: { $ne: articleId } },
-        { category: { slug: { $eq: categorySlug } } }
+        { documentId: { $ne: articleId } },
+        { category: { slug: { $eq: categorySlug } } },
+        getCurrentDateFilter()
       ]
     },
     sort: ['publish_date:desc'],
@@ -368,7 +388,10 @@ export async function getGlobal(): Promise<GlobalData | null> {
 export async function getArticlesByIds(ids: string[]) {
   const query = {
     filters: {
-      id: { $in: ids }
+      $and: [
+        { id: { $in: ids } },
+        getCurrentDateFilter()
+      ]
     },
     populate: ARTICLE_LIST_POPULATE
   };
@@ -390,9 +413,14 @@ export async function searchOptimized(searchTerm: string, contentTypes: string[]
     promises.push(
       client.collection("articles").find({
         filters: {
-          $or: [
-            { title: { $containsi: searchTerm } },
-            { description: { $containsi: searchTerm } }
+          $and: [
+            {
+              $or: [
+                { title: { $containsi: searchTerm } },
+                { description: { $containsi: searchTerm } }
+              ]
+            },
+            getCurrentDateFilter()
           ]
         },
         sort: ['publish_date:desc'],
@@ -550,6 +578,7 @@ const MAGAZINE_DETAIL_POPULATE = {
     fields: ["name", "url"]
   },
   articles: {
+    filters: getCurrentDateFilter(),
     fields: ['title', 'slug', 'description', 'publish_date', 'is_featured'],
     populate: {
       cover_image: {
@@ -572,6 +601,7 @@ const MAGAZINE_DETAIL_POPULATE = {
 
 export async function getMagazineIssuesOptimized() {
   const query = {
+    filters: getCurrentDateFilter(),
     sort: ['issue_number:desc'],
     populate: MAGAZINE_LIST_POPULATE
   };
@@ -582,7 +612,10 @@ export async function getMagazineIssuesOptimized() {
 
 export async function getMagazineIssueBySlugOptimized(slug: string) {
   const query = {
-    filters: { slug: { $eq: slug } },
+    filters: {
+      slug: { $eq: slug },
+      ...getCurrentDateFilter()
+    },
     populate: MAGAZINE_DETAIL_POPULATE
   };
 
@@ -600,7 +633,10 @@ export async function getMagazineIssueBySlugOptimized(slug: string) {
 
 export async function getFeaturedMagazineIssuesOptimized(limit?: number) {
   const query = {
-    filters: { is_featured: { $eq: true } },
+    filters: {
+      is_featured: { $eq: true },
+      ...getCurrentDateFilter()
+    },
     sort: ['publish_date:desc'],
     ...(limit && { pagination: { limit } }),
     populate: MAGAZINE_LIST_POPULATE

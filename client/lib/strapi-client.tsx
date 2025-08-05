@@ -9,18 +9,35 @@ const url = new URL(PATH, STRAPI_BASE_URL);
 const client = strapi({ baseURL: url.toString() });
 
 // =====================
+// HELPER FUNCTIONS
+// =====================
+
+// Helper function to get current date filter to exclude future content
+function getCurrentDateFilter() {
+  return {
+    publish_date: { $lte: new Date().toISOString() }
+  };
+}
+
+// =====================
 // ARTICLE FUNCTIONS
 // =====================
 
 export async function getAllArticles() {
-  const articles = await client.collection("articles").find();
+  const articles = await client.collection("articles").find({
+    filters: getCurrentDateFilter(),
+    sort: ['publish_date:desc']
+  });
   return articles;
 }
 
 export async function getArticleBySlug(slug: string, status: "draft" | "published" = "published") {
   console.log(slug, "slug")
   const article = await client.collection("articles").find({
-    filters: { slug: { $eq: slug } },
+    filters: {
+      slug: { $eq: slug },
+      ...getCurrentDateFilter()
+    },
     status: status,
   });
   return article;
@@ -29,7 +46,10 @@ export async function getArticleBySlug(slug: string, status: "draft" | "publishe
 // Get featured articles
 export async function getFeaturedArticles(limit?: number) {
   const query = {
-    filters: { is_featured: { $eq: true } },
+    filters: {
+      is_featured: { $eq: true },
+      ...getCurrentDateFilter()
+    },
     sort: ['publish_date:desc'],
     ...(limit && { pagination: { limit } }),
   };
@@ -42,9 +62,14 @@ export async function getFeaturedArticles(limit?: number) {
 export async function getArticlesByCategory(categorySlug: string, limit?: number, page?: number) {
   const query = {
     filters: {
-      category: {
-        slug: { $eq: categorySlug }
-      }
+      $and: [
+        {
+          category: {
+            slug: { $eq: categorySlug }
+          }
+        },
+        getCurrentDateFilter()
+      ]
     },
     sort: ['publish_date:desc'],
     ...(limit && page ? { pagination: { page, pageSize: limit } } : limit ? { pagination: { limit } } : {}),
@@ -58,9 +83,14 @@ export async function getArticlesByCategory(categorySlug: string, limit?: number
 export async function getArticlesByAuthor(authorId: string, limit?: number) {
   const query = {
     filters: {
-      author: {
-        id: { $eq: authorId }
-      }
+      $and: [
+        {
+          author: {
+            id: { $eq: authorId }
+          }
+        },
+        getCurrentDateFilter()
+      ]
     },
     sort: ['publish_date:desc'],
     ...(limit && { pagination: { limit } }),
@@ -74,9 +104,14 @@ export async function getArticlesByAuthor(authorId: string, limit?: number) {
 export async function getArticlesByNewsletter(newsletterId: string) {
   const query = {
     filters: {
-      newsletters: {
-        id: { $eq: newsletterId }
-      }
+      $and: [
+        {
+          newsletters: {
+            id: { $eq: newsletterId }
+          }
+        },
+        getCurrentDateFilter()
+      ]
     },
     sort: ['publish_date:desc'],
   };
@@ -89,9 +124,14 @@ export async function getArticlesByNewsletter(newsletterId: string) {
 export async function searchArticles(searchTerm: string, limit?: number) {
   const query = {
     filters: {
-      $or: [
-        { title: { $containsi: searchTerm } },
-        { description: { $containsi: searchTerm } }
+      $and: [
+        {
+          $or: [
+            { title: { $containsi: searchTerm } },
+            { description: { $containsi: searchTerm } }
+          ]
+        },
+        getCurrentDateFilter()
       ]
     },
     sort: ['publish_date:desc'],
@@ -105,6 +145,7 @@ export async function searchArticles(searchTerm: string, limit?: number) {
 // Get articles with pagination
 export async function getArticlesPaginated(page: number = 1, pageSize: number = 10) {
   const query = {
+    filters: getCurrentDateFilter(),
     sort: ['publish_date:desc'],
     pagination: {
       page,
@@ -121,8 +162,9 @@ export async function getRelatedArticles(articleId: string, categorySlug: string
   const query = {
     filters: {
       $and: [
-        { id: { $ne: articleId } },
-        { category: { slug: { $eq: categorySlug } } }
+        { documentId: { $ne: articleId } },
+        { category: { slug: { $eq: categorySlug } } },
+        getCurrentDateFilter()
       ]
     },
     sort: ['publish_date:desc'],
@@ -137,9 +179,14 @@ export async function getRelatedArticles(articleId: string, categorySlug: string
 export async function getArticleCountByCategory(categorySlug: string) {
   const query = {
     filters: {
-      category: {
-        slug: { $eq: categorySlug }
-      }
+      $and: [
+        {
+          category: {
+            slug: { $eq: categorySlug }
+          }
+        },
+        getCurrentDateFilter()
+      ]
     },
     pagination: { limit: 1 },
   };
@@ -152,10 +199,15 @@ export async function getArticleCountByCategory(categorySlug: string) {
 export async function getArticlesByDateRange(startDate: string, endDate: string) {
   const query = {
     filters: {
-      publish_date: {
-        $gte: startDate,
-        $lte: endDate
-      }
+      $and: [
+        {
+          publish_date: {
+            $gte: startDate,
+            $lte: endDate
+          }
+        },
+        getCurrentDateFilter()
+      ]
     },
     sort: ['publish_date:desc'],
   };
@@ -167,7 +219,10 @@ export async function getArticlesByDateRange(startDate: string, endDate: string)
 // Get article with full population (all relations and media)
 export async function getArticleWithFullPopulation(slug: string, status: "draft" | "published" = "published") {
   const query = {
-    filters: { slug: { $eq: slug } },
+    filters: {
+      slug: { $eq: slug },
+      ...getCurrentDateFilter()
+    },
     status: status,
     populate: {
       cover_image: {
@@ -188,6 +243,7 @@ export async function getArticleWithFullPopulation(slug: string, status: "draft"
         }
       },
       magazine_issues: {
+        filters: getCurrentDateFilter(),
         fields: ["title", "slug", "issue_number", "publish_date", "is_featured"],
         populate: {
           cover_image: {
@@ -295,6 +351,7 @@ export async function getCategoryBySlug(slug: string) {
         fields: ['name', 'slug', 'description']
       },
       articles: {
+        filters: getCurrentDateFilter(),
         fields: ['title', 'slug', 'publish_date', 'is_featured'],
         populate: {
           cover_image: {
@@ -355,6 +412,7 @@ export async function getAuthorById(id: string) {
         fields: ["url", "alternativeText", "width", "height"]
       },
       articles: {
+        filters: getCurrentDateFilter(),
         fields: ['title', 'slug', 'publish_date', 'is_featured'],
         populate: {
           cover_image: {
@@ -378,6 +436,7 @@ export async function getAuthorById(id: string) {
 
 export async function getAllMagazineIssues() {
   const issues = await client.collection("magazine-issues").find({
+    filters: getCurrentDateFilter(),
     sort: ['issue_number:desc'],
     populate: {
       cover_image: {
@@ -394,7 +453,10 @@ export async function getAllMagazineIssues() {
 
 export async function getMagazineIssueBySlug(slug: string) {
   const query = {
-    filters: { slug: { $eq: slug } },
+    filters: {
+      slug: { $eq: slug },
+      ...getCurrentDateFilter()
+    },
     populate: {
       cover_image: {
         fields: ["url", "alternativeText", "width", "height"]
@@ -403,6 +465,7 @@ export async function getMagazineIssueBySlug(slug: string) {
         fields: ["name", "url"]
       },
       articles: {
+        filters: getCurrentDateFilter(),
         fields: ['title', 'slug', 'publish_date', 'is_featured'],
         populate: {
           cover_image: {
@@ -426,7 +489,10 @@ export async function getMagazineIssueBySlug(slug: string) {
 
 export async function getFeaturedMagazineIssues(limit?: number) {
   const query = {
-    filters: { is_featured: { $eq: true } },
+    filters: {
+      is_featured: { $eq: true },
+      ...getCurrentDateFilter()
+    },
     sort: ['publish_date:desc'],
     ...(limit && { pagination: { limit } }),
     populate: {
@@ -451,6 +517,7 @@ export async function getAllNewsletterEditions() {
     sort: ['sent_at:desc'],
     populate: {
       featured_articles: {
+        filters: getCurrentDateFilter(),
         fields: ['title', 'slug'],
         populate: {
           cover_image: {
@@ -471,6 +538,7 @@ export async function getNewsletterEditionBySlug(slug: string) {
     filters: { slug: { $eq: slug } },
     populate: {
       featured_articles: {
+        filters: getCurrentDateFilter(),
         populate: {
           cover_image: {
             fields: ["url", "alternativeText", "width", "height"]
@@ -690,9 +758,14 @@ export async function searchContent(searchTerm: string, contentTypes?: string[],
   if (searchTypes.includes('magazine-issues')) {
     const issuesQuery = {
       filters: {
-        $or: [
-          { title: { $containsi: searchTerm } },
-          { description: { $containsi: searchTerm } }
+        $and: [
+          {
+            $or: [
+              { title: { $containsi: searchTerm } },
+              { description: { $containsi: searchTerm } }
+            ]
+          },
+          getCurrentDateFilter()
         ]
       },
       sort: ['issue_number:desc'],
