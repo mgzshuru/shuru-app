@@ -788,3 +788,68 @@ export async function getGlobal(): Promise<GlobalData | null> {
     return null;
   }
 }
+
+// =====================
+// SAVED ARTICLES FUNCTIONS
+// =====================
+
+export async function toggleSavedArticle(articleId: string, jwt: string) {
+  try {
+    const response = await fetch(`${getStrapiURL()}/api/saved-articles/toggle/${articleId}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to toggle saved article');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error toggling saved article:', error);
+    throw error;
+  }
+}
+
+export async function checkArticleSaved(articleId: string, jwt: string) {
+  try {
+    const response = await fetch(`${getStrapiURL()}/api/saved-articles/check/${articleId}`, {
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      return { saved: false };
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error checking saved article:', error);
+    return { saved: false };
+  }
+}
+
+export async function getUserSavedArticles(jwt: string) {
+  try {
+    const response = await fetch(`${getStrapiURL()}/api/saved-articles/user`, {
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch saved articles');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching saved articles:', error);
+    throw error;
+  }
+}

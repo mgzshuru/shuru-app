@@ -17,7 +17,8 @@ import {
   FileText,
   BookOpen,
   Clock,
-  Star
+  Star,
+  Bookmark
 } from "lucide-react";
 
 export default async function Profile() {
@@ -132,6 +133,20 @@ export default async function Profile() {
                         <div className="text-right">
                           <div className="font-medium">اكتب معنا</div>
                           <div className="text-sm text-gray-500">شارك مقالاً أو فكرة</div>
+                        </div>
+                      </div>
+                    </Link>
+                  </Button>
+
+                  <Button asChild variant="outline" className="h-auto p-4 justify-start">
+                    <Link href="/profile/saved-articles">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-blue-50 rounded-lg">
+                          <Bookmark className="h-5 w-5 text-blue-600" />
+                        </div>
+                        <div className="text-right">
+                          <div className="font-medium">المقالات المحفوظة</div>
+                          <div className="text-sm text-gray-500">المقالات التي قمت بحفظها</div>
                         </div>
                       </div>
                     </Link>

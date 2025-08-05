@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { getArticlesOptimized, getGlobalCached } from '@/lib/strapi-optimized';
 import { getAllCategories, getCategoryBySlug } from '@/lib/strapi-client';
 import { getStrapiMedia } from '@/components/custom/strapi-image';
+import { SaveButton } from '@/components/custom/save-button';
 import { formatDate } from '@/lib/utils';
 import { Article, Category } from '@/lib/types';
 import { SearchAndFilterClient } from '../../components/custom/search-and-filter-client';
@@ -220,6 +221,13 @@ function ArticleCard({ article }: { article: Article }) {
                 {article.author.jobTitle && (
                   <p className="text-gray-500 text-xs">{article.author.jobTitle}</p>
                 )}
+              </div>
+              <div className="flex-shrink-0">
+                <SaveButton
+                  articleId={article.documentId}
+                  articleTitle={article.title}
+                  size="sm"
+                />
               </div>
             </div>
           )}

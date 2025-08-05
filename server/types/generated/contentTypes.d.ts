@@ -430,6 +430,10 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
     >;
     publish_date: Schema.Attribute.DateTime;
     publishedAt: Schema.Attribute.DateTime;
+    saved_by_users: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::saved-article.saved-article'
+    >;
     SEO: Schema.Attribute.Component<'shared.seo', false>;
     slug: Schema.Attribute.UID<'title'> & Schema.Attribute.Required;
     title: Schema.Attribute.String &
@@ -789,6 +793,42 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+  };
+}
+
+export interface ApiSavedArticleSavedArticle
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'saved_articles';
+  info: {
+    description: "User's saved articles collection";
+    displayName: 'Saved Articles';
+    pluralName: 'saved-articles';
+    singularName: 'saved-article';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    articles: Schema.Attribute.Relation<'manyToMany', 'api::article.article'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::saved-article.saved-article'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    user: Schema.Attribute.Relation<
+      'oneToOne',
+      'plugin::users-permissions.user'
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
   };
 }
 
@@ -1348,6 +1388,7 @@ declare module '@strapi/strapi' {
       'api::newsletter-edition.newsletter-edition': ApiNewsletterEditionNewsletterEdition;
       'api::newsletter-page.newsletter-page': ApiNewsletterPageNewsletterPage;
       'api::page.page': ApiPagePage;
+      'api::saved-article.saved-article': ApiSavedArticleSavedArticle;
       'api::subscriber.subscriber': ApiSubscriberSubscriber;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;

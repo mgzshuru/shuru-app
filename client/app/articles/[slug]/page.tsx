@@ -8,6 +8,7 @@ import { getArticleForDetail, getArticleForSEO, getRelatedArticlesOptimized, get
 import { getStrapiMedia } from '@/components/custom/strapi-image';
 import { SocialShare } from '@/components/custom/social-share';
 import { TableOfContents } from '@/components/custom/table-of-contents';
+import { SaveButton } from '@/components/custom/save-button';
 import { formatDate, extractTextFromRichContent } from '@/lib/utils';
 import { Article, Block } from '@/lib/types';
 import styles from '@/components/article-content.module.css';
@@ -369,6 +370,16 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                     return acc;
                   }, 0) / 200)) : 5} دقائق للقراءة
                 </span>
+              </div>
+
+              {/* Save Button */}
+              <div className="flex items-center">
+                <SaveButton
+                  articleId={article.documentId}
+                  articleTitle={article.title}
+                  size="md"
+                  showText={true}
+                />
               </div>
             </div>
           </div>

@@ -1,0 +1,35 @@
+{
+  "kind": "collectionType",
+  "collectionName": "saved_articles",
+  "info": {
+    "singularName": "saved-article",
+    "pluralName": "saved-articles",
+    "displayName": "Saved Articles",
+    "description": "User's saved articles collection"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user",
+      "required": true,
+      "unique": true
+    },
+    "articles": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::article.article",
+      "mappedBy": "saved_by_users"
+    },
+    "createdAt": {
+      "type": "datetime"
+    },
+    "updatedAt": {
+      "type": "datetime"
+    }
+  }
+}

@@ -6,6 +6,7 @@ import { notFound } from 'next/navigation';
 import { getMagazineIssueBySlug, getAllMagazineIssues } from '@/lib/strapi-client';
 import { getGlobalCached, getMagazineIssueBySlugOptimized, getMagazineIssuesOptimized } from '@/lib/strapi-optimized';
 import { getStrapiMedia } from '@/components/custom/strapi-image';
+import { SaveButton } from '@/components/custom/save-button';
 import { formatDate, safeBuildTimeApiCall } from '@/lib/utils';
 import { MagazineIssue, Article } from '@/lib/types';
 import { MagazineStructuredData } from '@/components/seo/StructuredData';
@@ -337,14 +338,21 @@ function ArticleCard({ article }: { article: Article }) {
               {article.description}
             </p>
           )}
-          <div className="flex items-center text-sm text-gray-500 font-['IBM_Plex_Sans_Arabic']">
-            {article.author && (
-              <>
-                <span>{article.author.name}</span>
-                <span className="mx-2">•</span>
-              </>
-            )}
-            <span>{formatDate(article.publish_date)}</span>
+          <div className="flex items-center justify-between text-sm text-gray-500 font-['IBM_Plex_Sans_Arabic']">
+            <div className="flex items-center">
+              {article.author && (
+                <>
+                  <span>{article.author.name}</span>
+                  <span className="mx-2">•</span>
+                </>
+              )}
+              <span>{formatDate(article.publish_date)}</span>
+            </div>
+            <SaveButton
+              articleId={article.documentId}
+              articleTitle={article.title}
+              size="sm"
+            />
           </div>
         </div>
       </article>

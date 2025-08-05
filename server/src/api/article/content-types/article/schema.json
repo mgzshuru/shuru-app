@@ -79,6 +79,12 @@
       "target": "api::newsletter-edition.newsletter-edition",
       "inversedBy": "featured_articles"
     },
+    "saved_by_users": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::saved-article.saved-article",
+      "inversedBy": "articles"
+    },
     "SEO": {
       "type": "component",
       "repeatable": false,
