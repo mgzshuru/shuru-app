@@ -1,6 +1,6 @@
 import { strapi } from "@strapi/client";
 import { getStrapiURL } from "./utils";
-import { GlobalData, NewsletterPageData } from "./types";
+import { GlobalData, NewsletterPageData, ContactPageData } from "./types";
 
 const PATH = "/api";
 const STRAPI_BASE_URL = getStrapiURL();
@@ -763,6 +763,129 @@ export async function getNewsletterPageCached(): Promise<NewsletterPageData | nu
   // Update cache
   newsletterPageCache = freshData;
   newsletterPageCacheTime = now;
+
+  return freshData;
+}
+
+// =====================
+// CONTACT PAGE FUNCTIONS (OPTIMIZED)
+// =====================
+
+// Contact page cache
+let contactPageCache: ContactPageData | null = null;
+let contactPageCacheTime = 0;
+const CONTACT_CACHE_DURATION = 15 * 60 * 1000; // 15 minutes
+
+// Minimal population for contact page SEO only
+const CONTACT_PAGE_SEO_POPULATE = {
+  seo: {
+    fields: ["meta_title", "meta_description", "meta_keywords"],
+    populate: {
+      og_image: {
+        fields: ["url", "alternativeText", "width", "height"]
+      }
+    }
+  }
+};
+
+// Full population for contact page
+const CONTACT_PAGE_FULL_POPULATE = {
+  seo: {
+    fields: ["meta_title", "meta_description", "meta_keywords"],
+    populate: {
+      og_image: {
+        fields: ["url", "alternativeText", "width", "height"]
+      }
+    }
+  },
+  heroSection: {
+    populate: {
+      backgroundImage: {
+        fields: ["url", "alternativeText", "width", "height"]
+      }
+    }
+  },
+  contactInformation: {
+    populate: {
+      emails: true,
+      phones: true,
+      addresses: true,
+      officeHours: true,
+      socialLinks: true
+    }
+  },
+  formSettings: true,
+  additionalSections: {
+    populate: {
+      // Map section
+      markers: true,
+      // Office locations
+      offices: {
+        populate: {
+          address: true,
+          contact: true,
+          officeHours: true,
+          image: {
+            fields: ["url", "alternativeText", "width", "height"]
+          }
+        }
+      },
+      // FAQ section
+      faqs: true
+    }
+  }
+};
+
+// Get contact page data with full population
+export async function getContactPageDataOptimized(): Promise<ContactPageData | null> {
+  try {
+    const response = await client.single("contact-page").find({
+      populate: CONTACT_PAGE_FULL_POPULATE
+    });
+
+    if (response && response.data) {
+      return response.data as unknown as ContactPageData;
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching contact page data:", error);
+    return null;
+  }
+}
+
+// Get contact page data for SEO only (lighter payload)
+export async function getContactPageSEOOptimized(): Promise<Pick<ContactPageData, 'seo' | 'id' | 'documentId'> | null> {
+  try {
+    const response = await client.single("contact-page").find({
+      fields: ["id", "documentId"],
+      populate: CONTACT_PAGE_SEO_POPULATE
+    });
+
+    if (response && response.data) {
+      return response.data as unknown as Pick<ContactPageData, 'seo' | 'id' | 'documentId'>;
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching contact page SEO data:", error);
+    return null;
+  }
+}
+
+// Cached version for better performance
+export async function getContactPageCached(): Promise<ContactPageData | null> {
+  const now = Date.now();
+
+  // Return cached data if still valid
+  if (contactPageCache && (now - contactPageCacheTime) < CONTACT_CACHE_DURATION) {
+    return contactPageCache;
+  }
+
+  // Fetch fresh data
+  const freshData = await getContactPageDataOptimized();
+
+  // Update cache
+  contactPageCache = freshData;
+  contactPageCacheTime = now;
 
   return freshData;
 }

@@ -1,0 +1,65 @@
+{
+  "collectionName": "components_contact_map_sections",
+  "info": {
+    "displayName": "Map Section",
+    "description": "Interactive map section for contact page"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "موقعنا على الخريطة"
+    },
+    "description": {
+      "type": "text",
+      "required": false
+    },
+    "mapProvider": {
+      "type": "enumeration",
+      "enum": ["google", "mapbox", "openstreetmap"],
+      "default": "google"
+    },
+    "apiKey": {
+      "type": "string",
+      "required": false,
+      "private": true
+    },
+    "centerLatitude": {
+      "type": "decimal",
+      "required": true,
+      "default": 24.7136
+    },
+    "centerLongitude": {
+      "type": "decimal",
+      "required": true,
+      "default": 46.6753
+    },
+    "zoomLevel": {
+      "type": "integer",
+      "default": 12
+    },
+    "markers": {
+      "type": "component",
+      "repeatable": true,
+      "component": "contact.map-marker"
+    },
+    "showZoomControls": {
+      "type": "boolean",
+      "default": true
+    },
+    "showFullscreenControl": {
+      "type": "boolean",
+      "default": true
+    },
+    "mapStyle": {
+      "type": "enumeration",
+      "enum": ["standard", "satellite", "hybrid", "terrain"],
+      "default": "standard"
+    },
+    "height": {
+      "type": "integer",
+      "default": 400
+    }
+  }
+}

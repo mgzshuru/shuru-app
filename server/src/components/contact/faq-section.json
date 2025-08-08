@@ -1,0 +1,32 @@
+{
+  "collectionName": "components_contact_faq_sections",
+  "info": {
+    "displayName": "FAQ Section",
+    "description": "Frequently asked questions section for contact page"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "الأسئلة الشائعة"
+    },
+    "description": {
+      "type": "text",
+      "required": false
+    },
+    "faqs": {
+      "type": "component",
+      "repeatable": true,
+      "component": "contact.faq-item"
+    },
+    "showContactPrompt": {
+      "type": "boolean",
+      "default": true
+    },
+    "contactPromptText": {
+      "type": "string",
+      "default": "لم تجد إجابة لسؤالك؟ تواصل معنا مباشرة"
+    }
+  }
+}

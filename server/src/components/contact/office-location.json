@@ -1,0 +1,49 @@
+{
+  "collectionName": "components_contact_office_location",
+  "info": {
+    "displayName": "Office Location",
+    "description": "Individual office location details"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": ["headquarters", "branch", "regional", "satellite"],
+      "default": "branch"
+    },
+    "address": {
+      "type": "component",
+      "component": "contact.address-item"
+    },
+    "contact": {
+      "type": "component",
+      "component": "contact.contact-item",
+      "repeatable": true
+    },
+    "officeHours": {
+      "type": "component",
+      "component": "contact.office-hours"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "description": {
+      "type": "text",
+      "required": false
+    },
+    "services": {
+      "type": "json",
+      "required": false
+    },
+    "managers": {
+      "type": "json",
+      "required": false
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "collectionName": "components_contact_faq_items",
+  "info": {
+    "displayName": "FAQ Item",
+    "description": "Individual FAQ question and answer"
+  },
+  "options": {},
+  "attributes": {
+    "question": {
+      "type": "string",
+      "required": true
+    },
+    "answer": {
+      "type": "text",
+      "required": true
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": ["general", "technical", "billing", "support", "partnership", "other"],
+      "default": "general"
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    },
+    "isPublished": {
+      "type": "boolean",
+      "default": true
+    },
+    "relatedLinks": {
+      "type": "json",
+      "required": false
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "collectionName": "components_contact_office_locations",
+  "info": {
+    "displayName": "Office Locations",
+    "description": "Multiple office locations section"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "مواقع مكاتبنا"
+    },
+    "description": {
+      "type": "text",
+      "required": false
+    },
+    "offices": {
+      "type": "component",
+      "repeatable": true,
+      "component": "contact.office-location"
+    },
+    "showOnMap": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

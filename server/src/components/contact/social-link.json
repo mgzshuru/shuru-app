@@ -1,0 +1,35 @@
+{
+  "collectionName": "components_contact_social_links",
+  "info": {
+    "displayName": "Social Link",
+    "description": "Social media links for contact page"
+  },
+  "options": {},
+  "attributes": {
+    "platform": {
+      "type": "enumeration",
+      "enum": ["twitter", "facebook", "instagram", "linkedin", "youtube", "tiktok", "snapchat", "whatsapp", "telegram", "other"],
+      "required": true
+    },
+    "url": {
+      "type": "string",
+      "required": true
+    },
+    "label": {
+      "type": "string",
+      "required": false
+    },
+    "icon": {
+      "type": "string",
+      "required": false
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

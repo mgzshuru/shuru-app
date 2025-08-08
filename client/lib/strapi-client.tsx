@@ -1,6 +1,6 @@
 import { strapi } from "@strapi/client";
 import { getStrapiURL } from "./utils";
-import { Article, Author, Category, GlobalData, MagazineIssue, NewsletterPageData } from "./types";
+import { Article, Author, Category, GlobalData, MagazineIssue, NewsletterPageData, ContactMessage, ContactPageData } from "./types";
 
 const PATH = "/api";
 const STRAPI_BASE_URL = getStrapiURL();
@@ -924,5 +924,128 @@ export async function getUserSavedArticles(jwt: string) {
   } catch (error) {
     console.error('Error fetching saved articles:', error);
     throw error;
+  }
+}
+
+// =====================
+// CONTACT MESSAGE FUNCTIONS
+// =====================
+
+export async function submitContactMessage(data: {
+  name: string;
+  email: string;
+  phone?: string;
+  company?: string;
+  subject: string;
+  message: string;
+}) {
+  try {
+    const response = await fetch(`${STRAPI_BASE_URL}/api/contact-messages`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        data: {
+          name: data.name,
+          email: data.email,
+          phone: data.phone || '',
+          company: data.company || '',
+          subject: data.subject,
+          message: data.message,
+        }
+      })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTTP ${response.status}: ${errorText}`);
+    }
+
+    const result = await response.json();
+    return { success: true, data: result };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+// =====================
+// CONTACT PAGE FUNCTIONS
+// =====================
+
+export async function getContactPageData(): Promise<ContactPageData | null> {
+  try {
+    // Try with specific population first
+    const response = await client.single("contact-page").find({
+      populate: {
+        seo: true,
+        heroSection: true,
+        contactInformation: {
+          populate: {
+            emails: true,
+            phones: true,
+            addresses: true,
+            officeHours: true,
+            socialLinks: true
+          }
+        },
+        formSettings: true,
+        additionalSections: true
+      }
+    });
+
+    if (response && response.data) {
+      return response.data as unknown as ContactPageData;
+    }
+    return null;
+  } catch (error) {
+    // Handle specific error cases
+    if (error instanceof Error) {
+      if (error.message.includes('404') || error.message.includes('not found')) {
+        console.warn("Contact page not found. Please create content in Strapi admin panel.");
+        return null;
+      }
+      if (error.message.includes('500') || error.message.includes('ValidationError')) {
+        console.error("Strapi server error. Check server logs for details:", error.message);
+        // Try a simpler query as fallback
+        try {
+          const simpleResponse = await client.single("contact-page").find();
+          if (simpleResponse && simpleResponse.data) {
+            return simpleResponse.data as unknown as ContactPageData;
+          }
+        } catch (fallbackError) {
+          console.error("Fallback query also failed:", fallbackError);
+        }
+        return null;
+      }
+    }
+    console.error("Error fetching contact page data:", error);
+    return null;
+  }
+}
+
+// Simple function to test connectivity
+export async function testContactPageExists(): Promise<boolean> {
+  try {
+    const response = await client.single("contact-page").find();
+    return !!response;
+  } catch (error) {
+    if (error instanceof Error && (error.message.includes('404') || error.message.includes('not found'))) {
+      console.warn("Contact page Single Type exists but no content created yet.");
+      return true; // Content type exists, just no content
+    }
+    console.error("Contact page Single Type does not exist or is not accessible:", error);
+    return false;
+  }
+}
+
+// Test with minimal population
+export async function getContactPageDataSimple(): Promise<any> {
+  try {
+    const response = await client.single("contact-page").find();
+    return response?.data || null;
+  } catch (error) {
+    console.error("Simple contact page fetch failed:", error);
+    return null;
   }
 }

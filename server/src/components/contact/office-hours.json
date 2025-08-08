@@ -1,0 +1,45 @@
+{
+  "collectionName": "components_contact_office_hours",
+  "info": {
+    "displayName": "Office Hours",
+    "description": "Business hours and availability"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "ساعات العمل"
+    },
+    "weekdayHours": {
+      "type": "string",
+      "required": true,
+      "default": "الأحد - الخميس: 9:00 - 17:00"
+    },
+    "weekendHours": {
+      "type": "string",
+      "required": false,
+      "default": "الجمعة - السبت: مغلق"
+    },
+    "specialHours": {
+      "type": "text",
+      "required": false
+    },
+    "timezone": {
+      "type": "string",
+      "default": "Asia/Riyadh"
+    },
+    "isOpen24Hours": {
+      "type": "boolean",
+      "default": false
+    },
+    "holidayMessage": {
+      "type": "string",
+      "required": false
+    },
+    "emergencyContact": {
+      "type": "string",
+      "required": false
+    }
+  }
+}

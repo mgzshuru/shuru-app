@@ -1,0 +1,34 @@
+{
+  "collectionName": "components_contact_hero_sections",
+  "info": {
+    "displayName": "Hero Section",
+    "description": "Contact page hero section with title and description"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "تواصل معنا"
+    },
+    "subtitle": {
+      "type": "text",
+      "required": true,
+      "default": "نحن هنا للاستماع إليك. تواصل معنا لأي استفسارات أو اقتراحات أو تعاون"
+    },
+    "backgroundColor": {
+      "type": "string",
+      "default": "#000000"
+    },
+    "textColor": {
+      "type": "string",
+      "default": "#ffffff"
+    },
+    "backgroundImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    }
+  }
+}

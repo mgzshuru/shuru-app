@@ -1,0 +1,48 @@
+{
+  "collectionName": "components_contact_contact_informations",
+  "info": {
+    "displayName": "Contact Information",
+    "description": "Contact details like email, phone, address, and office hours"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "معلومات التواصل"
+    },
+    "emails": {
+      "type": "component",
+      "repeatable": true,
+      "component": "contact.contact-item",
+      "required": false
+    },
+    "phones": {
+      "type": "component",
+      "repeatable": true,
+      "component": "contact.contact-item",
+      "required": false
+    },
+    "addresses": {
+      "type": "component",
+      "repeatable": true,
+      "component": "contact.address-item",
+      "required": false
+    },
+    "officeHours": {
+      "type": "component",
+      "component": "contact.office-hours",
+      "required": false
+    },
+    "socialLinks": {
+      "type": "component",
+      "repeatable": true,
+      "component": "contact.social-link",
+      "required": false
+    },
+    "additionalInfo": {
+      "type": "text",
+      "required": false
+    }
+  }
+}

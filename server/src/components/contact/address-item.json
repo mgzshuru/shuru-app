@@ -1,0 +1,60 @@
+{
+  "collectionName": "components_contact_address_items",
+  "info": {
+    "displayName": "Address Item",
+    "description": "Address information with coordinates"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "addressLine1": {
+      "type": "string",
+      "required": true
+    },
+    "addressLine2": {
+      "type": "string",
+      "required": false
+    },
+    "city": {
+      "type": "string",
+      "required": true
+    },
+    "state": {
+      "type": "string",
+      "required": false
+    },
+    "postalCode": {
+      "type": "string",
+      "required": false
+    },
+    "country": {
+      "type": "string",
+      "required": true,
+      "default": "المملكة العربية السعودية"
+    },
+    "latitude": {
+      "type": "decimal",
+      "required": false
+    },
+    "longitude": {
+      "type": "decimal",
+      "required": false
+    },
+    "isPrimary": {
+      "type": "boolean",
+      "default": false
+    },
+    "officeType": {
+      "type": "enumeration",
+      "enum": ["main", "branch", "warehouse", "other"],
+      "default": "main"
+    },
+    "description": {
+      "type": "text",
+      "required": false
+    }
+  }
+}

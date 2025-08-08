@@ -1,0 +1,87 @@
+{
+  "collectionName": "components_contact_form_settings",
+  "info": {
+    "displayName": "Form Settings",
+    "description": "Contact form configuration and texts"
+  },
+  "options": {},
+  "attributes": {
+    "formTitle": {
+      "type": "string",
+      "required": true,
+      "default": "إرسال رسالة"
+    },
+    "formDescription": {
+      "type": "text",
+      "required": false
+    },
+    "namePlaceholder": {
+      "type": "string",
+      "default": "الاسم الكامل *"
+    },
+    "emailPlaceholder": {
+      "type": "string",
+      "default": "البريد الإلكتروني *"
+    },
+    "phonePlaceholder": {
+      "type": "string",
+      "default": "رقم الهاتف"
+    },
+    "companyPlaceholder": {
+      "type": "string",
+      "default": "اسم الشركة/المؤسسة"
+    },
+    "subjectPlaceholder": {
+      "type": "string",
+      "default": "الموضوع *"
+    },
+    "messagePlaceholder": {
+      "type": "string",
+      "default": "اكتب رسالتك هنا..."
+    },
+    "submitButtonText": {
+      "type": "string",
+      "default": "إرسال الرسالة"
+    },
+    "loadingText": {
+      "type": "string",
+      "default": "جاري الإرسال..."
+    },
+    "successTitle": {
+      "type": "string",
+      "default": "تم إرسال الرسالة بنجاح!"
+    },
+    "successMessage": {
+      "type": "text",
+      "default": "شكراً لتواصلك معنا. سنرد على رسالتك في أقرب وقت ممكن."
+    },
+    "privacyText": {
+      "type": "text",
+      "default": "بإرسال هذه الرسالة، أنت توافق على سياسة الخصوصية وشروط الاستخدام"
+    },
+    "privacyPolicyUrl": {
+      "type": "string",
+      "default": "/privacy"
+    },
+    "termsUrl": {
+      "type": "string",
+      "default": "/terms"
+    },
+    "enableCaptcha": {
+      "type": "boolean",
+      "default": false
+    },
+    "enableFileUpload": {
+      "type": "boolean",
+      "default": false
+    },
+    "maxFileSize": {
+      "type": "integer",
+      "default": 5
+    },
+    "allowedFileTypes": {
+      "type": "json",
+      "default": [".pdf", ".doc", ".docx", ".jpg", ".png"]
+    }
+  }
+}

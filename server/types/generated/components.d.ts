@@ -396,6 +396,319 @@ export interface ComingSoonWhyFeature extends Struct.ComponentSchema {
   };
 }
 
+export interface ContactAddressItem extends Struct.ComponentSchema {
+  collectionName: 'components_contact_address_items';
+  info: {
+    description: 'Address information with coordinates';
+    displayName: 'Address Item';
+  };
+  attributes: {
+    addressLine1: Schema.Attribute.String & Schema.Attribute.Required;
+    addressLine2: Schema.Attribute.String;
+    city: Schema.Attribute.String & Schema.Attribute.Required;
+    country: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'\u0627\u0644\u0645\u0645\u0644\u0643\u0629 \u0627\u0644\u0639\u0631\u0628\u064A\u0629 \u0627\u0644\u0633\u0639\u0648\u062F\u064A\u0629'>;
+    description: Schema.Attribute.Text;
+    isPrimary: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    label: Schema.Attribute.String & Schema.Attribute.Required;
+    latitude: Schema.Attribute.Decimal;
+    longitude: Schema.Attribute.Decimal;
+    officeType: Schema.Attribute.Enumeration<
+      ['main', 'branch', 'warehouse', 'other']
+    > &
+      Schema.Attribute.DefaultTo<'main'>;
+    postalCode: Schema.Attribute.String;
+    state: Schema.Attribute.String;
+  };
+}
+
+export interface ContactContactInformation extends Struct.ComponentSchema {
+  collectionName: 'components_contact_contact_informations';
+  info: {
+    description: 'Contact details like email, phone, address, and office hours';
+    displayName: 'Contact Information';
+  };
+  attributes: {
+    additionalInfo: Schema.Attribute.Text;
+    addresses: Schema.Attribute.Component<'contact.address-item', true>;
+    emails: Schema.Attribute.Component<'contact.contact-item', true>;
+    officeHours: Schema.Attribute.Component<'contact.office-hours', false>;
+    phones: Schema.Attribute.Component<'contact.contact-item', true>;
+    socialLinks: Schema.Attribute.Component<'contact.social-link', true>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'\u0645\u0639\u0644\u0648\u0645\u0627\u062A \u0627\u0644\u062A\u0648\u0627\u0635\u0644'>;
+  };
+}
+
+export interface ContactContactItem extends Struct.ComponentSchema {
+  collectionName: 'components_contact_contact_items';
+  info: {
+    description: 'Individual contact item like email or phone';
+    displayName: 'Contact Item';
+  };
+  attributes: {
+    description: Schema.Attribute.String;
+    icon: Schema.Attribute.String;
+    isPrimary: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    isPublic: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    label: Schema.Attribute.String & Schema.Attribute.Required;
+    value: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface ContactFaqItem extends Struct.ComponentSchema {
+  collectionName: 'components_contact_faq_items';
+  info: {
+    description: 'Individual FAQ question and answer';
+    displayName: 'FAQ Item';
+  };
+  attributes: {
+    answer: Schema.Attribute.Text & Schema.Attribute.Required;
+    category: Schema.Attribute.Enumeration<
+      ['general', 'technical', 'billing', 'support', 'partnership', 'other']
+    > &
+      Schema.Attribute.DefaultTo<'general'>;
+    isPublished: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    question: Schema.Attribute.String & Schema.Attribute.Required;
+    relatedLinks: Schema.Attribute.JSON;
+  };
+}
+
+export interface ContactFaqSection extends Struct.ComponentSchema {
+  collectionName: 'components_contact_faq_sections';
+  info: {
+    description: 'Frequently asked questions section for contact page';
+    displayName: 'FAQ Section';
+  };
+  attributes: {
+    contactPromptText: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'\u0644\u0645 \u062A\u062C\u062F \u0625\u062C\u0627\u0628\u0629 \u0644\u0633\u0624\u0627\u0644\u0643\u061F \u062A\u0648\u0627\u0635\u0644 \u0645\u0639\u0646\u0627 \u0645\u0628\u0627\u0634\u0631\u0629'>;
+    description: Schema.Attribute.Text;
+    faqs: Schema.Attribute.Component<'contact.faq-item', true>;
+    showContactPrompt: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<true>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'\u0627\u0644\u0623\u0633\u0626\u0644\u0629 \u0627\u0644\u0634\u0627\u0626\u0639\u0629'>;
+  };
+}
+
+export interface ContactFormSettings extends Struct.ComponentSchema {
+  collectionName: 'components_contact_form_settings';
+  info: {
+    description: 'Contact form configuration and texts';
+    displayName: 'Form Settings';
+  };
+  attributes: {
+    allowedFileTypes: Schema.Attribute.JSON &
+      Schema.Attribute.DefaultTo<['.pdf', '.doc', '.docx', '.jpg', '.png']>;
+    companyPlaceholder: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'\u0627\u0633\u0645 \u0627\u0644\u0634\u0631\u0643\u0629/\u0627\u0644\u0645\u0624\u0633\u0633\u0629'>;
+    emailPlaceholder: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'\u0627\u0644\u0628\u0631\u064A\u062F \u0627\u0644\u0625\u0644\u0643\u062A\u0631\u0648\u0646\u064A *'>;
+    enableCaptcha: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    enableFileUpload: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    formDescription: Schema.Attribute.Text;
+    formTitle: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'\u0625\u0631\u0633\u0627\u0644 \u0631\u0633\u0627\u0644\u0629'>;
+    loadingText: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'\u062C\u0627\u0631\u064A \u0627\u0644\u0625\u0631\u0633\u0627\u0644...'>;
+    maxFileSize: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<5>;
+    messagePlaceholder: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'\u0627\u0643\u062A\u0628 \u0631\u0633\u0627\u0644\u062A\u0643 \u0647\u0646\u0627...'>;
+    namePlaceholder: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'\u0627\u0644\u0627\u0633\u0645 \u0627\u0644\u0643\u0627\u0645\u0644 *'>;
+    phonePlaceholder: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'\u0631\u0642\u0645 \u0627\u0644\u0647\u0627\u062A\u0641'>;
+    privacyPolicyUrl: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'/privacy'>;
+    privacyText: Schema.Attribute.Text &
+      Schema.Attribute.DefaultTo<'\u0628\u0625\u0631\u0633\u0627\u0644 \u0647\u0630\u0647 \u0627\u0644\u0631\u0633\u0627\u0644\u0629\u060C \u0623\u0646\u062A \u062A\u0648\u0627\u0641\u0642 \u0639\u0644\u0649 \u0633\u064A\u0627\u0633\u0629 \u0627\u0644\u062E\u0635\u0648\u0635\u064A\u0629 \u0648\u0634\u0631\u0648\u0637 \u0627\u0644\u0627\u0633\u062A\u062E\u062F\u0627\u0645'>;
+    subjectPlaceholder: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'\u0627\u0644\u0645\u0648\u0636\u0648\u0639 *'>;
+    submitButtonText: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'\u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0631\u0633\u0627\u0644\u0629'>;
+    successMessage: Schema.Attribute.Text &
+      Schema.Attribute.DefaultTo<'\u0634\u0643\u0631\u0627\u064B \u0644\u062A\u0648\u0627\u0635\u0644\u0643 \u0645\u0639\u0646\u0627. \u0633\u0646\u0631\u062F \u0639\u0644\u0649 \u0631\u0633\u0627\u0644\u062A\u0643 \u0641\u064A \u0623\u0642\u0631\u0628 \u0648\u0642\u062A \u0645\u0645\u0643\u0646.'>;
+    successTitle: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'\u062A\u0645 \u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0631\u0633\u0627\u0644\u0629 \u0628\u0646\u062C\u0627\u062D!'>;
+    termsUrl: Schema.Attribute.String & Schema.Attribute.DefaultTo<'/terms'>;
+  };
+}
+
+export interface ContactHeroSection extends Struct.ComponentSchema {
+  collectionName: 'components_contact_hero_sections';
+  info: {
+    description: 'Contact page hero section with title and description';
+    displayName: 'Hero Section';
+  };
+  attributes: {
+    backgroundColor: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'#000000'>;
+    backgroundImage: Schema.Attribute.Media<'images'>;
+    subtitle: Schema.Attribute.Text &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'\u0646\u062D\u0646 \u0647\u0646\u0627 \u0644\u0644\u0627\u0633\u062A\u0645\u0627\u0639 \u0625\u0644\u064A\u0643. \u062A\u0648\u0627\u0635\u0644 \u0645\u0639\u0646\u0627 \u0644\u0623\u064A \u0627\u0633\u062A\u0641\u0633\u0627\u0631\u0627\u062A \u0623\u0648 \u0627\u0642\u062A\u0631\u0627\u062D\u0627\u062A \u0623\u0648 \u062A\u0639\u0627\u0648\u0646'>;
+    textColor: Schema.Attribute.String & Schema.Attribute.DefaultTo<'#ffffff'>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'\u062A\u0648\u0627\u0635\u0644 \u0645\u0639\u0646\u0627'>;
+  };
+}
+
+export interface ContactMapMarker extends Struct.ComponentSchema {
+  collectionName: 'components_contact_map_markers';
+  info: {
+    description: 'Individual marker for the map';
+    displayName: 'Map Marker';
+  };
+  attributes: {
+    address: Schema.Attribute.String;
+    color: Schema.Attribute.String & Schema.Attribute.DefaultTo<'#000000'>;
+    description: Schema.Attribute.Text;
+    email: Schema.Attribute.String;
+    icon: Schema.Attribute.String;
+    latitude: Schema.Attribute.Decimal & Schema.Attribute.Required;
+    longitude: Schema.Attribute.Decimal & Schema.Attribute.Required;
+    phone: Schema.Attribute.String;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    website: Schema.Attribute.String;
+  };
+}
+
+export interface ContactMapSection extends Struct.ComponentSchema {
+  collectionName: 'components_contact_map_sections';
+  info: {
+    description: 'Interactive map section for contact page';
+    displayName: 'Map Section';
+  };
+  attributes: {
+    apiKey: Schema.Attribute.String & Schema.Attribute.Private;
+    centerLatitude: Schema.Attribute.Decimal &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<24.7136>;
+    centerLongitude: Schema.Attribute.Decimal &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<46.6753>;
+    description: Schema.Attribute.Text;
+    height: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<400>;
+    mapProvider: Schema.Attribute.Enumeration<
+      ['google', 'mapbox', 'openstreetmap']
+    > &
+      Schema.Attribute.DefaultTo<'google'>;
+    mapStyle: Schema.Attribute.Enumeration<
+      ['standard', 'satellite', 'hybrid', 'terrain']
+    > &
+      Schema.Attribute.DefaultTo<'standard'>;
+    markers: Schema.Attribute.Component<'contact.map-marker', true>;
+    showFullscreenControl: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<true>;
+    showZoomControls: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<true>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'\u0645\u0648\u0642\u0639\u0646\u0627 \u0639\u0644\u0649 \u0627\u0644\u062E\u0631\u064A\u0637\u0629'>;
+    zoomLevel: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<12>;
+  };
+}
+
+export interface ContactOfficeHours extends Struct.ComponentSchema {
+  collectionName: 'components_contact_office_hours';
+  info: {
+    description: 'Business hours and availability';
+    displayName: 'Office Hours';
+  };
+  attributes: {
+    emergencyContact: Schema.Attribute.String;
+    holidayMessage: Schema.Attribute.String;
+    isOpen24Hours: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    specialHours: Schema.Attribute.Text;
+    timezone: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Asia/Riyadh'>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'\u0633\u0627\u0639\u0627\u062A \u0627\u0644\u0639\u0645\u0644'>;
+    weekdayHours: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'\u0627\u0644\u0623\u062D\u062F - \u0627\u0644\u062E\u0645\u064A\u0633: 9:00 - 17:00'>;
+    weekendHours: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'\u0627\u0644\u062C\u0645\u0639\u0629 - \u0627\u0644\u0633\u0628\u062A: \u0645\u063A\u0644\u0642'>;
+  };
+}
+
+export interface ContactOfficeLocation extends Struct.ComponentSchema {
+  collectionName: 'components_contact_office_location';
+  info: {
+    description: 'Individual office location details';
+    displayName: 'Office Location';
+  };
+  attributes: {
+    address: Schema.Attribute.Component<'contact.address-item', false>;
+    contact: Schema.Attribute.Component<'contact.contact-item', true>;
+    description: Schema.Attribute.Text;
+    image: Schema.Attribute.Media<'images'>;
+    managers: Schema.Attribute.JSON;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    officeHours: Schema.Attribute.Component<'contact.office-hours', false>;
+    services: Schema.Attribute.JSON;
+    type: Schema.Attribute.Enumeration<
+      ['headquarters', 'branch', 'regional', 'satellite']
+    > &
+      Schema.Attribute.DefaultTo<'branch'>;
+  };
+}
+
+export interface ContactOfficeLocations extends Struct.ComponentSchema {
+  collectionName: 'components_contact_office_locations';
+  info: {
+    description: 'Multiple office locations section';
+    displayName: 'Office Locations';
+  };
+  attributes: {
+    description: Schema.Attribute.Text;
+    offices: Schema.Attribute.Component<'contact.office-location', true>;
+    showOnMap: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'\u0645\u0648\u0627\u0642\u0639 \u0645\u0643\u0627\u062A\u0628\u0646\u0627'>;
+  };
+}
+
+export interface ContactSocialLink extends Struct.ComponentSchema {
+  collectionName: 'components_contact_social_links';
+  info: {
+    description: 'Social media links for contact page';
+    displayName: 'Social Link';
+  };
+  attributes: {
+    icon: Schema.Attribute.String;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    label: Schema.Attribute.String;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    platform: Schema.Attribute.Enumeration<
+      [
+        'twitter',
+        'facebook',
+        'instagram',
+        'linkedin',
+        'youtube',
+        'tiktok',
+        'snapchat',
+        'whatsapp',
+        'telegram',
+        'other',
+      ]
+    > &
+      Schema.Attribute.Required;
+    url: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 export interface ContentCallToAction extends Struct.ComponentSchema {
   collectionName: 'components_content_call_to_actions';
   info: {
@@ -934,6 +1247,19 @@ declare module '@strapi/strapi' {
       'coming-soon.timeline-phase': ComingSoonTimelinePhase;
       'coming-soon.why': ComingSoonWhy;
       'coming-soon.why-feature': ComingSoonWhyFeature;
+      'contact.address-item': ContactAddressItem;
+      'contact.contact-information': ContactContactInformation;
+      'contact.contact-item': ContactContactItem;
+      'contact.faq-item': ContactFaqItem;
+      'contact.faq-section': ContactFaqSection;
+      'contact.form-settings': ContactFormSettings;
+      'contact.hero-section': ContactHeroSection;
+      'contact.map-marker': ContactMapMarker;
+      'contact.map-section': ContactMapSection;
+      'contact.office-hours': ContactOfficeHours;
+      'contact.office-location': ContactOfficeLocation;
+      'contact.office-locations': ContactOfficeLocations;
+      'contact.social-link': ContactSocialLink;
       'content.call-to-action': ContentCallToAction;
       'content.code-block': ContentCodeBlock;
       'content.gallery': ContentGallery;

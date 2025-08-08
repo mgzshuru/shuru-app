@@ -495,3 +495,205 @@ export interface NewsletterPageData {
   updatedAt: string;
   publishedAt?: string;
 }
+
+// Contact Message Types
+export interface ContactMessage {
+  id: number;
+  documentId: string;
+  name: string;
+  email: string;
+  phone?: string;
+  company?: string;
+  subject: string;
+  message: string;
+  is_read: boolean;
+  status: 'new' | 'in_progress' | 'resolved' | 'closed';
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  admin_notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Contact Page Types
+export interface ContactPageData {
+  id: number;
+  documentId: string;
+  seo?: SEOComponent;
+  heroSection: ContactHeroSection;
+  contactInformation: ContactInformation;
+  formSettings: ContactFormSettings;
+  additionalSections?: ContactAdditionalSection[];
+  createdAt: string;
+  updatedAt: string;
+  publishedAt?: string;
+}
+
+export interface ContactHeroSection {
+  title: string;
+  subtitle: string;
+  backgroundColor?: string;
+  textColor?: string;
+  backgroundImage?: {
+    id: number;
+    documentId: string;
+    url: string;
+    alternativeText?: string;
+    width?: number;
+    height?: number;
+  };
+}
+
+export interface ContactInformation {
+  title: string;
+  emails?: ContactItem[];
+  phones?: ContactItem[];
+  addresses?: AddressItem[];
+  officeHours?: OfficeHours;
+  socialLinks?: ContactSocialLink[];
+  additionalInfo?: string;
+}
+
+export interface ContactItem {
+  label: string;
+  value: string;
+  icon?: string;
+  isPrimary: boolean;
+  isPublic: boolean;
+  description?: string;
+}
+
+export interface AddressItem {
+  label: string;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  state?: string;
+  postalCode?: string;
+  country: string;
+  latitude?: number;
+  longitude?: number;
+  isPrimary: boolean;
+  officeType: 'main' | 'branch' | 'warehouse' | 'other';
+  description?: string;
+}
+
+export interface OfficeHours {
+  title: string;
+  weekdayHours: string;
+  weekendHours?: string;
+  specialHours?: string;
+  timezone: string;
+  isOpen24Hours: boolean;
+  holidayMessage?: string;
+  emergencyContact?: string;
+}
+
+export interface ContactSocialLink {
+  platform: 'twitter' | 'facebook' | 'instagram' | 'linkedin' | 'youtube' | 'tiktok' | 'snapchat' | 'whatsapp' | 'telegram' | 'other';
+  url: string;
+  label?: string;
+  icon?: string;
+  isActive: boolean;
+  order: number;
+}
+
+export interface ContactFormSettings {
+  formTitle: string;
+  formDescription?: string;
+  namePlaceholder: string;
+  emailPlaceholder: string;
+  phonePlaceholder: string;
+  companyPlaceholder: string;
+  subjectPlaceholder: string;
+  messagePlaceholder: string;
+  submitButtonText: string;
+  loadingText: string;
+  successTitle: string;
+  successMessage: string;
+  privacyText: string;
+  privacyPolicyUrl: string;
+  termsUrl: string;
+  enableCaptcha: boolean;
+  enableFileUpload: boolean;
+  maxFileSize: number;
+  allowedFileTypes: string[];
+}
+
+export interface ContactAdditionalSection {
+  __component: string;
+  id: number;
+  [key: string]: any;
+}
+
+export interface MapSection extends ContactAdditionalSection {
+  __component: 'contact.map-section';
+  title: string;
+  description?: string;
+  mapProvider: 'google' | 'mapbox' | 'openstreetmap';
+  centerLatitude: number;
+  centerLongitude: number;
+  zoomLevel: number;
+  markers?: MapMarker[];
+  showZoomControls: boolean;
+  showFullscreenControl: boolean;
+  mapStyle: 'standard' | 'satellite' | 'hybrid' | 'terrain';
+  height: number;
+}
+
+export interface MapMarker {
+  title: string;
+  description?: string;
+  latitude: number;
+  longitude: number;
+  icon?: string;
+  color: string;
+  address?: string;
+  phone?: string;
+  email?: string;
+  website?: string;
+}
+
+export interface OfficeLocationsSection extends ContactAdditionalSection {
+  __component: 'contact.office-locations';
+  title: string;
+  description?: string;
+  offices: OfficeLocation[];
+  showOnMap: boolean;
+}
+
+export interface OfficeLocation {
+  name: string;
+  type: 'headquarters' | 'branch' | 'regional' | 'satellite';
+  address: AddressItem;
+  contact: ContactItem[];
+  officeHours: OfficeHours;
+  image?: {
+    id: number;
+    documentId: string;
+    url: string;
+    alternativeText?: string;
+    width?: number;
+    height?: number;
+  };
+  description?: string;
+  services?: any;
+  managers?: any;
+}
+
+export interface FAQSection extends ContactAdditionalSection {
+  __component: 'contact.faq-section';
+  title: string;
+  description?: string;
+  faqs: FAQItem[];
+  showContactPrompt: boolean;
+  contactPromptText: string;
+}
+
+export interface FAQItem {
+  question: string;
+  answer: string;
+  category: 'general' | 'technical' | 'billing' | 'support' | 'partnership' | 'other';
+  order: number;
+  isPublished: boolean;
+  relatedLinks?: any;
+}

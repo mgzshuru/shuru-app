@@ -1,0 +1,50 @@
+{
+  "collectionName": "components_contact_map_markers",
+  "info": {
+    "displayName": "Map Marker",
+    "description": "Individual marker for the map"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": false
+    },
+    "latitude": {
+      "type": "decimal",
+      "required": true
+    },
+    "longitude": {
+      "type": "decimal",
+      "required": true
+    },
+    "icon": {
+      "type": "string",
+      "required": false
+    },
+    "color": {
+      "type": "string",
+      "default": "#000000"
+    },
+    "address": {
+      "type": "string",
+      "required": false
+    },
+    "phone": {
+      "type": "string",
+      "required": false
+    },
+    "email": {
+      "type": "string",
+      "required": false
+    },
+    "website": {
+      "type": "string",
+      "required": false
+    }
+  }
+}
