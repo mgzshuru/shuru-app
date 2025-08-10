@@ -461,6 +461,7 @@ export interface ApiAuthorAuthor extends Struct.CollectionTypeSchema {
   attributes: {
     articles: Schema.Attribute.Relation<'oneToMany', 'api::article.article'>;
     avatar: Schema.Attribute.Media<'images'>;
+    bio: Schema.Attribute.Text;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -935,6 +936,159 @@ export interface ApiSavedArticleSavedArticle
     > &
       Schema.Attribute.Required &
       Schema.Attribute.Unique;
+  };
+}
+
+export interface ApiSubmitPageContentSubmitPageContent
+  extends Struct.SingleTypeSchema {
+  collectionName: 'submit_page_contents';
+  info: {
+    description: 'Content management for article submission page';
+    displayName: 'Submit Page Content';
+    pluralName: 'submit-page-contents';
+    singularName: 'submit-page-content';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    allowedFileTypes: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'jpg,jpeg,png,webp'>;
+    articleStepDescription: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }>;
+    articleStepTitle: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }> &
+      Schema.Attribute.DefaultTo<'\u062A\u0641\u0627\u0635\u064A\u0644 \u0627\u0644\u0645\u0642\u0627\u0644'>;
+    authorStepDescription: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }>;
+    authorStepTitle: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }> &
+      Schema.Attribute.DefaultTo<'\u0645\u0639\u0644\u0648\u0645\u0627\u062A \u0627\u0644\u0643\u0627\u062A\u0628'>;
+    contentCriteriaItems: Schema.Attribute.Component<
+      'shared.guideline-item',
+      true
+    >;
+    contentCriteriaTitle: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }> &
+      Schema.Attribute.DefaultTo<'\u0645\u0639\u0627\u064A\u064A\u0631 \u0627\u0644\u0645\u062D\u062A\u0648\u0649'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    emailStepDescription: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }>;
+    emailStepTitle: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }> &
+      Schema.Attribute.DefaultTo<'\u0627\u0644\u062A\u062D\u0642\u0642 \u0645\u0646 \u0627\u0644\u0628\u0631\u064A\u062F \u0627\u0644\u0625\u0644\u0643\u062A\u0631\u0648\u0646\u064A'>;
+    enableEmailCheck: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<true>;
+    guidelinesTitle: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }> &
+      Schema.Attribute.DefaultTo<'\u0625\u0631\u0634\u0627\u062F\u0627\u062A \u0627\u0644\u0646\u0634\u0631'>;
+    headerIcon: Schema.Attribute.Media<'images'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::submit-page-content.submit-page-content'
+    > &
+      Schema.Attribute.Private;
+    maxFileSize: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 50;
+          min: 1;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<5>;
+    maxWordCount: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 50000;
+          min: 50;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<5000>;
+    minWordCount: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 10000;
+          min: 1;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<50>;
+    pageSubtitle: Schema.Attribute.RichText;
+    pageTitle: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }> &
+      Schema.Attribute.DefaultTo<'\u0625\u0631\u0633\u0627\u0644 \u0645\u0642\u0627\u0644'>;
+    privacyPolicyUrl: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    returnButtonText: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }> &
+      Schema.Attribute.DefaultTo<'\u0627\u0644\u0639\u0648\u062F\u0629 \u0644\u0644\u0631\u0626\u064A\u0633\u064A\u0629'>;
+    reviewProcessItems: Schema.Attribute.Component<
+      'shared.guideline-item',
+      true
+    >;
+    reviewProcessTitle: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }> &
+      Schema.Attribute.DefaultTo<'\u0639\u0645\u0644\u064A\u0629 \u0627\u0644\u0645\u0631\u0627\u062C\u0639\u0629'>;
+    reviewStepDescription: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }>;
+    reviewStepTitle: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }> &
+      Schema.Attribute.DefaultTo<'\u0645\u0631\u0627\u062C\u0639\u0629 \u0627\u0644\u0625\u0631\u0633\u0627\u0644'>;
+    seo: Schema.Attribute.Component<'shared.seo', false>;
+    successMessage: Schema.Attribute.RichText & Schema.Attribute.Required;
+    successSteps: Schema.Attribute.Component<'shared.success-step', true>;
+    successTitle: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }> &
+      Schema.Attribute.DefaultTo<'\u062A\u0645 \u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0645\u0642\u0627\u0644 \u0628\u0646\u062C\u0627\u062D!'>;
+    systemMessages: Schema.Attribute.JSON;
+    termsAndConditionsUrl: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    validationMessages: Schema.Attribute.JSON;
   };
 }
 
@@ -1497,6 +1651,7 @@ declare module '@strapi/strapi' {
       'api::newsletter-page.newsletter-page': ApiNewsletterPageNewsletterPage;
       'api::page.page': ApiPagePage;
       'api::saved-article.saved-article': ApiSavedArticleSavedArticle;
+      'api::submit-page-content.submit-page-content': ApiSubmitPageContentSubmitPageContent;
       'api::subscriber.subscriber': ApiSubscriberSubscriber;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;

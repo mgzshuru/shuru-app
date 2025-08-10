@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_shared_success_steps",
+  "info": {
+    "displayName": "Success Step",
+    "description": "Next step item for success page",
+    "icon": "arrowRight"
+  },
+  "options": {},
+  "attributes": {
+    "stepText": {
+      "type": "string",
+      "required": true,
+      "maxLength": 300
+    }
+  }
+}

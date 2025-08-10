@@ -937,6 +937,22 @@ export interface SharedFooterLogo extends Struct.ComponentSchema {
   };
 }
 
+export interface SharedGuidelineItem extends Struct.ComponentSchema {
+  collectionName: 'components_shared_guideline_items';
+  info: {
+    description: 'Individual guideline item for submission guidelines';
+    displayName: 'Guideline Item';
+    icon: 'bulletList';
+  };
+  attributes: {
+    itemText: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }>;
+  };
+}
+
 export interface SharedHeaderLogo extends Struct.ComponentSchema {
   collectionName: 'components_shared_header_logos';
   info: {
@@ -1220,6 +1236,22 @@ export interface SharedSubscriptionButton extends Struct.ComponentSchema {
   };
 }
 
+export interface SharedSuccessStep extends Struct.ComponentSchema {
+  collectionName: 'components_shared_success_steps';
+  info: {
+    description: 'Next step item for success page';
+    displayName: 'Success Step';
+    icon: 'arrowRight';
+  };
+  attributes: {
+    stepText: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 300;
+      }>;
+  };
+}
+
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
@@ -1272,6 +1304,7 @@ declare module '@strapi/strapi' {
       'shared.footer-copyright': SharedFooterCopyright;
       'shared.footer-link-section': SharedFooterLinkSection;
       'shared.footer-logo': SharedFooterLogo;
+      'shared.guideline-item': SharedGuidelineItem;
       'shared.header-logo': SharedHeaderLogo;
       'shared.link': SharedLink;
       'shared.login-button': SharedLoginButton;
@@ -1285,6 +1318,7 @@ declare module '@strapi/strapi' {
       'shared.seo': SharedSeo;
       'shared.social-link': SharedSocialLink;
       'shared.subscription-button': SharedSubscriptionButton;
+      'shared.success-step': SharedSuccessStep;
     }
   }
 }

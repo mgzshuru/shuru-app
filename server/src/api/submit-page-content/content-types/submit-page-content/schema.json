@@ -1,0 +1,181 @@
+{
+  "kind": "singleType",
+  "collectionName": "submit_page_contents",
+  "info": {
+    "singularName": "submit-page-content",
+    "pluralName": "submit-page-contents",
+    "displayName": "Submit Page Content",
+    "description": "Content management for article submission page"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "pageTitle": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100,
+      "default": "إرسال مقال"
+    },
+    "pageSubtitle": {
+      "type": "richtext",
+      "required": false
+    },
+    "headerIcon": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "emailStepTitle": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100,
+      "default": "التحقق من البريد الإلكتروني"
+    },
+    "emailStepDescription": {
+      "type": "text",
+      "required": false,
+      "maxLength": 500
+    },
+    "authorStepTitle": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100,
+      "default": "معلومات الكاتب"
+    },
+    "authorStepDescription": {
+      "type": "text",
+      "required": false,
+      "maxLength": 500
+    },
+    "articleStepTitle": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100,
+      "default": "تفاصيل المقال"
+    },
+    "articleStepDescription": {
+      "type": "text",
+      "required": false,
+      "maxLength": 500
+    },
+    "reviewStepTitle": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100,
+      "default": "مراجعة الإرسال"
+    },
+    "reviewStepDescription": {
+      "type": "text",
+      "required": false,
+      "maxLength": 500
+    },
+    "successTitle": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200,
+      "default": "تم إرسال المقال بنجاح!"
+    },
+    "successMessage": {
+      "type": "richtext",
+      "required": true
+    },
+    "successSteps": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.success-step",
+      "required": false
+    },
+    "returnButtonText": {
+      "type": "string",
+      "required": true,
+      "maxLength": 50,
+      "default": "العودة للرئيسية"
+    },
+    "guidelinesTitle": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100,
+      "default": "إرشادات النشر"
+    },
+    "contentCriteriaTitle": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100,
+      "default": "معايير المحتوى"
+    },
+    "contentCriteriaItems": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.guideline-item",
+      "required": false
+    },
+    "reviewProcessTitle": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100,
+      "default": "عملية المراجعة"
+    },
+    "reviewProcessItems": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.guideline-item",
+      "required": false
+    },
+    "validationMessages": {
+      "type": "json",
+      "required": false
+    },
+    "systemMessages": {
+      "type": "json",
+      "required": false
+    },
+    "enableEmailCheck": {
+      "type": "boolean",
+      "default": true,
+      "required": false
+    },
+    "minWordCount": {
+      "type": "integer",
+      "default": 50,
+      "min": 1,
+      "max": 10000,
+      "required": false
+    },
+    "maxWordCount": {
+      "type": "integer",
+      "default": 5000,
+      "min": 50,
+      "max": 50000,
+      "required": false
+    },
+    "maxFileSize": {
+      "type": "integer",
+      "default": 5,
+      "min": 1,
+      "max": 50,
+      "required": false
+    },
+    "allowedFileTypes": {
+      "type": "string",
+      "default": "jpg,jpeg,png,webp",
+      "required": false
+    },
+    "termsAndConditionsUrl": {
+      "type": "string",
+      "required": false
+    },
+    "privacyPolicyUrl": {
+      "type": "string",
+      "required": false
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo",
+      "required": false
+    }
+  }
+}

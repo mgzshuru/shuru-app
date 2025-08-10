@@ -889,3 +889,159 @@ export async function getContactPageCached(): Promise<ContactPageData | null> {
 
   return freshData;
 }
+
+// =====================
+// SUBMIT PAGE CONTENT FUNCTIONS (OPTIMIZED)
+// =====================
+
+// Submit page data types
+export interface SubmitPageData {
+  id: number;
+  documentId: string;
+  pageTitle: string;
+  pageSubtitle?: string;
+  headerIcon?: {
+    url: string;
+    alternativeText?: string;
+    width?: number;
+    height?: number;
+  };
+  emailStepTitle: string;
+  emailStepDescription?: string;
+  authorStepTitle: string;
+  authorStepDescription?: string;
+  articleStepTitle: string;
+  articleStepDescription?: string;
+  reviewStepTitle: string;
+  reviewStepDescription?: string;
+  successTitle: string;
+  successMessage: string;
+  successSteps?: Array<{
+    stepText: string;
+  }>;
+  returnButtonText: string;
+  guidelinesTitle: string;
+  contentCriteriaTitle: string;
+  contentCriteriaItems?: Array<{
+    itemText: string;
+  }>;
+  reviewProcessTitle: string;
+  reviewProcessItems?: Array<{
+    itemText: string;
+  }>;
+  validationMessages?: any;
+  systemMessages?: any;
+  enableEmailCheck?: boolean;
+  minWordCount?: number;
+  maxWordCount?: number;
+  maxFileSize?: number;
+  allowedFileTypes?: string;
+  termsAndConditionsUrl?: string;
+  privacyPolicyUrl?: string;
+  seo?: {
+    meta_title?: string;
+    meta_description?: string;
+    meta_keywords?: string;
+    og_image?: {
+      url: string;
+      alternativeText?: string;
+      width?: number;
+      height?: number;
+    };
+  };
+}
+
+// Submit page cache
+let submitPageCache: SubmitPageData | null = null;
+let submitPageCacheTime = 0;
+const SUBMIT_PAGE_CACHE_DURATION = 15 * 60 * 1000; // 15 minutes
+
+// Full population for submit page
+const SUBMIT_PAGE_FULL_POPULATE = {
+  headerIcon: {
+    fields: ['url', 'alternativeText', 'width', 'height']
+  },
+  successSteps: {
+    fields: ['stepText']
+  },
+  contentCriteriaItems: {
+    fields: ['itemText']
+  },
+  reviewProcessItems: {
+    fields: ['itemText']
+  },
+  seo: {
+    fields: ['meta_title', 'meta_description', 'meta_keywords'],
+    populate: {
+      og_image: {
+        fields: ['url', 'alternativeText', 'width', 'height']
+      }
+    }
+  }
+};
+
+// SEO-only population for submit page
+const SUBMIT_PAGE_SEO_POPULATE = {
+  seo: {
+    fields: ['meta_title', 'meta_description', 'meta_keywords'],
+    populate: {
+      og_image: {
+        fields: ['url', 'alternativeText', 'width', 'height']
+      }
+    }
+  }
+};
+
+// Get submit page data with full population
+export async function getSubmitPageDataOptimized(): Promise<SubmitPageData | null> {
+  try {
+    const response = await client.single("submit-page-content").find({
+      populate: SUBMIT_PAGE_FULL_POPULATE
+    });
+
+    if (response && response.data) {
+      return response.data as unknown as SubmitPageData;
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching submit page data:", error);
+    return null;
+  }
+}
+
+// Get submit page data for SEO only (lighter payload)
+export async function getSubmitPageSEOOptimized(): Promise<Pick<SubmitPageData, 'seo' | 'id' | 'documentId'> | null> {
+  try {
+    const response = await client.single("submit-page-content").find({
+      fields: ["id", "documentId"],
+      populate: SUBMIT_PAGE_SEO_POPULATE
+    });
+
+    if (response && response.data) {
+      return response.data as unknown as Pick<SubmitPageData, 'seo' | 'id' | 'documentId'>;
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching submit page SEO data:", error);
+    return null;
+  }
+}
+
+// Cached version for better performance
+export async function getSubmitPageCached(): Promise<SubmitPageData | null> {
+  const now = Date.now();
+
+  // Return cached data if still valid
+  if (submitPageCache && (now - submitPageCacheTime) < SUBMIT_PAGE_CACHE_DURATION) {
+    return submitPageCache;
+  }
+
+  // Fetch fresh data
+  const freshData = await getSubmitPageDataOptimized();
+
+  // Update cache
+  submitPageCache = freshData;
+  submitPageCacheTime = now;
+
+  return freshData;
+}

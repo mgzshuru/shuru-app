@@ -1,0 +1,34 @@
+/* Arabic Editor Global Styles */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Noto+Sans+Arabic:wght@400;500;600&display=swap');
+
+/* Global Arabic font family setup */
+.arabic-editor-textarea {
+  font-family: 'IBM Plex Sans Arabic', 'Noto Sans Arabic', 'Tajawal', Arial, sans-serif !important;
+  direction: rtl !important;
+  text-align: right !important;
+  font-size: 16px !important;
+  line-height: 1.6 !important;
+  unicode-bidi: embed !important;
+  resize: vertical !important;
+}
+
+/* Ensure proper text selection for Arabic */
+.arabic-editor-textarea::selection {
+  background-color: rgba(59, 130, 246, 0.25) !important;
+  color: inherit !important;
+}
+
+.arabic-editor-textarea::-moz-selection {
+  background-color: rgba(59, 130, 246, 0.25) !important;
+  color: inherit !important;
+}
+
+/* RTL-specific fixes */
+.arabic-editor-container {
+  direction: rtl;
+}
+
+.arabic-editor-container * {
+  direction: rtl;
+  text-align: right;
+}

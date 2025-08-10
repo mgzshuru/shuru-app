@@ -1,10 +1,123 @@
 /* Custom styles for the markdown editor */
 .md-editor-arabic {
   font-family: 'IBM Plex Sans Arabic', 'Noto Sans Arabic', 'Tajawal', sans-serif;
+  direction: rtl !important;
+}
+
+/* Import Arabic fonts if not available */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Noto+Sans+Arabic:wght@400;500;600&display=swap');
+
+.md-editor-arabic .w-md-editor {
+  background-color: #f9fafb !important;
+  border-radius: 8px !important;
+  direction: rtl !important;
+  font-family: 'IBM Plex Sans Arabic', 'Noto Sans Arabic', 'Tajawal', sans-serif !important;
+}
+
+/* Core text areas and inputs with enhanced RTL support */
+.md-editor-arabic .w-md-editor-text-input,
+.md-editor-arabic .w-md-editor-text-textarea,
+.md-editor-arabic .w-md-editor-text,
+.md-editor-arabic textarea,
+.md-editor-arabic input[type="text"] {
+  direction: rtl !important;
+  text-align: right !important;
+  font-family: 'IBM Plex Sans Arabic', 'Noto Sans Arabic', 'Tajawal', sans-serif !important;
+  font-size: 16px !important;
+  line-height: 1.8 !important;
+  color: #374151 !important;
+  unicode-bidi: embed !important;
+  writing-mode: horizontal-tb !important;
+  font-feature-settings: "kern" 1, "liga" 1 !important;
+  text-rendering: optimizeLegibility !important;
+}
+
+/* Fix text selection highlighting with comprehensive targeting */
+.md-editor-arabic ::selection,
+.md-editor-arabic *::selection,
+.md-editor-arabic .w-md-editor-text-textarea::selection,
+.md-editor-arabic .w-md-editor-text::selection,
+.md-editor-arabic textarea::selection,
+.md-editor-arabic [contenteditable]::selection,
+.md-editor-arabic [contenteditable] *::selection,
+.md-editor-arabic .CodeMirror-line::selection,
+.md-editor-arabic .CodeMirror-line *::selection {
+  background-color: rgba(59, 130, 246, 0.3) !important;
+  color: inherit !important;
+  direction: rtl !important;
+  text-align: right !important;
+  text-shadow: none !important;
+}
+
+/* Alternative selection highlighting for better visibility */
+.md-editor-arabic ::-moz-selection,
+.md-editor-arabic *::-moz-selection {
+  background-color: rgba(59, 130, 246, 0.3) !important;
+  color: inherit !important;
+  text-shadow: none !important;
+}
+
+/* Fix cursor positioning and caret with enhanced positioning */
+.md-editor-arabic .w-md-editor-text-textarea,
+.md-editor-arabic .w-md-editor-text,
+.md-editor-arabic textarea,
+.md-editor-arabic [contenteditable] {
+  caret-color: #1f2937 !important;
+  text-align-last: right !important;
+  /* Fix text positioning and prevent offset */
+  box-sizing: border-box !important;
+  position: relative !important;
+  overflow: visible !important;
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+  /* Prevent text selection misalignment */
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+}
+
+/* Ensure consistent font rendering across all text elements */
+.md-editor-arabic .w-md-editor-text-textarea,
+.md-editor-arabic .w-md-editor-text,
+.md-editor-arabic textarea,
+.md-editor-arabic .w-md-editor-text-container,
+.md-editor-arabic .w-md-editor-text-area,
+.md-editor-arabic [contenteditable],
+.md-editor-arabic .CodeMirror,
+.md-editor-arabic .CodeMirror-line {
+  font-family: 'IBM Plex Sans Arabic', 'Noto Sans Arabic', 'Tajawal', sans-serif !important;
+  font-weight: 400 !important;
+  font-style: normal !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  /* Fix text rendering and positioning */
+  text-rendering: optimizeLegibility !important;
+  letter-spacing: 0 !important;
+  word-spacing: 0 !important;
+  text-indent: 0 !important;
+}
+
+/* Fix CodeMirror specific issues for Arabic text */
+.md-editor-arabic .CodeMirror {
+  direction: rtl !important;
+  text-align: right !important;
+}
+
+.md-editor-arabic .CodeMirror-line {
+  direction: rtl !important;
+  text-align: right !important;
+  unicode-bidi: embed !important;
+}
+
+.md-editor-arabic .CodeMirror-cursor {
+  border-left: 1px solid #1f2937 !important;
+  border-right: none !important;
 }
 
 .md-editor-arabic .w-md-editor {
   background-color: #f9fafb !important;
+  border-radius: 8px !important;
 }
 
 .md-editor-arabic .w-md-editor-text-input,
@@ -14,17 +127,56 @@
   text-align: right !important;
   font-family: 'IBM Plex Sans Arabic', 'Noto Sans Arabic', 'Tajawal', sans-serif !important;
   font-size: 16px !important;
-  line-height: 1.6 !important;
+  line-height: 1.8 !important;
+  color: #374151 !important;
+  unicode-bidi: embed !important;
+  writing-mode: horizontal-tb !important;
+}
+
+/* Force all text content to be RTL */
+.md-editor-arabic .w-md-editor-text-textarea *,
+.md-editor-arabic .w-md-editor-text *,
+.md-editor-arabic .w-md-editor-text-input * {
+  direction: rtl !important;
+  text-align: right !important;
+}
+
+/* Target the actual contenteditable div with enhanced positioning */
+.md-editor-arabic .w-md-editor-text-container [contenteditable="true"],
+.md-editor-arabic .w-md-editor-text-container [contenteditable],
+.md-editor-arabic [contenteditable="true"],
+.md-editor-arabic [contenteditable] {
+  direction: rtl !important;
+  text-align: right !important;
+  unicode-bidi: embed !important;
+  /* Fix positioning and prevent offset issues */
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  /* Ensure proper text flow */
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
+  hyphens: none !important;
+}
+
+.md-editor-arabic .w-md-editor-text-textarea {
+  padding: 20px !important;
+  min-height: 400px !important;
+  resize: vertical !important;
 }
 
 .md-editor-arabic .w-md-editor-toolbar {
   background-color: #ffffff !important;
   border-bottom: 1px solid #e5e7eb !important;
-  padding: 8px 12px !important;
+  padding: 12px 16px !important;
+  border-radius: 8px 8px 0 0 !important;
 }
 
 .md-editor-arabic .w-md-editor-toolbar ul {
   direction: ltr !important;
+  gap: 4px !important;
 }
 
 .md-editor-arabic .w-md-editor-focus {
@@ -34,21 +186,37 @@
 
 .md-editor-arabic .w-md-editor-text-container {
   background-color: #f9fafb !important;
+  border-radius: 0 0 8px 8px !important;
+  /* Fix container positioning to prevent selection offset */
+  position: relative !important;
+  transform: none !important;
+  will-change: auto !important;
+  contain: none !important;
 }
 
 .md-editor-arabic .w-md-editor-text-container .w-md-editor-text {
-  padding: 16px !important;
+  padding: 20px !important;
+  border: none !important;
 }
 
 /* Improve button styling */
 .md-editor-arabic .w-md-editor-toolbar button {
-  border-radius: 4px !important;
-  padding: 4px 8px !important;
+  border-radius: 6px !important;
+  padding: 6px 10px !important;
   margin: 0 2px !important;
+  background-color: transparent !important;
+  border: 1px solid transparent !important;
+  transition: all 0.2s ease !important;
 }
 
 .md-editor-arabic .w-md-editor-toolbar button:hover {
   background-color: #f3f4f6 !important;
+  border-color: #d1d5db !important;
+}
+
+.md-editor-arabic .w-md-editor-toolbar button.active {
+  background-color: #e5e7eb !important;
+  border-color: #9ca3af !important;
 }
 
 /* Hide preview by default in edit mode */
@@ -63,6 +231,7 @@
 
 .md-editor-arabic .w-md-editor-text::-webkit-scrollbar-track {
   background: #f1f1f1;
+  border-radius: 4px;
 }
 
 .md-editor-arabic .w-md-editor-text::-webkit-scrollbar-thumb {
@@ -72,4 +241,196 @@
 
 .md-editor-arabic .w-md-editor-text::-webkit-scrollbar-thumb:hover {
   background: #a1a1a1;
+}
+
+/* Better Arabic text support */
+.md-editor-arabic .w-md-editor-text-textarea::placeholder {
+  direction: rtl !important;
+  text-align: right !important;
+  color: #9ca3af !important;
+  font-style: normal !important;
+}
+
+/* Fix any LTR issues and force RTL */
+.md-editor-arabic .w-md-editor-text-textarea,
+.md-editor-arabic .w-md-editor-text-input {
+  unicode-bidi: bidi-override !important;
+  direction: rtl !important;
+}
+
+/* Target CodeMirror instances if present */
+.md-editor-arabic .CodeMirror {
+  direction: rtl !important;
+  text-align: right !important;
+}
+
+.md-editor-arabic .CodeMirror-line {
+  direction: rtl !important;
+  text-align: right !important;
+}
+
+/* Target any pre elements for code blocks */
+.md-editor-arabic pre,
+.md-editor-arabic code {
+  direction: rtl !important;
+  text-align: right !important;
+}
+
+/* Ensure headings are RTL */
+.md-editor-arabic h1,
+.md-editor-arabic h2,
+.md-editor-arabic h3,
+.md-editor-arabic h4,
+.md-editor-arabic h5,
+.md-editor-arabic h6 {
+  direction: rtl !important;
+  text-align: right !important;
+}
+
+/* Force all paragraphs to be RTL */
+.md-editor-arabic p {
+  direction: rtl !important;
+  text-align: right !important;
+}
+
+/* Ensure proper Arabic text flow */
+.md-editor-arabic .w-md-editor-text {
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+/* Force RTL on any nested elements that might override */
+.md-editor-arabic * {
+  direction: rtl !important;
+  text-align: right !important;
+  font-family: inherit !important;
+}
+
+/* Specific targeting for the actual editor content */
+.md-editor-arabic [role="textbox"],
+.md-editor-arabic [contenteditable="true"],
+.md-editor-arabic .w-md-editor-text-container > div,
+.md-editor-arabic .w-md-editor-text-area {
+  direction: rtl !important;
+  text-align: right !important;
+  unicode-bidi: embed !important;
+  font-family: 'IBM Plex Sans Arabic', 'Noto Sans Arabic', 'Tajawal', sans-serif !important;
+}
+
+/* Fix text selection for all possible elements */
+.md-editor-arabic [role="textbox"]::selection,
+.md-editor-arabic [contenteditable="true"]::selection,
+.md-editor-arabic .w-md-editor-text-container *::selection,
+.md-editor-arabic .w-md-editor-text-area *::selection {
+  background-color: #bfdbfe !important;
+  color: #1e40af !important;
+  direction: rtl !important;
+}
+
+/* Target specific markdown elements for proper RTL */
+.md-editor-arabic .w-md-editor-text span,
+.md-editor-arabic .w-md-editor-text div,
+.md-editor-arabic .w-md-editor-text p,
+.md-editor-arabic .w-md-editor-text-container span,
+.md-editor-arabic .w-md-editor-text-container div,
+.md-editor-arabic .w-md-editor-text-container p {
+  direction: rtl !important;
+  text-align: right !important;
+  font-family: 'IBM Plex Sans Arabic', 'Noto Sans Arabic', 'Tajawal', sans-serif !important;
+  unicode-bidi: embed !important;
+}
+
+/* Fix any text nodes that might have wrong positioning */
+.md-editor-arabic .w-md-editor-text-textarea:focus,
+.md-editor-arabic .w-md-editor-text:focus,
+.md-editor-arabic [contenteditable="true"]:focus {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  text-align: right !important;
+  direction: rtl !important;
+}
+
+/* Additional targeting for any spans or divs inside the editor */
+.md-editor-arabic span,
+.md-editor-arabic div {
+  direction: rtl !important;
+  text-align: right !important;
+}
+
+/* Override any LTR classes that might be applied */
+.md-editor-arabic .ltr,
+.md-editor-arabic [dir="ltr"] {
+  direction: rtl !important;
+  text-align: right !important;
+}
+
+/* Ensure proper selection behavior for the editor content */
+.md-editor-arabic .w-md-editor-text-container,
+.md-editor-arabic .w-md-editor-text,
+.md-editor-arabic .w-md-editor-text-textarea {
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  user-select: text !important;
+}
+
+/* Force proper selection highlighting direction */
+.md-editor-arabic .w-md-editor-text-container::selection,
+.md-editor-arabic .w-md-editor-text::selection,
+.md-editor-arabic .w-md-editor-text-textarea::selection {
+  direction: rtl !important;
+  unicode-bidi: plaintext !important;
+}
+
+/* CRITICAL FIX: Comprehensive text selection override */
+.md-editor-arabic,
+.md-editor-arabic *,
+.md-editor-arabic .w-md-editor,
+.md-editor-arabic .w-md-editor *,
+.md-editor-arabic .w-md-editor-text-container,
+.md-editor-arabic .w-md-editor-text-container *,
+.md-editor-arabic .w-md-editor-text,
+.md-editor-arabic .w-md-editor-text *,
+.md-editor-arabic .w-md-editor-text-textarea,
+.md-editor-arabic [contenteditable],
+.md-editor-arabic [contenteditable] *,
+.md-editor-arabic textarea,
+.md-editor-arabic textarea * {
+  /* Reset any conflicting positioning */
+  position: static !important;
+  transform: none !important;
+  will-change: auto !important;
+  contain: none !important;
+  /* Fix text selection highlighting */
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  user-select: text !important;
+}
+
+/* Universal selection styling with proper positioning */
+.md-editor-arabic ::selection {
+  background-color: rgba(59, 130, 246, 0.25) !important;
+  color: inherit !important;
+  text-shadow: none !important;
+  /* Prevent selection offset */
+  position: static !important;
+  transform: none !important;
+}
+
+.md-editor-arabic ::-moz-selection {
+  background-color: rgba(59, 130, 246, 0.25) !important;
+  color: inherit !important;
+  text-shadow: none !important;
+}
+
+/* Force text alignment and direction for all text content */
+.md-editor-arabic,
+.md-editor-arabic * {
+  direction: rtl !important;
+  text-align: right !important;
+  unicode-bidi: embed !important;
+  /* Prevent any transforms that could affect selection */
+  transform: none !important;
+  backface-visibility: visible !important;
 }

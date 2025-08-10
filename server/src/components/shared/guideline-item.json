@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_shared_guideline_items",
+  "info": {
+    "displayName": "Guideline Item",
+    "description": "Individual guideline item for submission guidelines",
+    "icon": "bulletList"
+  },
+  "options": {},
+  "attributes": {
+    "itemText": {
+      "type": "string",
+      "required": true,
+      "maxLength": 500
+    }
+  }
+}

@@ -48,6 +48,10 @@
       "type": "string",
       "required": false
     },
+    "bio": {
+      "type": "text",
+      "required": false
+    },
     "articles": {
       "type": "relation",
       "relation": "oneToMany",
