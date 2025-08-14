@@ -8,7 +8,11 @@ const nextConfig = {
   },
   images: {
     unoptimized: true,
-    domains: ['localhost', 'cms.shuru.sa'], // Add your Strapi domains
+    domains: [
+      'localhost',
+      'cms.shuru.sa',
+      'shuru-bkt.s3.eu-west-3.amazonaws.com', // S3 bucket URL
+    ],
     // Add image optimization
     formats: ['image/webp', 'image/avif'],
     minimumCacheTTL: 60,
