@@ -19,6 +19,7 @@
   "dependencies": {
     "@strapi/plugin-cloud": "5.13.1",
     "@strapi/plugin-users-permissions": "5.13.1",
+    "@strapi/provider-upload-aws-s3": "^5.22.0",
     "@strapi/strapi": "5.13.1",
     "@types/uuid": "^10.0.0",
     "better-sqlite3": "^11.10.0",
