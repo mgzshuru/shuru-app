@@ -74,12 +74,8 @@ const nextConfig = {
             value: 'nosniff',
           },
           {
-            key: 'X-Frame-Options',
-            value: 'DENY',
-          },
-          {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block',
+            key: 'Content-Security-Policy',
+            value: "frame-ancestors 'self' https://cms.shuru.sa https://shuru.sa http://localhost:1337",
           },
           {
             key: 'Referrer-Policy',
