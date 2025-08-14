@@ -157,61 +157,10 @@ const NewsletterPage = () => {
 
       {/* Subscription Section - Mobile Optimized */}
       <section className="py-6 sm:py-8 lg:py-8 bg-gray-50">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 items-center">
-             {/* Left Side - Images */}
-            <div className="relative hidden lg:block">
-              {/* Main Image - Use mainImage from Strapi if available */}
-              <div className="relative">
-                <img
-                  src={
-                    subscriptionData?.mainImage?.url ||
-                    "https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
-                  }
-                  alt={subscriptionData?.mainImage?.alternativeText || "Business meeting"}
-                  className="w-full h-80 object-cover"
-                  style={{ border: '1px solid #e5e7eb' }}
-                />
-                {/* Overlay Cards */}
-                <div className="absolute -bottom-4 -right-4 bg-white p-4" style={{ border: '1px solid #e5e7eb' }}>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-black flex items-center justify-center">
-                      <Mail className="w-5 h-5 text-white" />
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-semibold text-gray-800">+2,500</p>
-                      <p className="text-xs text-gray-500">مشترك جديد</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="absolute -top-4 -left-4 bg-white p-3" style={{ border: '1px solid #e5e7eb' }}>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-8 h-8 bg-black flex items-center justify-center">
-                      <TrendingUp className="w-4 h-4 text-white" />
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs font-semibold text-gray-800">نمو 95%</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Right Side - Form */}
-            <div className="relative">
-              {/* Mobile Image - Improved */}
-              <div className="lg:hidden mb-4 sm:mb-6">
-                <img
-                  src={
-                    subscriptionData?.mainImage?.url ||
-                    "https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-                  }
-                  alt={subscriptionData?.mainImage?.alternativeText || "Business meeting"}
-                  className="w-full h-40 sm:h-48 object-cover rounded-none"
-                  style={{ border: '1px solid #e5e7eb' }}
-                />
-              </div>
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-center">
+            {/* Form Section - Full Width */}
+            <div className="relative w-full">
 
               {isSubmitted ? (
                 <div className="bg-white p-6 sm:p-8 text-center rounded-none" style={{ border: '1px solid #e5e7eb' }}>

@@ -673,9 +673,6 @@ export async function getNewsletterPageData(): Promise<NewsletterPageData | null
             "termsOfServiceUrl"
           ],
           populate: {
-            mainImage: {
-              fields: ["url", "alternativeText", "width", "height"]
-            },
             features: {
               fields: ["icon", "text"]
             }

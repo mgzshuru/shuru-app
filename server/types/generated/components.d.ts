@@ -1114,7 +1114,6 @@ export interface SharedNewsletterSubscriptionSection
     loadingText: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'\u062C\u0627\u0631\u064A \u0627\u0644\u0627\u0634\u062A\u0631\u0627\u0643...'>;
-    mainImage: Schema.Attribute.Media<'images'>;
     namePlaceholder: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'\u0627\u0644\u0627\u0633\u0645 *'>;

@@ -696,9 +696,6 @@ const NEWSLETTER_PAGE_FULL_POPULATE = {
       "termsOfServiceUrl"
     ],
     populate: {
-      mainImage: {
-        fields: ["url", "alternativeText", "width", "height"]
-      },
       features: {
         fields: ["icon", "text"]
       }

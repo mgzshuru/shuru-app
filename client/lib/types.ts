@@ -473,14 +473,6 @@ export interface NewsletterSubscriptionSection {
   termsOfServiceText?: string;
   privacyPolicyUrl?: string;
   termsOfServiceUrl?: string;
-  mainImage?: {
-    id: number;
-    documentId: string;
-    url: string;
-    alternativeText?: string;
-    width?: number;
-    height?: number;
-  };
   features?: NewsletterFeature[];
 }
 
