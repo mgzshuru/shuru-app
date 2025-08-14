@@ -24,5 +24,8 @@ export function getStrapiMedia(url: string | null) {
   if (url == null) return null;
   if (url.startsWith("data:")) return url;
   if (url.startsWith("http") || url.startsWith("//")) return url;
-  return getStrapiURL() + url;
+
+  // For relative URLs, serve directly from S3
+  const cleanUrl = url.startsWith("/") ? url.slice(1) : url;
+  return `https://shuru-bkt.s3.eu-west-3.amazonaws.com/${cleanUrl}`;
 }
