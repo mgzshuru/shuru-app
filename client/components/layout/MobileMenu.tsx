@@ -16,9 +16,10 @@ interface MobileMenuProps {
   isOpen: boolean;
   onClose: () => void;
   headerData: HeaderData;
+  isUserSubscribed?: boolean;
 }
 
-export default function MobileMenu({ isOpen, onClose, headerData }: MobileMenuProps) {
+export default function MobileMenu({ isOpen, onClose, headerData, isUserSubscribed = false }: MobileMenuProps) {
   const router = useRouter();
   const [latestIssue, setLatestIssue] = useState<any>(null);
   const { isAuthenticated, user, loading } = useAuth();
@@ -123,14 +124,16 @@ export default function MobileMenu({ isOpen, onClose, headerData }: MobileMenuPr
             </>
           )}
 
-          <Button
-            variant="default"
-            size="default"
-            className="justify-center text-black w-full bg-primary hover:bg-primary/90 text-sm py-2"
-            onClick={handleSubscribeClick}
-          >
-            {'اشترك الآن'}
-          </Button>
+          {!isUserSubscribed && (
+            <Button
+              variant="default"
+              size="default"
+              className="justify-center text-black w-full bg-primary hover:bg-primary/90 text-sm py-2"
+              onClick={handleSubscribeClick}
+            >
+              {'اشترك الآن'}
+            </Button>
+          )}
         </div>
 
         {/* Current Issue Section */}

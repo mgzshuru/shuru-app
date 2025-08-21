@@ -2,6 +2,7 @@ import Link from "next/link";
 import React from "react";
 import LogOutButton from "@/components/LogOutButton";
 import { verifySession } from "@/lib/dal";
+import { checkSubscriptionStatus } from "@/lib/strapi-client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,17 @@ export default async function Profile() {
   const {
     session: { user },
   }: any = await verifySession();
+
+  // Check subscription status
+  let isSubscribed = false;
+  if (user?.email) {
+    try {
+      const subscriptionResult = await checkSubscriptionStatus(user.email);
+      isSubscribed = subscriptionResult.isSubscribed;
+    } catch (error) {
+      console.error('Error checking subscription status:', error);
+    }
+  }
 
   // Generate user initials for avatar
   const userInitials = user?.username
@@ -158,21 +170,37 @@ export default async function Profile() {
                     </Link>
                   </Button>
 
-                  <Button asChild variant="outline" className="h-auto p-6 justify-start border-gray-200 hover:border-orange-300 hover:bg-orange-50 transition-all">
-                    <Link href="/subscribe">
+                  {!isSubscribed && (
+                    <Button asChild variant="outline" className="h-auto p-6 justify-start border-gray-200 hover:border-orange-300 hover:bg-orange-50 transition-all">
+                      <Link href="/subscribe">
+                        <div className="flex items-center gap-4 text-right">
+                          <div className="p-3 bg-orange-100 rounded-xl flex-shrink-0">
+                            <Star className="h-6 w-6 text-orange-600" />
+                          </div>
+                          <div>
+                            <div className="font-semibold text-gray-900">اشترك الآن</div>
+                            <div className="text-sm text-gray-600 mt-1">في النشرة الاسبوعية</div>
+                          </div>
+                        </div>
+                      </Link>
+                    </Button>
+                  )}
+
+                  {isSubscribed && (
+                    <div className="h-auto p-6 justify-start bg-green-50 border-green-200 rounded-lg border">
                       <div className="flex items-center gap-4 text-right">
-                        <div className="p-3 bg-orange-100 rounded-xl flex-shrink-0">
-                          <Star className="h-6 w-6 text-orange-600" />
+                        <div className="p-3 bg-green-100 rounded-xl flex-shrink-0">
+                          <Star className="h-6 w-6 text-green-600" />
                         </div>
                         <div>
-                          <div className="font-semibold text-gray-900">اشترك الآن</div>
-                          <div className="text-sm text-gray-600 mt-1">في النشرة الاسبوعية</div>
+                          <div className="font-semibold text-green-900">مشترك بالفعل</div>
+                          <div className="text-sm text-green-600 mt-1">أنت مشترك في النشرة الاسبوعية</div>
                         </div>
                       </div>
-                    </Link>
-                  </Button>
+                    </div>
+                  )}
 
-                  <Button asChild variant="outline" className="h-auto p-6 justify-start border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all sm:col-span-2">
+                  <Button asChild variant="outline" className={`h-auto p-6 justify-start border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all ${!isSubscribed ? 'sm:col-span-2' : ''}`}>
                     <Link href="/magazine">
                       <div className="flex items-center gap-4 text-right">
                         <div className="p-3 bg-blue-100 rounded-xl flex-shrink-0">
