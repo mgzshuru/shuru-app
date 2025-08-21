@@ -77,14 +77,15 @@ const NewsletterPage = () => {
   return (
     <div className="min-h-screen bg-white" dir="rtl">
       {/* Hero Section - Mobile Optimized */}
-      <section className="relative overflow-hidden" style={{ backgroundColor: heroData?.backgroundColor || '#ff6b5a' }}>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
-          <div className="text-center">
-            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black text-black mb-3 sm:mb-4 tracking-tight uppercase leading-tight px-2">
-              {heroData?.title || 'استكشف النشرات الإخبارية للشركات السريعة'}
-            </h1>
+      {heroData && (
+        <section className="relative overflow-hidden" style={{ backgroundColor: heroData?.backgroundColor || '#ff6b5a' }}>
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
+            <div className="text-center">
+              <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black text-black mb-3 sm:mb-4 tracking-tight uppercase leading-tight px-2">
+                {heroData?.title || ''}
+              </h1>
             <p className="text-sm sm:text-base text-white mb-6 sm:mb-8 max-w-2xl mx-auto font-normal px-4">
-              {heroData?.subtitle || 'اكتشف وجهات نظر جديدة. اشترك للحصول على أهم التغطيات الإخبارية في صندوق الوارد الخاص بك.'}
+              {heroData?.subtitle || 'كتشف وجهات نظر جديدة. اشترك للحصول على أهم التغطيات الإخبارية في صندوق الوارد الخاص بك.'}
             </p>            {/* Newsletter Preview Cards - Mobile Responsive */}
             {newsletterCategories.length > 0 && (
               <div className="flex justify-center items-end gap-1 sm:gap-2 md:gap-3 mt-4 sm:mt-6 px-2 overflow-x-auto sm:overflow-x-visible pb-2">
@@ -153,7 +154,8 @@ const NewsletterPage = () => {
             )}
           </div>
         </div>
-      </section>
+        </section>
+      )}
 
       {/* Subscription Section - Mobile Optimized */}
       <section className="py-6 sm:py-8 lg:py-8 bg-gray-50">

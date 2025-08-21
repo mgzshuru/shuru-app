@@ -1544,48 +1544,82 @@ export default function SubmitPage() {
 
         {/* Guidelines Section */}
         <div className="mt-12 bg-white p-8" style={{ border: '1px solid #e5e7eb' }}>
-          <h3 className="text-xl font-bold text-gray-800 mb-6">إرشادات النشر</h3>
+          <h3 className="text-xl font-bold text-gray-800 mb-6">
+            {submitPageContent.guidelinesTitle || 'إرشادات النشر'}
+          </h3>
           <div className="grid md:grid-cols-2 gap-8">
             <div>
-              <h4 className="font-semibold text-gray-800 mb-3">معايير المحتوى</h4>
+              <h4 className="font-semibold text-gray-800 mb-3">
+                {submitPageContent.contentCriteriaTitle || 'معايير المحتوى'}
+              </h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li className="flex items-start">
-                  <div className="w-2 h-2 bg-gray-400 mt-2 ml-2"></div>
-                  <span>المحتوى الأصلي والحصري فقط</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="w-2 h-2 bg-gray-400 mt-2 ml-2"></div>
-                  <span>التركيز على ريادة الأعمال والابتكار</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="w-2 h-2 bg-gray-400 mt-2 ml-2"></div>
-                  <span>اللغة العربية الفصحى المبسطة</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="w-2 h-2 bg-gray-400 mt-2 ml-2"></div>
-                  <span>تجنب المحتوى التجاري المباشر</span>
-                </li>
+                {submitPageContent.contentCriteriaItems && submitPageContent.contentCriteriaItems.length > 0 ? (
+                  submitPageContent.contentCriteriaItems.map((item, index) => (
+                    <li key={index} className="flex items-start">
+                      <div className="w-2 h-2 bg-gray-400 mt-2 ml-2"></div>
+                      <span>{item.itemText}</span>
+                    </li>
+                  ))
+                ) : (
+                  // Fallback content
+                  <>
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-gray-400 mt-2 ml-2"></div>
+                      <span>التركيز على مواضيع ذات علاقة</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-gray-400 mt-2 ml-2"></div>
+                      <span>استخدام اللغة العربية الفصحى المبسطة والواضحة</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-gray-400 mt-2 ml-2"></div>
+                      <span>تجنب المحتوى التجاري المباشر أو الدعاية</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-gray-400 mt-2 ml-2"></div>
+                      <span>احترام حقوق الملكية الفكرية والمصادر عند الاقتباس</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-gray-400 mt-2 ml-2"></div>
+                      <span>تعزيز المعرفة الهوية والإلهام القيادي في الطرح</span>
+                    </li>
+                  </>
+                )}
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold text-gray-800 mb-3">عملية المراجعة</h4>
+              <h4 className="font-semibold text-gray-800 mb-3">
+                {submitPageContent.reviewProcessTitle || 'عملية المراجعة'}
+              </h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li className="flex items-start">
-                  <div className="w-2 h-2 bg-gray-400 mt-2 ml-2"></div>
-                  <span>مراجعة فنية وتحريرية خلال 5-7 أيام</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="w-2 h-2 bg-gray-400 mt-2 ml-2"></div>
-                  <span>قد نطلب تعديلات أو إضافات</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="w-2 h-2 bg-gray-400 mt-2 ml-2"></div>
-                  <span>إشعار بالقبول أو الرفض مع الأسباب</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="w-2 h-2 bg-gray-400 mt-2 ml-2"></div>
-                  <span>النشر حسب التوقيت المناسب</span>
-                </li>
+                {submitPageContent.reviewProcessItems && submitPageContent.reviewProcessItems.length > 0 ? (
+                  submitPageContent.reviewProcessItems.map((item, index) => (
+                    <li key={index} className="flex items-start">
+                      <div className="w-2 h-2 bg-gray-400 mt-2 ml-2"></div>
+                      <span>{item.itemText}</span>
+                    </li>
+                  ))
+                ) : (
+                  // Fallback content
+                  <>
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-gray-400 mt-2 ml-2"></div>
+                      <span>مراجعة فنية وتحريرية خلال 7-5 أيام</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-gray-400 mt-2 ml-2"></div>
+                      <span>قد نطلب تعديلات أو إضافات</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-gray-400 mt-2 ml-2"></div>
+                      <span>إشعار بالقبول أو الرفض مع الأسباب</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-gray-400 mt-2 ml-2"></div>
+                      <span>النشر حسب التوقيت المناسب</span>
+                    </li>
+                  </>
+                )}
               </ul>
             </div>
           </div>
