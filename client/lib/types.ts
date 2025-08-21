@@ -138,6 +138,7 @@ export interface Article {
     width?: number
     height?: number
   }
+  enable_cover_image?: boolean
   category?: {
     id: number
     documentId: string

@@ -323,7 +323,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                         height={40}
                         className="md:w-12 md:h-12 rounded-full object-cover border-2 border-gray-100"
                       />
-                      <div className="absolute -bottom-0.5 -left-0.5 md:-bottom-1 md:-left-1 w-3 h-3 md:w-4 md:h-4 bg-green-500 rounded-full border-2 border-white"></div>
+                      {/* <div className="absolute -bottom-0.5 -left-0.5 md:-bottom-1 md:-left-1 w-3 h-3 md:w-4 md:h-4 bg-green-500 rounded-full border-2 border-white"></div> */}
                     </div>
                   )}
                   <div className="text-right">
@@ -386,7 +386,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         </header>
 
         {/* Featured Image */}
-        {article.cover_image && (
+        {article.enable_cover_image && article.cover_image && (
           <div className="px-4 md:px-6 mb-12 md:mb-16">
             <div className="max-w-6xl mx-auto">
               <div className="relative aspect-[4/3] md:aspect-[16/9] bg-gray-100 overflow-hidden">

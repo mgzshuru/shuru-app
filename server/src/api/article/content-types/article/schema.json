@@ -29,6 +29,10 @@
         "images"
       ]
     },
+    "enable_cover_image": {
+      "type": "boolean",
+      "default": false
+    },
     "blocks": {
       "type": "dynamiczone",
       "components": [
