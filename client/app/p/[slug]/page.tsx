@@ -289,41 +289,6 @@ export default async function PageComponent({ params }: PageProps) {
                   </div>
                 )}
               </div>
-
-              {/* Page Info Card - Mobile Optimized */}
-              <div className="mt-12 sm:mt-16 bg-white p-6 sm:p-8 border border-gray-200 shadow-sm hover:shadow-md transition-shadow rounded-lg">
-                <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-                  <div className="w-2 h-12 sm:h-16 bg-gray-600"></div>
-                  <h3 className="text-lg sm:text-xl font-bold text-gray-900">معلومات الصفحة</h3>
-                </div>
-                <div className="space-y-3 sm:space-y-4" dir="rtl">
-                  <div className="flex items-center justify-between text-sm sm:text-base">
-                    <span className="text-gray-500">تاريخ النشر:</span>
-                    <span className="font-medium text-gray-900">
-                      {page.publishedAt && formatDate(page.publishedAt)}
-                    </span>
-                  </div>
-                  {page.updatedAt !== page.publishedAt && (
-                    <div className="flex items-center justify-between text-sm sm:text-base">
-                      <span className="text-gray-500">آخر تحديث:</span>
-                      <span className="font-medium text-gray-900">
-                        {formatDate(page.updatedAt)}
-                      </span>
-                    </div>
-                  )}
-                  <div className="flex items-center justify-between text-sm sm:text-base">
-                    <span className="text-gray-500">وقت القراءة:</span>
-                    <span className="font-medium text-gray-900">
-                      {page.blocks ? Math.max(1, Math.ceil(page.blocks.reduce((acc, block) => {
-                        if (block.__component === 'content.rich-text') {
-                          return acc + (block.content?.split(' ').length || 0);
-                        }
-                        return acc;
-                      }, 0) / 200)) : 3} دقائق
-                    </span>
-                  </div>
-                </div>
-              </div>
             </main>
           </div>
         </div>

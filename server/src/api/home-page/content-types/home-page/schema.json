@@ -1,0 +1,30 @@
+{
+  "kind": "singleType",
+  "collectionName": "home_pages",
+  "info": {
+    "singularName": "home-page",
+    "pluralName": "home-pages",
+    "displayName": "Home Page",
+    "description": "Dynamic home page with reorderable sections"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "seo": {
+      "type": "component",
+      "component": "shared.seo",
+      "required": false
+    },
+    "blocks": {
+      "type": "dynamiczone",
+      "components": [
+        "home.hero-complex-section",
+        "home.article-grid-section",
+        "home.featured-categories-section"
+      ],
+      "required": true
+    }
+  }
+}

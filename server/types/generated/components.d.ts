@@ -826,6 +826,134 @@ export interface ContentVideoEmbed extends Struct.ComponentSchema {
   };
 }
 
+export interface HomeArticleGridSection extends Struct.ComponentSchema {
+  collectionName: 'components_home_article_grid_sections';
+  info: {
+    description: 'Grid layout section displaying articles with dynamic sidebar content (events, ads, etc.)';
+    displayName: 'Article Grid Section';
+  };
+  attributes: {
+    articles: Schema.Attribute.Relation<'oneToMany', 'api::article.article'>;
+    backgroundColor: Schema.Attribute.Enumeration<
+      ['white', 'gray-50', 'gray-100']
+    > &
+      Schema.Attribute.DefaultTo<'white'>;
+    category: Schema.Attribute.Relation<'oneToOne', 'api::category.category'>;
+    gridColumns: Schema.Attribute.Enumeration<['2', '3', '4']> &
+      Schema.Attribute.DefaultTo<'3'>;
+    maxArticles: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 20;
+          min: 1;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<6>;
+    sectionSpacing: Schema.Attribute.Enumeration<['small', 'medium', 'large']> &
+      Schema.Attribute.DefaultTo<'medium'>;
+    showAuthor: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    showCategory: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    showDate: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    showExcerpt: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    showSidebar: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    showTitle: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    sidebarContent: Schema.Attribute.DynamicZone<['shared.event-card']>;
+    subtitle: Schema.Attribute.Text;
+    title: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Latest Articles'>;
+  };
+}
+
+export interface HomeFeaturedCategoriesSection extends Struct.ComponentSchema {
+  collectionName: 'components_home_featured_categories_sections';
+  info: {
+    description: 'Section displaying featured categories with their latest articles';
+    displayName: 'Featured Categories Section';
+  };
+  attributes: {
+    articlesPerCategory: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 10;
+          min: 1;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<3>;
+    backgroundStyle: Schema.Attribute.Enumeration<
+      ['white', 'gray', 'gradient']
+    > &
+      Schema.Attribute.DefaultTo<'white'>;
+    categories: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::category.category'
+    >;
+    layout: Schema.Attribute.Enumeration<['grid', 'carousel', 'list']> &
+      Schema.Attribute.DefaultTo<'grid'>;
+    maxCategories: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 12;
+          min: 1;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<6>;
+    showArticleCount: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<true>;
+    showCategoryDescription: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    showTitle: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    subtitle: Schema.Attribute.Text;
+    title: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'\u0627\u0644\u062A\u0635\u0646\u064A\u0641\u0627\u062A \u0627\u0644\u0645\u0645\u064A\u0632\u0629'>;
+  };
+}
+
+export interface HomeHeroComplexSection extends Struct.ComponentSchema {
+  collectionName: 'components_home_hero_complex_sections';
+  info: {
+    description: 'Complex hero section with featured article, sidebar articles, and most read widget';
+    displayName: 'Hero Complex Section';
+  };
+  attributes: {
+    featuredArticle: Schema.Attribute.Relation<
+      'oneToOne',
+      'api::article.article'
+    >;
+    maxMostReadArticles: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 10;
+          min: 1;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<4>;
+    maxSidebarArticles: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 10;
+          min: 1;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<3>;
+    mostReadArticles: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::article.article'
+    >;
+    showMostRead: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    sidebarArticles: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::article.article'
+    >;
+    subtitle: Schema.Attribute.Text;
+    title: Schema.Attribute.String;
+  };
+}
+
 export interface LayoutFooter extends Struct.ComponentSchema {
   collectionName: 'components_layout_footer';
   info: {
@@ -872,6 +1000,55 @@ export interface LayoutHeader extends Struct.ComponentSchema {
       Schema.Attribute.Required;
     navigation: Schema.Attribute.Component<'shared.navigation-menu', false> &
       Schema.Attribute.Required;
+  };
+}
+
+export interface SharedAdSpace extends Struct.ComponentSchema {
+  collectionName: 'components_shared_ad_spaces';
+  info: {
+    description: 'Advertisement space with customizable dimensions and content';
+    displayName: 'Ad Space';
+  };
+  attributes: {
+    altText: Schema.Attribute.String;
+    customHtml: Schema.Attribute.Text;
+    height: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<250>;
+    image: Schema.Attribute.Media<'images'>;
+    link: Schema.Attribute.String;
+    linkTarget: Schema.Attribute.Enumeration<['_self', '_blank']> &
+      Schema.Attribute.DefaultTo<'_blank'>;
+    placeholderText: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'\u0645\u0633\u0627\u062D\u0629 \u0625\u0639\u0644\u0627\u0646\u064A\u0629'>;
+    showPlaceholder: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<true>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'\u0625\u0639\u0644\u0627\u0646'>;
+    width: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<300>;
+  };
+}
+
+export interface SharedEventCard extends Struct.ComponentSchema {
+  collectionName: 'components_shared_event_cards';
+  info: {
+    description: 'A promotional card for events with image, title, description and CTA';
+    displayName: 'Event Card';
+  };
+  attributes: {
+    ctaLink: Schema.Attribute.String & Schema.Attribute.DefaultTo<'/events'>;
+    ctaText: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'\u0633\u062C\u0644 \u0627\u0644\u0622\u0646'>;
+    dateText: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'15-18 \u0633\u0628\u062A\u0645\u0628\u0631 | \u0627\u0644\u0631\u064A\u0627\u0636'>;
+    description: Schema.Attribute.Text &
+      Schema.Attribute.DefaultTo<'\u062D\u062F\u062B \u0627\u0644\u0627\u0628\u062A\u0643\u0627\u0631 \u0644\u0647\u0630\u0627 \u0627\u0644\u0639\u0627\u0645 \u0633\u064A\u062C\u0645\u0639 \u0622\u0644\u0627\u0641 \u0627\u0644\u0635\u0646\u0627\u0639 \u0648\u0627\u0644\u0645\u0628\u062A\u0643\u0631\u064A\u0646 \u0645\u0646 \u062C\u0645\u064A\u0639 \u0623\u0646\u062D\u0627\u0621 \u0627\u0644\u0639\u0627\u0644\u0645'>;
+    image: Schema.Attribute.Media<'images'>;
+    sectionIcon: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'/_public/homepage_icons/events.gif'>;
+    sectionTitle: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'\u062D\u0641\u0638 \u0627\u0644\u062A\u0627\u0631\u064A\u062E'>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'\u0645\u0647\u0631\u062C\u0627\u0646 \u0634\u064F\u0631\u0648 \u0644\u0644\u0627\u0628\u062A\u0643\u0627\u0631'>;
   };
 }
 
@@ -1298,8 +1475,13 @@ declare module '@strapi/strapi' {
       'content.quote': ContentQuote;
       'content.rich-text': ContentRichText;
       'content.video-embed': ContentVideoEmbed;
+      'home.article-grid-section': HomeArticleGridSection;
+      'home.featured-categories-section': HomeFeaturedCategoriesSection;
+      'home.hero-complex-section': HomeHeroComplexSection;
       'layout.footer': LayoutFooter;
       'layout.header': LayoutHeader;
+      'shared.ad-space': SharedAdSpace;
+      'shared.event-card': SharedEventCard;
       'shared.footer-copyright': SharedFooterCopyright;
       'shared.footer-link-section': SharedFooterLinkSection;
       'shared.footer-logo': SharedFooterLogo;

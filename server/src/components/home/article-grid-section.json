@@ -1,0 +1,93 @@
+{
+  "collectionName": "components_home_article_grid_sections",
+  "info": {
+    "displayName": "Article Grid Section",
+    "description": "Grid layout section displaying articles with dynamic sidebar content (events, ads, etc.)"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": false,
+      "default": "Latest Articles"
+    },
+    "subtitle": {
+      "type": "text",
+      "required": false
+    },
+    "showTitle": {
+      "type": "boolean",
+      "default": true,
+      "required": false
+    },
+    "articles": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::article.article",
+      "required": false
+    },
+    "maxArticles": {
+      "type": "integer",
+      "default": 6,
+      "min": 1,
+      "max": 20,
+      "required": false
+    },
+    "gridColumns": {
+      "type": "enumeration",
+      "enum": ["2", "3", "4"],
+      "default": "3",
+      "required": false
+    },
+    "category": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::category.category",
+      "required": false
+    },
+    "showCategory": {
+      "type": "boolean",
+      "default": true,
+      "required": false
+    },
+    "showExcerpt": {
+      "type": "boolean",
+      "default": true,
+      "required": false
+    },
+    "showDate": {
+      "type": "boolean",
+      "default": true,
+      "required": false
+    },
+    "showAuthor": {
+      "type": "boolean",
+      "default": false,
+      "required": false
+    },
+    "backgroundColor": {
+      "type": "enumeration",
+      "enum": ["white", "gray-50", "gray-100"],
+      "default": "white",
+      "required": false
+    },
+    "sectionSpacing": {
+      "type": "enumeration",
+      "enum": ["small", "medium", "large"],
+      "default": "medium",
+      "required": false
+    },
+    "sidebarContent": {
+      "type": "dynamiczone",
+      "components": [
+        "shared.event-card"
+      ],
+      "required": false
+    },
+    "showSidebar": {
+      "type": "boolean",
+      "default": false,
+      "required": false
+    }
+  }
+}

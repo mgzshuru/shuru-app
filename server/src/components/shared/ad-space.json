@@ -1,0 +1,59 @@
+{
+  "collectionName": "components_shared_ad_spaces",
+  "info": {
+    "displayName": "Ad Space",
+    "description": "Advertisement space with customizable dimensions and content"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": false,
+      "default": "إعلان"
+    },
+    "width": {
+      "type": "integer",
+      "required": false,
+      "default": 300
+    },
+    "height": {
+      "type": "integer",
+      "required": false,
+      "default": 250
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "link": {
+      "type": "string",
+      "required": false
+    },
+    "linkTarget": {
+      "type": "enumeration",
+      "enum": ["_self", "_blank"],
+      "default": "_blank",
+      "required": false
+    },
+    "altText": {
+      "type": "string",
+      "required": false
+    },
+    "customHtml": {
+      "type": "text",
+      "required": false
+    },
+    "showPlaceholder": {
+      "type": "boolean",
+      "default": true,
+      "required": false
+    },
+    "placeholderText": {
+      "type": "string",
+      "required": false,
+      "default": "مساحة إعلانية"
+    }
+  }
+}

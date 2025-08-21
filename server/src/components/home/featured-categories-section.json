@@ -1,0 +1,66 @@
+{
+  "collectionName": "components_home_featured_categories_sections",
+  "info": {
+    "displayName": "Featured Categories Section",
+    "description": "Section displaying featured categories with their latest articles"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": false,
+      "default": "التصنيفات المميزة"
+    },
+    "subtitle": {
+      "type": "text",
+      "required": false
+    },
+    "showTitle": {
+      "type": "boolean",
+      "default": true,
+      "required": false
+    },
+    "categories": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::category.category",
+      "required": false
+    },
+    "maxCategories": {
+      "type": "integer",
+      "default": 6,
+      "min": 1,
+      "max": 12,
+      "required": false
+    },
+    "articlesPerCategory": {
+      "type": "integer",
+      "default": 3,
+      "min": 1,
+      "max": 10,
+      "required": false
+    },
+    "layout": {
+      "type": "enumeration",
+      "enum": ["grid", "carousel", "list"],
+      "default": "grid",
+      "required": false
+    },
+    "showCategoryDescription": {
+      "type": "boolean",
+      "default": false,
+      "required": false
+    },
+    "showArticleCount": {
+      "type": "boolean",
+      "default": true,
+      "required": false
+    },
+    "backgroundStyle": {
+      "type": "enumeration",
+      "enum": ["white", "gray", "gradient"],
+      "default": "white",
+      "required": false
+    }
+  }
+}

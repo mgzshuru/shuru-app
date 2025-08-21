@@ -1,0 +1,51 @@
+{
+  "collectionName": "components_shared_event_cards",
+  "info": {
+    "displayName": "Event Card",
+    "description": "A promotional card for events with image, title, description and CTA"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "مهرجان شُرو للابتكار"
+    },
+    "description": {
+      "type": "text",
+      "required": false,
+      "default": "حدث الابتكار لهذا العام سيجمع آلاف الصناع والمبتكرين من جميع أنحاء العالم"
+    },
+    "dateText": {
+      "type": "string",
+      "required": false,
+      "default": "15-18 سبتمبر | الرياض"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "ctaText": {
+      "type": "string",
+      "required": false,
+      "default": "سجل الآن"
+    },
+    "ctaLink": {
+      "type": "string",
+      "required": false,
+      "default": "/events"
+    },
+    "sectionTitle": {
+      "type": "string",
+      "required": false,
+      "default": "حفظ التاريخ"
+    },
+    "sectionIcon": {
+      "type": "string",
+      "required": false,
+      "default": "/_public/homepage_icons/events.gif"
+    }
+  }
+}
