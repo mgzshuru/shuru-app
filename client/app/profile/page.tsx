@@ -138,7 +138,7 @@ export default async function Profile() {
                         </div>
                         <div>
                           <div className="font-semibold text-gray-900">اكتب معنا</div>
-                          <div className="text-sm text-gray-600 mt-1">شارك مقالاً أو فكرة</div>
+                          <div className="text-sm text-gray-600 mt-1"></div>
                         </div>
                       </div>
                     </Link>
@@ -166,7 +166,7 @@ export default async function Profile() {
                         </div>
                         <div>
                           <div className="font-semibold text-gray-900">اشترك الآن</div>
-                          <div className="text-sm text-gray-600 mt-1">احصل على محتوى حصري</div>
+                          <div className="text-sm text-gray-600 mt-1">في النشرة الاسبوعية</div>
                         </div>
                       </div>
                     </Link>
