@@ -413,15 +413,6 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           <div className="max-w-6xl mx-auto grid lg:grid-cols-12 gap-8 lg:gap-16">
             {/* Article Content */}
             <main className="lg:col-span-8 order-2 lg:order-1" dir="rtl">
-              {/* Social Share */}
-              <div className="mb-8 md:mb-12">
-                <SocialShare
-                  title={article.title}
-                  slug={article.slug}
-                  description={article.description}
-                />
-              </div>
-
               {/* Article Content */}
               <div id="article-content" className={styles.articleContent}>
                 {article.blocks && article.blocks.length > 0 ? (
@@ -500,11 +491,11 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                             </div>
                           )}
                           <div className="p-4 md:p-6" dir="rtl">
-                            <h4 className="font-bold text-gray-900 group-hover:text-gray-700 transition-colors line-clamp-2 text-base md:text-lg mb-2 md:mb-3 text-right">
+                            <h4 className="font-bold text-gray-900 group-hover:text-gray-700 transition-colors  text-base md:text-lg mb-2 md:mb-3 text-right">
                               {relatedArticle.title}
                             </h4>
                             {relatedArticle.description && (
-                              <p className="text-xs md:text-sm text-gray-600 line-clamp-2 mb-3 md:mb-4 text-right">
+                              <p className="text-xs md:text-sm text-gray-600  mb-3 md:mb-4 text-right">
                                 {relatedArticle.description}
                               </p>
                             )}

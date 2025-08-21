@@ -99,7 +99,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   const handleSearchResultClick = (type: string, item: any) => {
     onClose();
     setSearchTerm('');
-    
+
     switch (type) {
       case 'article':
         router.push(`/articles/${item.slug}`);
@@ -116,9 +116,9 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     }
   };
 
-  const totalResults = searchResults.articles.length + 
-                      searchResults.categories.length + 
-                      searchResults.authors.length + 
+  const totalResults = searchResults.articles.length +
+                      searchResults.categories.length +
+                      searchResults.authors.length +
                       searchResults.magazine_issues.length;
 
   if (!isOpen) return null;
@@ -178,7 +178,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                         >
                           <h4 className="text-white font-medium">{article.title}</h4>
                           {article.description && (
-                            <p className="text-gray-300 text-sm mt-1 line-clamp-2">
+                            <p className="text-gray-300 text-sm mt-1 ">
                               {article.description}
                             </p>
                           )}
@@ -204,7 +204,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                         >
                           <h4 className="text-white font-medium">{category.name}</h4>
                           {category.description && (
-                            <p className="text-gray-300 text-sm mt-1 line-clamp-2">
+                            <p className="text-gray-300 text-sm mt-1 ">
                               {category.description}
                             </p>
                           )}
@@ -257,7 +257,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                         >
                           <h4 className="text-white font-medium">{issue.title}</h4>
                           {issue.description && (
-                            <p className="text-gray-300 text-sm mt-1 line-clamp-2">
+                            <p className="text-gray-300 text-sm mt-1 ">
                               {issue.description}
                             </p>
                           )}
@@ -273,4 +273,4 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
       </div>
     </div>
   );
-} 
+}

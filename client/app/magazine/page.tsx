@@ -307,7 +307,7 @@ function FeaturedMagazineCard({ issue, priority = false }: { issue: MagazineIssu
           </div>
         </div>
         <div className="p-6">
-          <h3 className="text-xl font-bold text-black mb-3 group-hover:text-gray-600 transition-colors font-['IBM_Plex_Sans_Arabic'] line-clamp-2">
+          <h3 className="text-xl font-bold text-black mb-3 group-hover:text-gray-600 transition-colors font-['IBM_Plex_Sans_Arabic'] ">
             {issue.title}
           </h3>
           <div className="text-sm text-gray-500 mb-3 font-['IBM_Plex_Sans_Arabic']">
@@ -340,7 +340,7 @@ function MagazineCard({ issue }: { issue: MagazineIssue }) {
           </div>
         </div>
         <div className="p-4">
-          <h3 className="text-lg font-bold text-black mb-2 group-hover:text-gray-600 transition-colors font-['IBM_Plex_Sans_Arabic'] line-clamp-2">
+          <h3 className="text-lg font-bold text-black mb-2 group-hover:text-gray-600 transition-colors font-['IBM_Plex_Sans_Arabic'] ">
             {issue.title}
           </h3>
           <div className="text-sm text-gray-500 font-['IBM_Plex_Sans_Arabic']">

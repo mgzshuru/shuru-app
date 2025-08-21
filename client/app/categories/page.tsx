@@ -97,7 +97,7 @@ function CategoryCard({ category }: { category: Category }) {
                       </div>
                     )}
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs text-gray-700 line-clamp-2 font-medium text-right">
+                      <p className="text-xs text-gray-700  font-medium text-right">
                         {article.title}
                       </p>
                     </div>
@@ -220,7 +220,7 @@ export default async function CategoriesPage() {
                                   )}
                                 </div>
                                 {childCategory.description && (
-                                  <p className="text-xs text-gray-600 mt-2 line-clamp-2 text-right">
+                                  <p className="text-xs text-gray-600 mt-2  text-right">
                                     {childCategory.description}
                                   </p>
                                 )}

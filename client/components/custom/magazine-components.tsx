@@ -74,7 +74,7 @@ export function MagazineCard({ issue, variant = 'standard', priority = false }: 
 
         {/* Content */}
         <div className={variant === 'featured' ? 'p-6' : 'p-4'}>
-          <h3 className={`font-bold text-black mb-3 group-hover:text-gray-600 transition-colors font-['IBM_Plex_Sans_Arabic'] line-clamp-2 ${
+          <h3 className={`font-bold text-black mb-3 group-hover:text-gray-600 transition-colors font-['IBM_Plex_Sans_Arabic']  ${
             variant === 'featured' ? 'text-xl' : 'text-lg'
           }`}>
             {issue.title}

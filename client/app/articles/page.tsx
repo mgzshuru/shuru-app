@@ -194,7 +194,7 @@ function ArticleCard({ article }: { article: Article }) {
             </time>
           </div>
 
-          <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 leading-tight text-right">
+          <h3 className="text-xl font-bold text-gray-900 mb-3 leading-tight text-right">
             {article.title}
           </h3>
 

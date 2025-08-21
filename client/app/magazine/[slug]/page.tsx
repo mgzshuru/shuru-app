@@ -330,11 +330,11 @@ function ArticleCard({ article }: { article: Article }) {
           </div>
         )}
         <div className="flex-1 min-w-0">
-          <h3 className="text-xl font-bold text-black mb-3 line-clamp-2 font-['IBM_Plex_Sans_Arabic']">
+          <h3 className="text-xl font-bold text-black mb-3  font-['IBM_Plex_Sans_Arabic']">
             {article.title}
           </h3>
           {article.description && (
-            <p className="text-gray-600 text-sm line-clamp-2 mb-3 font-['IBM_Plex_Sans_Arabic']">
+            <p className="text-gray-600 text-sm  mb-3 font-['IBM_Plex_Sans_Arabic']">
               {article.description}
             </p>
           )}

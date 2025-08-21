@@ -117,7 +117,7 @@ export function FeaturedCategoriesSection({ data }: FeaturedCategoriesSectionPro
                 </div>
 
                 {showCategoryDescription && category.description && (
-                  <p className="text-gray-600 text-sm line-clamp-2">
+                  <p className="text-gray-600 text-sm ">
                     {category.description}
                   </p>
                 )}
@@ -155,7 +155,7 @@ export function FeaturedCategoriesSection({ data }: FeaturedCategoriesSectionPro
 
                           {/* Article Content */}
                           <div className="flex-1 min-w-0">
-                            <h4 className="text-sm font-semibold text-gray-900 group-hover/article:text-primary transition-colors line-clamp-2 mb-1">
+                            <h4 className="text-sm font-semibold text-gray-900 group-hover/article:text-primary transition-colors  mb-1">
                               {article.title}
                             </h4>
                             <p className="text-xs text-gray-500">
