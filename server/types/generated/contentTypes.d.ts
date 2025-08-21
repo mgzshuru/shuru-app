@@ -880,8 +880,7 @@ export interface ApiNewsletterPageNewsletterPage
     heroSection: Schema.Attribute.Component<
       'shared.newsletter-hero-section',
       false
-    > &
-      Schema.Attribute.Required;
+    >;
     isActive: Schema.Attribute.Boolean &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<true>;

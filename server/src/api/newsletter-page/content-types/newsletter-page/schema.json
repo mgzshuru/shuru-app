@@ -21,7 +21,7 @@
       "type": "component",
       "repeatable": false,
       "component": "shared.newsletter-hero-section",
-      "required": true
+      "required": false
     },
     "subscriptionSection": {
       "type": "component",

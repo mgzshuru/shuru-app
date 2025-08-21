@@ -32,8 +32,16 @@ export default function Header({ headerData }: HeaderProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [checkingSubscription, setCheckingSubscription] = useState(false);
+  const [isSafari, setIsSafari] = useState(false);
   const router = useRouter();
   const { isAuthenticated, user, loading } = useAuth();
+
+  // Detect Safari browser
+  useEffect(() => {
+    const userAgent = window.navigator.userAgent;
+    const isSafariBrowser = /^((?!chrome|android).)*safari/i.test(userAgent);
+    setIsSafari(isSafariBrowser);
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -97,15 +105,28 @@ export default function Header({ headerData }: HeaderProps) {
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 flex flex-col bg-black/80 px-3 lg:px-5 shadow-md transition-all duration-300"
-      style={{ zIndex: 1000 }}
+      className={`fixed top-0 left-0 right-0 flex flex-col px-3 lg:px-5 shadow-md transition-all duration-300 safari-header safari-performance safari-text-fix safari-header-fallback ${isSafari ? 'bg-black' : ''}`}
+      style={{
+        zIndex: 1000,
+        backgroundColor: isSafari ? 'rgba(0, 0, 0, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+        backdropFilter: 'blur(8px)',
+        WebkitBackdropFilter: 'blur(8px)',
+        transform: 'translateZ(0)',
+        WebkitTransform: 'translateZ(0)',
+        ...(isSafari && {
+          WebkitBackfaceVisibility: 'hidden',
+          backfaceVisibility: 'hidden',
+          WebkitPerspective: '1000px',
+          perspective: '1000px'
+        })
+      }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Top Navigation Bar */}
-      <div className="grid min-h-[40px] sm:min-h-[44px] lg:min-h-[50px] grid-cols-3 items-center justify-between overflow-hidden">
+      <div className="min-h-[40px] sm:min-h-[44px] lg:min-h-[50px] safari-grid-fix safari-grid-fallback overflow-hidden">
         {/* Left Section */}
-        <div className="grid-column-1 flex justify-start items-center gap-1 sm:gap-2 lg:gap-6 text-white rounded-none">
+        <div className="flex justify-start items-center gap-1 sm:gap-2 lg:gap-6 text-white rounded-none safari-flex-fix">
           <Button
             aria-label="Hamburger menu button"
             variant="ghost"
@@ -183,22 +204,23 @@ export default function Header({ headerData }: HeaderProps) {
         </div>
 
         {/* Center Logo */}
-        <div className="masthead grid-column-2">
-          <div className="flex grow-[100] items-center justify-center" aria-label="Shuru logo">
+        <div className="masthead flex justify-center items-center safari-flex-fix">
+          <div className="flex grow-[100] items-center justify-center safari-flex-fix" aria-label="Shuru logo">
             <StrapiLink href="/">
               <StrapiImage
                 src={headerData.logo.logoImage.url}
                 alt={headerData.logo.logoImage.alternativeText || headerData.logo.alt}
                 width={200}
                 height={32}
-                className="py-2 w-[120px] sm:w-[150px] lg:w-[200px] h-[50px] lg:h-[60px]"
+                className="py-2 w-[120px] sm:w-[150px] lg:w-[200px] h-[50px] lg:h-[60px] object-contain block max-w-full safari-image-fix"
+                priority
               />
             </StrapiLink>
           </div>
         </div>
 
         {/* Right Section */}
-        <div className="grid-column-3 flex justify-end items-stretch gap-1 sm:gap-2 lg:gap-6 h-full">
+        <div className="flex justify-end items-stretch gap-1 sm:gap-2 lg:gap-6 h-full safari-flex-fix">
           {/* Show subscribe button only if user is not authenticated OR not subscribed */}
           {(!isAuthenticated || !isSubscribed) && (
             <Link href="/subscribe" className="flex items-stretch">
@@ -227,11 +249,11 @@ export default function Header({ headerData }: HeaderProps) {
 
       {/* Horizontal Categories - Hidden on mobile */}
       <div
-        className={`hidden lg:flex flex-row items-center justify-center gap-2 sm:gap-4 uppercase text-white overflow-hidden transition-all duration-300 ${
+        className={`hidden lg:flex flex-row items-center justify-center gap-2 sm:gap-4 uppercase text-white overflow-hidden transition-all duration-300 safari-flex-fix ${
           isScrolled && !isHovered ? 'h-0 opacity-0' : 'h-[20px] sm:h-[23px] opacity-100'
         }`}
       >
-        <ul className="flex flex-row justify-center gap-2 sm:gap-4 text-xs sm:text-sm font-normal leading-4 tracking-[1px] sm:tracking-[1.4px]">
+        <ul className="flex flex-row justify-center gap-2 sm:gap-4 text-xs sm:text-sm font-normal leading-4 tracking-[1px] sm:tracking-[1.4px] safari-flex-fix">
           {headerData.navigation.primaryMenuItems && headerData.navigation.primaryMenuItems
             .filter((item) => item.onHeader)
             .map((item) => (
