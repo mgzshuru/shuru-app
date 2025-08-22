@@ -7,74 +7,10 @@ import { factories } from '@strapi/strapi';
 export default factories.createCoreController('api::home-page.home-page', ({ strapi }) => ({
   async find(ctx) {
     try {
-      // First, try to find any home page document
+      // Find any home page document - population is handled by middleware
       const entities = await strapi.documents('api::home-page.home-page').findMany({
         status: 'published',
-        populate: {
-          blocks: {
-            on: {
-              'home.hero-complex-section': {
-                populate: {
-                  featuredArticle: {
-                    populate: {
-                      categories: {
-                        fields: ['name', 'slug']
-                      },
-                      cover_image: {
-                        fields: ['url', 'alternativeText', 'width', 'height']
-                      }
-                    }
-                  },
-                  sidebarArticles: {
-                    populate: {
-                      categories: {
-                        fields: ['name', 'slug']
-                      }
-                    }
-                  },
-                  mostReadArticles: {
-                    populate: {
-                      categories: {
-                        fields: ['name', 'slug']
-                      },
-                      cover_image: {
-                        fields: ['url', 'alternativeText', 'width', 'height']
-                      }
-                    }
-                  }
-                }
-              },
-              'home.article-grid-section': {
-                populate: {
-                  articles: {
-                    populate: {
-                      categories: {
-                        fields: ['name', 'slug']
-                      },
-                      cover_image: {
-                        fields: ['url', 'alternativeText', 'width', 'height']
-                      },
-                      author: {
-                        fields: ['name', 'jobTitle'],
-                        populate: {
-                          avatar: {
-                            fields: ['url', 'alternativeText']
-                          }
-                        }
-                      }
-                    }
-                  },
-                  category: {
-                    fields: ['name', 'slug', 'description']
-                  }
-                }
-              }
-            }
-          },
-          seo: {
-            populate: ['og_image']
-          }
-        }
+        // Population is now handled by the middleware
       });
 
       if (!entities || entities.length === 0) {
