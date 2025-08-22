@@ -39,7 +39,8 @@ const populateQuery = {
               }
             }
           }
-        }
+        },
+        fields: ['title', 'subtitle', 'showMostRead', 'maxSidebarArticles', 'maxMostReadArticles']
       },
       'home.article-grid-section': {
         populate: {
