@@ -47,7 +47,6 @@ export function SocialShare({ title, url, description, slug }: SocialShareProps)
 
   return (
     <div className="border border-gray-200 py-6 px-6 bg-gray-50 rounded-lg">
-      <h3 className="text-sm font-semibold text-gray-900 mb-4 text-right">شارك المقال</h3>
       <div className="flex items-center gap-3 justify-end" dir="rtl">
         {/* LinkedIn */}
         <a
