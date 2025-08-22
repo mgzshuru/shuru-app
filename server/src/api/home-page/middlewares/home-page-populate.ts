@@ -23,6 +23,9 @@ const populateQuery = {
             populate: {
               categories: {
                 fields: ['name', 'slug']
+              },
+              cover_image: {
+                fields: ['url', 'alternativeText', 'width', 'height']
               }
             }
           },
