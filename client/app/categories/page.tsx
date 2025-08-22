@@ -153,7 +153,36 @@ export default async function CategoriesPage() {
   try {
     // Fetch all categories with their articles
     const categoriesResponse = await getAllCategories();
-    const categories = (categoriesResponse?.data || []) as Category[];
+    const allCategories = (categoriesResponse?.data || []) as Category[];
+
+    // Process categories to filter articles and sort them
+    const processedCategories = allCategories.map(category => {
+      if (category.articles && category.articles.length > 0) {
+        // Filter out future articles and sort by publish_date desc
+        const currentDate = new Date();
+        const filteredArticles = category.articles
+          .filter(article => {
+            if (!article.publish_date) return true; // Include articles without publish_date
+            return new Date(article.publish_date) <= currentDate;
+          })
+          .sort((a, b) => {
+            if (!a.publish_date || !b.publish_date) return 0;
+            return new Date(b.publish_date).getTime() - new Date(a.publish_date).getTime();
+          })
+          .slice(0, 5); // Limit to 5 recent articles
+
+        return {
+          ...category,
+          articles: filteredArticles
+        };
+      }
+      return category;
+    });
+
+    // Filter to only include categories that have articles
+    const categories = processedCategories.filter((category) =>
+      category.articles && category.articles.length > 0
+    );
 
     // Separate root categories from child categories
     const rootCategories = categories.filter((category) =>
@@ -164,14 +193,18 @@ export default async function CategoriesPage() {
       category.parent_category
     );
 
-    // Group child categories by parent
+    // Group child categories by parent (only include parents that also have articles)
     const categoriesByParent = childCategories.reduce((acc: any, category) => {
       const parentId = category.parent_category?.id;
       if (parentId) {
-        if (!acc[parentId]) {
-          acc[parentId] = [];
+        // Only group if the parent category also has articles and is in our filtered list
+        const parentExists = rootCategories.find(root => root.id === parentId);
+        if (parentExists) {
+          if (!acc[parentId]) {
+            acc[parentId] = [];
+          }
+          acc[parentId].push(category);
         }
-        acc[parentId].push(category);
       }
       return acc;
     }, {});
@@ -234,8 +267,8 @@ export default async function CategoriesPage() {
                 </div>
               </section>
 
-              {/* Standalone Child Categories (categories without parents that got orphaned) */}
-              {childCategories.some((cat) => !categoriesByParent[cat.parent_category?.id || '']) && (
+              {/* Standalone Child Categories (child categories whose parents don't have articles) */}
+              {childCategories.some((cat) => !rootCategories.find(root => root.id === cat.parent_category?.id)) && (
                 <section>
                   <div className="flex items-center gap-3 mb-8" dir="rtl">
                     <div className="w-1 h-8 bg-gray-600"></div>

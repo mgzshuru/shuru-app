@@ -491,6 +491,14 @@ export async function getAllCategories() {
       },
       children_categories: {
         fields: ['name', 'slug']
+      },
+      articles: {
+        fields: ['title', 'slug', 'publish_date'],
+        populate: {
+          cover_image: {
+            fields: ['url', 'alternativeText']
+          }
+        }
       }
     }
   });
