@@ -41,14 +41,27 @@ const NewsletterPage = () => {
     if (email && name) {
       setIsLoading(true);
       try {
-        const result = await subscribe(email, name);
-        if (result.success) {
+        // Submit to both services in parallel
+        const [strapiResult, listmonkResult] = await Promise.allSettled([
+          // Submit to Strapi
+          subscribe(email, name),
+          // Submit to Listmonk newsletter service
+          submitToListmonk(email, name)
+        ]);
+
+        // Check if at least one submission was successful
+        const strapiSuccess = strapiResult.status === 'fulfilled' && strapiResult.value.success;
+        const listmonkSuccess = listmonkResult.status === 'fulfilled';
+
+        if (strapiSuccess || listmonkSuccess) {
           setIsSubmitted(true);
           setEmail('');
           setName('');
           setTimeout(() => setIsSubmitted(false), 3000);
         } else {
-          console.error('Subscription failed:', result.error);
+          console.error('Both subscription methods failed');
+          console.error('Strapi result:', strapiResult);
+          console.error('Listmonk result:', listmonkResult);
         }
       } catch (error) {
         console.error('Error during subscription:', error);
@@ -56,6 +69,23 @@ const NewsletterPage = () => {
         setIsLoading(false);
       }
     }
+  };
+
+  // Function to submit to Listmonk newsletter service
+  const submitToListmonk = async (email: string, name: string) => {
+    const formData = new FormData();
+    formData.append('email', email);
+    formData.append('name', name);
+    formData.append('l', '0cf26f9c-5527-4c4d-b2de-99c85ecaf706'); // Shuru list ID
+
+    const response = await fetch('https://newsletter.shuru.sa/subscription/form', {
+      method: 'POST',
+      body: formData,
+      mode: 'no-cors' // Required for cross-origin requests to external domains
+    });
+
+    // Note: With no-cors mode, we can't read the response, so we assume success if no error is thrown
+    return response;
   };
 
   // Loading state

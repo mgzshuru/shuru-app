@@ -9,6 +9,7 @@ import { getStrapiMedia } from '@/components/custom/strapi-image';
 import { SocialShare } from '@/components/custom/social-share';
 import { TableOfContents } from '@/components/custom/table-of-contents';
 import { SaveButton } from '@/components/custom/save-button';
+import NewsletterSignup from '@/components/custom/NewsletterSignup';
 import { formatDate, extractTextFromRichContent } from '@/lib/utils';
 import { Article, Block } from '@/lib/types';
 import styles from '@/components/article-content.module.css';
@@ -517,23 +518,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
               {/* Newsletter Signup - Mobile Only */}
               <div className="lg:hidden mt-12 md:mt-16 pt-6 md:pt-8 border-t border-gray-200">
-                <div className="bg-gradient-to-br from-gray-600 to-gray-700 text-white p-6 md:p-8">
-                  <h3 className="text-lg md:text-xl font-bold mb-3 md:mb-4 text-right">اشترك في النشرة الإخبارية</h3>
-                  <p className="text-gray-200 mb-4 md:mb-6 leading-relaxed text-right text-sm md:text-base">
-                    احصل على أحدث المقالات والتحديثات مباشرة في بريدك الإلكتروني
-                  </p>
-                  <div className="space-y-3">
-                    <input
-                      type="email"
-                      placeholder="بريدك الإلكتروني"
-                      className="w-full px-3 md:px-4 py-2 md:py-3 text-gray-900 border-0 focus:ring-2 focus:ring-white/50 outline-none text-right text-sm md:text-base"
-                      dir="rtl"
-                    />
-                    <button className="w-full bg-white text-gray-700 font-semibold py-2 md:py-3 px-3 md:px-4 hover:bg-gray-50 transition-colors text-sm md:text-base">
-                      اشترك الآن
-                    </button>
-                  </div>
-                </div>
+                <NewsletterSignup variant="inline" />
               </div>
             </main>
 
@@ -596,23 +581,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               )}
 
               {/* Newsletter Signup - Desktop Only */}
-              <div className="hidden lg:block bg-gradient-to-br from-gray-600 to-gray-700 text-white p-6 lg:p-8">
-                <h3 className="text-lg lg:text-xl font-bold mb-3 lg:mb-4 text-right">اشترك في النشرة الإخبارية</h3>
-                <p className="text-gray-200 mb-4 lg:mb-6 leading-relaxed text-right text-sm lg:text-base">
-                  احصل على أحدث المقالات والتحديثات مباشرة في بريدك الإلكتروني
-                </p>
-                <div className="space-y-3">
-                  <input
-                    type="email"
-                    placeholder="بريدك الإلكتروني"
-                    className="w-full px-3 lg:px-4 py-2 lg:py-3 text-gray-900 border-0 focus:ring-2 focus:ring-white/50 outline-none text-right text-sm lg:text-base"
-                    dir="rtl"
-                  />
-                  <button className="w-full bg-white text-gray-700 font-semibold py-2 lg:py-3 px-3 lg:px-4 hover:bg-gray-50 transition-colors text-sm lg:text-base">
-                    اشترك الآن
-                  </button>
-                </div>
-              </div>
+              <NewsletterSignup variant="sidebar" />
 
               {/* Desktop Table of Contents - Hidden on mobile */}
               <div className="hidden lg:block sticky top-24">

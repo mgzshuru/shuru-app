@@ -254,7 +254,7 @@ export default async function MagazinePage({ searchParams }: MagazinePageProps) 
         </section>
 
         {/* Newsletter Subscription CTA */}
-        <section className="py-24 bg-black text-white">
+        {/* <section className="py-24 bg-black text-white">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-3xl md:text-4xl font-bold mb-6 font-['IBM_Plex_Sans_Arabic']">
               اشترك في نشرتنا الإخبارية
@@ -269,7 +269,7 @@ export default async function MagazinePage({ searchParams }: MagazinePageProps) 
               اشترك الآن
             </Link>
           </div>
-        </section>
+        </section> */}
       </div>
     );
   } catch (error) {
