@@ -517,9 +517,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               )}
 
               {/* Newsletter Signup - Mobile Only */}
-              <div className="lg:hidden mt-12 md:mt-16 pt-6 md:pt-8 border-t border-gray-200">
+              {/* <div className="lg:hidden mt-12 md:mt-16 pt-6 md:pt-8 border-t border-gray-200">
                 <NewsletterSignup variant="inline" />
-              </div>
+              </div> */}
             </main>
 
             {/* Enhanced Sidebar */}
@@ -581,7 +581,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               )}
 
               {/* Newsletter Signup - Desktop Only */}
-              <NewsletterSignup variant="sidebar" />
+              {/* <NewsletterSignup variant="sidebar" /> */}
 
               {/* Desktop Table of Contents - Hidden on mobile */}
               <div className="hidden lg:block sticky top-24">
