@@ -9,7 +9,7 @@ const listPopulateQuery = {
   cover_image: {
     fields: ["url", "alternativeText", "width", "height"],
   },
-  category: {
+  categories: {
     fields: ["name", "slug"],
   },
   author: {
@@ -27,7 +27,7 @@ const detailPopulateQuery = {
   cover_image: {
     fields: ["name", "alternativeText", "url", "width", "height"],
   },
-  category: {
+  categories: {
     fields: ["name", "slug", "description"],
     populate: {
       SEO: {

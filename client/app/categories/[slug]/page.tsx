@@ -141,11 +141,15 @@ function ArticleCard({ article }: { article: Article }) {
 
         <div className="p-6" dir="rtl">
           <div className="flex items-center gap-3 text-sm text-gray-500 mb-4">
-            {article.category && (
+            {article.categories && article.categories.length > 0 && (
               <>
-                <span className="text-gray-700 font-medium text-xs uppercase tracking-wide border border-gray-300 px-2 py-1">
-                  {article.category.name}
-                </span>
+                <div className="flex items-center gap-2 flex-wrap">
+                  {article.categories.map((category) => (
+                    <span key={category.id} className="text-gray-700 font-medium text-xs uppercase tracking-wide border border-gray-300 px-2 py-1">
+                      {category.name}
+                    </span>
+                  ))}
+                </div>
                 <span className="text-gray-300">•</span>
               </>
             )}
@@ -318,10 +322,14 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                           </div>
                         )}
                         <div className="space-y-6" dir="rtl">
-                          {articles[0].category && (
-                            <span className="text-gray-700 font-medium text-xs uppercase tracking-wide border border-gray-300 px-2 py-1">
-                              {articles[0].category.name}
-                            </span>
+                          {articles[0].categories && articles[0].categories.length > 0 && (
+                            <div className="flex items-center gap-2 flex-wrap justify-end">
+                              {articles[0].categories.map((category) => (
+                                <span key={category.id} className="text-gray-700 font-medium text-xs uppercase tracking-wide border border-gray-300 px-2 py-1">
+                                  {category.name}
+                                </span>
+                              ))}
+                            </div>
                           )}
                           <h3 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight text-right">
                             {articles[0].title}

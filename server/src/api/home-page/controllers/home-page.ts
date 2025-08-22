@@ -15,22 +15,84 @@ export default factories.createCoreController('api::home-page.home-page', ({ str
               'home.hero-complex-section': {
                 populate: {
                   featuredArticle: {
-                    populate: ['category', 'cover_image', 'author']
+                    populate: {
+                      categories: {
+                        fields: ['name', 'slug']
+                      },
+                      cover_image: {
+                        fields: ['url', 'alternativeText', 'width', 'height']
+                      },
+                      author: {
+                        fields: ['name', 'jobTitle'],
+                        populate: {
+                          avatar: {
+                            fields: ['url', 'alternativeText']
+                          }
+                        }
+                      }
+                    }
                   },
                   sidebarArticles: {
-                    populate: ['category', 'cover_image', 'author']
+                    populate: {
+                      categories: {
+                        fields: ['name', 'slug']
+                      },
+                      cover_image: {
+                        fields: ['url', 'alternativeText', 'width', 'height']
+                      },
+                      author: {
+                        fields: ['name', 'jobTitle'],
+                        populate: {
+                          avatar: {
+                            fields: ['url', 'alternativeText']
+                          }
+                        }
+                      }
+                    }
                   },
                   mostReadArticles: {
-                    populate: ['category', 'cover_image', 'author']
+                    populate: {
+                      categories: {
+                        fields: ['name', 'slug']
+                      },
+                      cover_image: {
+                        fields: ['url', 'alternativeText', 'width', 'height']
+                      },
+                      author: {
+                        fields: ['name', 'jobTitle'],
+                        populate: {
+                          avatar: {
+                            fields: ['url', 'alternativeText']
+                          }
+                        }
+                      }
+                    }
                   }
                 }
               },
               'home.article-grid-section': {
                 populate: {
                   articles: {
-                    populate: ['category', 'cover_image', 'author']
+                    populate: {
+                      categories: {
+                        fields: ['name', 'slug']
+                      },
+                      cover_image: {
+                        fields: ['url', 'alternativeText', 'width', 'height']
+                      },
+                      author: {
+                        fields: ['name', 'jobTitle'],
+                        populate: {
+                          avatar: {
+                            fields: ['url', 'alternativeText']
+                          }
+                        }
+                      }
+                    }
                   },
-                  category: true
+                  category: {
+                    fields: ['name', 'slug', 'description']
+                  }
                 }
               },
               'home.featured-categories-section': {

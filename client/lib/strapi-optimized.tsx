@@ -28,7 +28,7 @@ const ARTICLE_LIST_POPULATE = {
   cover_image: {
     fields: ["url", "alternativeText", "width", "height"]
   },
-  category: {
+  categories: {
     fields: ["name", "slug"]
   },
   author: {
@@ -46,7 +46,7 @@ const ARTICLE_DETAIL_POPULATE = {
   cover_image: {
     fields: ["name", "alternativeText", "url", "width", "height"]
   },
-  category: {
+  categories: {
     fields: ["name", "slug", "description"],
     populate: {
       SEO: {
@@ -80,7 +80,7 @@ const ARTICLE_SEO_POPULATE = {
   cover_image: {
     fields: ["url", "alternativeText", "width", "height"]
   },
-  category: {
+  categories: {
     fields: ["name", "slug"]
   },
   author: {
@@ -115,7 +115,7 @@ export async function getArticlesOptimized(options: {
   };
 
   if (categorySlug) {
-    filters.category = { slug: { $eq: categorySlug } };
+    filters.categories = { slug: { $eq: categorySlug } };
   }
 
   if (featured) {
@@ -182,8 +182,8 @@ export async function getArticlePageData(slug: string) {
     getArticleForDetail(slug),
     // Only fetch related articles if we have the article
     getArticleForDetail(slug).then(async (art) => {
-      if (art?.category?.slug) {
-        return getRelatedArticlesOptimized(art.id, art.category.slug, 3);
+      if (art?.categories?.[0]?.slug) {
+        return getRelatedArticlesOptimized(art.id, art.categories[0].slug, 3);
       }
       return null;
     })
@@ -201,7 +201,7 @@ export async function getRelatedArticlesOptimized(articleId: string, categorySlu
     filters: {
       $and: [
         { documentId: { $ne: articleId } },
-        { category: { slug: { $eq: categorySlug } } },
+        { categories: { slug: { $eq: categorySlug } } },
         getCurrentDateFilter()
       ]
     },

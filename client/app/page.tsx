@@ -13,6 +13,7 @@ export default async function Home() {
       getArticlesOptimized({ pageSize: 20 }).catch(() => ({ data: [], meta: { total: 0 } })),
       getAllCategories().catch(() => ({ data: [] }))
     ]);
+    console.log('Fetched home page data:', homePageData);
     const articles = Array.isArray(articlesResponse.data) ? articlesResponse.data : [];
     const categories = Array.isArray(categoriesResponse.data) ? categoriesResponse.data : [];
 

@@ -57,7 +57,7 @@ export function ArticleStructuredData({ article, globalData }: ArticleStructured
       "@id": articleUrl
     },
     "inLanguage": "ar-SA",
-    "articleSection": article.category?.name || "أعمال",
+    "articleSection": article.categories?.[0]?.name || "أعمال",
     ...(article.cover_image && {
       "image": {
         "@type": "ImageObject",
@@ -89,15 +89,15 @@ export function ArticleStructuredData({ article, globalData }: ArticleStructured
         "name": "المقالات",
         "item": `${baseUrl}/articles`
       },
-      ...(article.category ? [{
+      ...(article.categories?.[0] ? [{
         "@type": "ListItem",
         "position": 3,
-        "name": article.category.name,
-        "item": `${baseUrl}/categories/${article.category.slug}`
+        "name": article.categories[0].name,
+        "item": `${baseUrl}/categories/${article.categories[0].slug}`
       }] : []),
       {
         "@type": "ListItem",
-        "position": article.category ? 4 : 3,
+        "position": article.categories?.[0] ? 4 : 3,
         "name": article.title,
         "item": articleUrl
       }

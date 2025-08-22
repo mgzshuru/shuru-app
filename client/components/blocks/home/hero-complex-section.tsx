@@ -81,10 +81,10 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
               <p className="flex items-center font-centra text-primary-dark text-left text-[13px] font-bold leading-[14px] tracking-[1.4px]">
                 <Link
                   className=""
-                  href={`/categories/${mainArticle.category?.slug || '#'}`}
+                  href={`/categories/${mainArticle.categories?.[0]?.slug || '#'}`}
                   target="_blank"
                 >
-                  {mainArticle.category?.name?.toUpperCase() || 'أخبار'}
+                  {mainArticle.categories?.[0]?.name?.toUpperCase() || 'أخبار'}
                 </Link>
               </p>
             </div>
@@ -158,10 +158,10 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
                   <p className="flex items-center font-centra text-primary-dark text-left text-[13px] font-bold leading-[14px] tracking-[1.4px]">
                     <Link
                       className=""
-                      href={`/categories/${article.category?.slug || '#'}`}
+                      href={`/categories/${article.categories?.[0]?.slug || '#'}`}
                       target="_blank"
                     >
-                      {article.category?.name?.toUpperCase() || 'مميز'}
+                      {article.categories?.[0]?.name?.toUpperCase() || 'مميز'}
                     </Link>
                   </p>
                 </div>
@@ -219,10 +219,10 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
                       <p className="flex items-center font-centra text-subhead font-bold leading-[13px] tracking-[1.4px] text-primary-dark">
                         <Link
                           className=""
-                          href={`/categories/${article.category?.slug || '#'}`}
+                          href={`/categories/${article.categories?.[0]?.slug || '#'}`}
                           target="_blank"
                         >
-                          {article.category?.name?.toUpperCase() || 'أخبار'}
+                          {article.categories?.[0]?.name?.toUpperCase() || 'أخبار'}
                         </Link>
                       </p>
                     </div>
@@ -299,10 +299,10 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
                   <p className="flex items-center font-centra text-primary-dark text-left text-[13px] font-bold leading-[13px] tracking-[1.82px] sm:text-[13px] sm:leading-[14px] sm:tracking-[1.4px]">
                     <Link
                       className=""
-                      href={`/categories/${article.category?.slug || '#'}`}
+                      href={`/categories/${article.categories?.[0]?.slug || '#'}`}
                       target="_blank"
                     >
-                      {article.category?.name?.toUpperCase() || 'أخبار'}
+                      {article.categories?.[0]?.name?.toUpperCase() || 'أخبار'}
                     </Link>
                   </p>
                 </div>

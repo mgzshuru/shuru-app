@@ -64,7 +64,7 @@ export async function getArticlesByCategory(categorySlug: string, limit?: number
     filters: {
       $and: [
         {
-          category: {
+          categories: {
             slug: { $eq: categorySlug }
           }
         },
@@ -163,7 +163,31 @@ export async function getRelatedArticles(articleId: string, categorySlug: string
     filters: {
       $and: [
         { documentId: { $ne: articleId } },
-        { category: { slug: { $eq: categorySlug } } },
+        { categories: { slug: { $eq: categorySlug } } },
+        getCurrentDateFilter()
+      ]
+    },
+    sort: ['publish_date:desc'],
+    pagination: { limit },
+  };
+
+  const articles = await client.collection("articles").find(query);
+  return articles;
+}
+
+// Get related articles from multiple categories
+export async function getRelatedArticlesFromCategories(articleId: string, categorySlugs: string[], limit: number = 3) {
+  if (categorySlugs.length === 0) return { data: [] };
+
+  const query = {
+    filters: {
+      $and: [
+        { documentId: { $ne: articleId } },
+        {
+          $or: categorySlugs.map(slug => ({
+            categories: { slug: { $eq: slug } }
+          }))
+        },
         getCurrentDateFilter()
       ]
     },
@@ -181,7 +205,7 @@ export async function getArticleCountByCategory(categorySlug: string) {
     filters: {
       $and: [
         {
-          category: {
+          categories: {
             slug: { $eq: categorySlug }
           }
         },
@@ -228,7 +252,7 @@ export async function getArticleWithFullPopulation(slug: string, status: "draft"
       cover_image: {
         fields: ["name", "alternativeText", "url", "width", "height"]
       },
-      category: {
+      categories: {
         fields: ["name", "slug", "description"],
         populate: {
           SEO: true

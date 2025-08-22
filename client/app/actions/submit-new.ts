@@ -15,7 +15,7 @@ export interface SubmissionData {
   // Article Information
   articleTitle: string;
   articleDescription: string;
-  articleCategory: string;
+  articleCategories: string[]; // Changed from single string to array
   articleContent: string;
   articleKeywords: string;
   publishDate: string;
@@ -211,7 +211,7 @@ export async function submitArticle(data: SubmissionData) {
       authorName: data.authorName,
       authorEmail: data.authorEmail,
       articleTitle: data.articleTitle,
-      articleCategory: data.articleCategory,
+      articleCategories: data.articleCategories,
     });
 
     // Comprehensive server-side validation
@@ -252,8 +252,8 @@ export async function submitArticle(data: SubmissionData) {
       validationErrors.articleDescription = 'وصف المقال يجب أن يكون بين 20 و 500 حرف';
     }
 
-    if (!data.articleCategory) {
-      validationErrors.articleCategory = 'فئة المقال مطلوبة';
+    if (!data.articleCategories || data.articleCategories.length === 0) {
+      validationErrors.articleCategories = 'يجب اختيار فئة واحدة على الأقل للمقال';
     }
 
     // Article content validation with security checks
@@ -323,7 +323,7 @@ export async function submitArticle(data: SubmissionData) {
       authorBio: sanitizeInput(data.authorBio),
       articleTitle: sanitizeInput(data.articleTitle),
       articleDescription: sanitizeInput(data.articleDescription),
-      articleCategory: sanitizeInput(data.articleCategory),
+      articleCategories: data.articleCategories, // Keep array as is, individual items are sanitized
       // Don't sanitize article content as it contains markdown
       articleKeywords: sanitizeInput(data.articleKeywords),
       previousPublications: sanitizeInput(data.previousPublications),

@@ -67,7 +67,7 @@ export function ArticleGridSection({ data, articles = [] }: ArticleGridSectionPr
     // Filter by category if specified
     if (category) {
       filteredArticles = filteredArticles.filter(article =>
-        article.category?.id === category.id
+        article.categories?.some((cat: any) => cat.id === category.id)
       );
     }
 
@@ -127,19 +127,26 @@ export function ArticleGridSection({ data, articles = [] }: ArticleGridSectionPr
           {articlesToDisplay.map((article) => (
             <article key={article.id} className="card--latestStories flex flex-col gap-[8px] md:px-0 py-4 px-0">
 
-              {/* Category */}
-              <div className="flex items-center gap-1">
-                <p className="flex items-center font-centra text-primary-dark text-right text-[13px] font-bold leading-[14px] tracking-[1.4px]">
-                  {showCategory && article.category && (
-                    <Link
-                      className=""
-                      href={`/categories/${article.category.slug}`}
-                      target="_blank"
-                    >
-                      {article.category.name?.toUpperCase()}
-                    </Link>
-                  )}
-                </p>
+              {/* Categories */}
+              <div className="flex items-center gap-1 flex-wrap">
+                {showCategory && article.categories && article.categories.length > 0 && (
+                  article.categories.map((category, index) => (
+                    <div key={category.id} className="flex items-center">
+                      <p className="flex items-center font-centra text-primary-dark text-right text-[13px] font-bold leading-[14px] tracking-[1.4px]">
+                        <Link
+                          className=""
+                          href={`/categories/${category.slug}`}
+                          target="_blank"
+                        >
+                          {category.name?.toUpperCase()}
+                        </Link>
+                      </p>
+                      {index < (article.categories?.length || 0) - 1 && (
+                        <span className="text-gray-400 mx-1">•</span>
+                      )}
+                    </div>
+                  ))
+                )}
               </div>
 
               {/* Article Content */}

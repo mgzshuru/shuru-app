@@ -139,14 +139,14 @@ export interface Article {
     height?: number
   }
   enable_cover_image?: boolean
-  category?: {
+  categories?: {
     id: number
     documentId: string
     name: string
     slug: string
     description?: string
     SEO?: SEOComponent
-  }
+  }[]
   author?: {
     id: number
     documentId: string

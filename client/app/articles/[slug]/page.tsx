@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ContentRenderer } from '@/components/blocks/content/ContentRenderer';
 import { getArticleForDetail, getArticleForSEO, getRelatedArticlesOptimized, getGlobalCached } from '@/lib/strapi-optimized';
+import { getRelatedArticlesFromCategories } from '@/lib/strapi-client';
 import { getStrapiMedia } from '@/components/custom/strapi-image';
 import { SocialShare } from '@/components/custom/social-share';
 import { TableOfContents } from '@/components/custom/table-of-contents';
@@ -55,7 +56,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       extractedDescription.substring(0, 160);
 
     const seoKeywords = article.SEO?.meta_keywords?.split(',').map((k: string) => k.trim()).filter(Boolean) || [
-      article.category?.name,
+      ...(article.categories?.map((cat: any) => cat.name) || []),
       'شروع',
       'ريادة الأعمال',
       'الابتكار',
@@ -80,7 +81,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       authors: article.author ? [{ name: article.author.name }] : [{ name: globalData?.siteName || 'شروع' }],
       creator: article.author?.name || globalData?.siteName || 'شروع',
       publisher: globalData?.siteName || 'شروع للنشر الرقمي',
-      category: article.category?.name || 'business',
+      category: article.categories?.[0]?.name || 'business',
 
       openGraph: {
         type: 'article',
@@ -91,7 +92,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
         description: seoDescription,
         publishedTime: article.publish_date,
         modifiedTime: article.updatedAt,
-        section: article.category?.name,
+        section: article.categories?.[0]?.name,
         authors: article.author ? [article.author.name] : [],
         tags: seoKeywords,
         images: [
@@ -132,7 +133,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       other: {
         'article:published_time': article.publish_date,
         'article:modified_time': article.updatedAt,
-        'article:section': article.category?.name || '',
+        'article:section': article.categories?.[0]?.name || '',
         'article:author': article.author?.name || '',
         'article:tag': seoKeywords.join(','),
       },
@@ -159,9 +160,12 @@ async function getArticleData(slug: string): Promise<Article | null> {
 }
 
 // Fetch related articles
-async function getRelatedArticlesData(articleId: string, categorySlug: string): Promise<Article[]> {
+async function getRelatedArticlesData(articleId: string, categorySlugs: string[]): Promise<Article[]> {
   try {
-    const relatedResponse = await getRelatedArticlesOptimized(articleId, categorySlug, 3);
+    // Get related articles from all categories
+    if (categorySlugs.length === 0) return [];
+
+    const relatedResponse = await getRelatedArticlesFromCategories(articleId, categorySlugs, 3);
     return (relatedResponse?.data || []) as Article[];
   } catch (error) {
     console.error('Error fetching related articles:', error);
@@ -244,9 +248,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     globalData = null;
   }
 
-  // Fetch related articles if category exists
-  const relatedArticles = article.category
-    ? await getRelatedArticlesData(article.documentId, article.category.slug)
+  // Fetch related articles if categories exist
+  const relatedArticles = article.categories?.length
+    ? await getRelatedArticlesData(article.documentId, article.categories.map((cat: any) => cat.slug))
     : [];
 
   return (
@@ -265,16 +269,16 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             <Link href="/articles" className="text-gray-500 hover:text-gray-700 transition-colors font-medium whitespace-nowrap">
               المقالات
             </Link>
-            {article.category && (
+            {article.categories?.[0] && (
               <>
                 <svg className="w-3 h-3 md:w-4 md:h-4 mx-2 md:mx-3 text-gray-300 rotate-180 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
                 <Link
-                  href={`/categories/${article.category.slug}`}
+                  href={`/categories/${article.categories[0].slug}`}
                   className="text-gray-500 hover:text-gray-700 transition-colors font-medium whitespace-nowrap"
                 >
-                  {article.category.name}
+                  {article.categories[0].name}
                 </Link>
               </>
             )}
@@ -286,15 +290,20 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         {/* Article Header */}
         <header className="px-4 md:px-6 pt-12 md:pt-16 pb-8 md:pb-12">
           <div className="max-w-4xl mx-auto" dir="rtl">
-            {/* Category Badge */}
-            {article.category && (
+            {/* Categories Badges */}
+            {article.categories?.length && (
               <div className="mb-6 md:mb-8 text-right">
-                <Link
-                  href={`/categories/${article.category.slug}`}
-                  className="inline-flex items-center px-3 md:px-4 py-1.5 md:py-2 bg-gray-100 text-gray-700 text-xs md:text-sm font-semibold uppercase tracking-wider hover:bg-gray-200 transition-colors border border-gray-200"
-                >
-                  {article.category.name}
-                </Link>
+                <div className="flex flex-wrap gap-2 justify-end">
+                  {article.categories.map((category: any) => (
+                    <Link
+                      key={category.id}
+                      href={`/categories/${category.slug}`}
+                      className="inline-flex items-center px-3 md:px-4 py-1.5 md:py-2 bg-gray-100 text-gray-700 text-xs md:text-sm font-semibold uppercase tracking-wider hover:bg-gray-200 transition-colors border border-gray-200"
+                    >
+                      {category.name}
+                    </Link>
+                  ))}
+                </div>
               </div>
             )}
 
@@ -502,10 +511,15 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                             )}
                             <div className="flex items-center justify-between text-xs text-gray-500">
                               <time>{formatDate(relatedArticle.publish_date)}</time>
-                              {relatedArticle.category && (
-                                <span className="text-gray-600 font-medium">
-                                  {relatedArticle.category.name}
-                                </span>
+                              {relatedArticle.categories && relatedArticle.categories.length > 0 && (
+                                <div className="flex items-center gap-1 flex-wrap">
+                                  {relatedArticle.categories.map((category, index) => (
+                                    <span key={category.id} className="text-gray-600 font-medium">
+                                      {category.name}
+                                      {index < relatedArticle.categories!.length - 1 && <span className="text-gray-400 ml-1">•</span>}
+                                    </span>
+                                  ))}
+                                </div>
                               )}
                             </div>
                           </div>
@@ -632,8 +646,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               "@type": "WebPage",
               "@id": `https://www.shuru.sa/articles/${article.slug}`
             },
-            "articleSection": article.category?.name,
-            "keywords": article.SEO?.meta_keywords || [article.category?.name, 'شروع', 'ريادة الأعمال'].filter(Boolean).join(','),
+            "articleSection": article.categories?.[0]?.name,
+            "keywords": article.SEO?.meta_keywords || [...(article.categories?.map((cat: any) => cat.name) || []), 'شروع', 'ريادة الأعمال'].filter(Boolean).join(','),
             "wordCount": article.blocks?.reduce((count, block) => {
               if (block.__component === 'content.rich-text') {
                 return count + (block.content?.split(' ').length || 0);
@@ -641,9 +655,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               return count;
             }, 0),
             "inLanguage": "ar",
-            "about": article.category ? {
+            "about": article.categories?.[0] ? {
               "@type": "Thing",
-              "name": article.category.name
+              "name": article.categories[0].name
             } : undefined,
             "isPartOf": {
               "@type": "WebSite",
@@ -678,15 +692,15 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                 "name": "المقالات",
                 "item": "https://www.shuru.sa/articles"
               },
-              ...(article.category ? [{
+              ...(article.categories?.[0] ? [{
                 "@type": "ListItem",
                 "position": 3,
-                "name": article.category.name,
-                "item": `https://www.shuru.sa/categories/${article.category.slug}`
+                "name": article.categories[0].name,
+                "item": `https://www.shuru.sa/categories/${article.categories[0].slug}`
               }] : []),
               {
                 "@type": "ListItem",
-                "position": article.category ? 4 : 3,
+                "position": article.categories?.[0] ? 4 : 3,
                 "name": article.title,
                 "item": `https://www.shuru.sa/articles/${article.slug}`
               }

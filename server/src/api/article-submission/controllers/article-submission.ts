@@ -244,8 +244,10 @@ export default {
         validationErrors.articleDescription = 'Article description must be between 20 and 500 characters';
       }
 
-      if (!data.articleCategory || typeof data.articleCategory !== 'string') {
-        validationErrors.articleCategory = 'Article category is required';
+      if (!data.articleCategories || !Array.isArray(data.articleCategories) || data.articleCategories.length === 0) {
+        validationErrors.articleCategories = 'At least one article category is required';
+      } else if (data.articleCategories.some(cat => !cat || typeof cat !== 'string' || cat.trim().length === 0)) {
+        validationErrors.articleCategories = 'All selected categories must be valid';
       }
 
       // Article content validation with security checks
@@ -327,7 +329,7 @@ export default {
         authorBio: sanitizeInput(data.authorBio || '').trim(),
         articleTitle: sanitizeInput(data.articleTitle).trim(),
         articleDescription: sanitizeInput(data.articleDescription).trim(),
-        articleCategory: sanitizeInput(data.articleCategory).trim(),
+        articleCategories: data.articleCategories.map(cat => sanitizeInput(cat).trim()),
         articleContent: data.articleContent, // Don't sanitize markdown content
         articleKeywords: sanitizeInput(data.articleKeywords || '').trim(),
         publishDate: data.publishDate,
@@ -405,41 +407,47 @@ export default {
         return ctx.internalServerError('Failed to create or update author');
       }
 
-      // Find or create category
-      let category;
-      const existingCategories = await strapi.entityService.findMany('api::category.category', {
-        filters: { name: sanitizedData.articleCategory },
-        limit: 1
-      });
+      // Find or create categories
+      const categoryIds = [];
 
-      if (!existingCategories || existingCategories.length === 0) {
-        // Create new category with improved slug generation
-        const categorySlug = sanitizedData.articleCategory.toLowerCase()
-          .normalize('NFD') // Normalize Unicode
-          .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
-          .replace(/[^a-z0-9\s\u0600-\u06FF]/g, '') // Keep only letters, numbers, spaces, and Arabic
-          .replace(/\s+/g, '-') // Replace spaces with hyphens
-          .replace(/^-+|-+$/g, '') // Remove leading/trailing hyphens
-          .trim() || `category-${Date.now()}`; // Fallback if no valid characters
+      for (const categoryName of sanitizedData.articleCategories) {
+        let category;
+        const existingCategories = await strapi.entityService.findMany('api::category.category', {
+          filters: { name: categoryName },
+          limit: 1
+        });
 
-        try {
-          category = await strapi.entityService.create('api::category.category', {
-            data: {
-              name: sanitizedData.articleCategory,
-              slug: categorySlug
-            }
-          });
-        } catch (categoryError) {
-          strapi.log.error('Error creating category:', categoryError);
-          return ctx.internalServerError('Failed to create category');
+        if (!existingCategories || existingCategories.length === 0) {
+          // Create new category with improved slug generation
+          const categorySlug = categoryName.toLowerCase()
+            .normalize('NFD') // Normalize Unicode
+            .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+            .replace(/[^a-z0-9\s\u0600-\u06FF]/g, '') // Keep only letters, numbers, spaces, and Arabic
+            .replace(/\s+/g, '-') // Replace spaces with hyphens
+            .replace(/^-+|-+$/g, '') // Remove leading/trailing hyphens
+            .trim() || `category-${Date.now()}`; // Fallback if no valid characters
+
+          try {
+            category = await strapi.entityService.create('api::category.category', {
+              data: {
+                name: categoryName,
+                slug: categorySlug
+              }
+            });
+          } catch (categoryError) {
+            strapi.log.error('Error creating category:', categoryError);
+            return ctx.internalServerError(`Failed to create category: ${categoryName}`);
+          }
+        } else {
+          category = existingCategories[0];
         }
-      } else {
-        category = existingCategories[0];
-      }
 
-      if (!category) {
-        strapi.log.error('Failed to create or retrieve category');
-        return ctx.internalServerError('Failed to create or retrieve category');
+        if (!category) {
+          strapi.log.error(`Failed to create or retrieve category: ${categoryName}`);
+          return ctx.internalServerError(`Failed to create or retrieve category: ${categoryName}`);
+        }
+
+        categoryIds.push(category.id);
       }
 
       // Convert markdown content to blocks format
@@ -480,10 +488,9 @@ export default {
 
       // Create article as draft
       const authorId = (author as any).documentId || (author as any).id;
-      const categoryId = (category as any).documentId || (category as any).id;
 
-      if (!authorId || !categoryId) {
-        strapi.log.error('Missing author or category ID', { authorId, categoryId });
+      if (!authorId || categoryIds.length === 0) {
+        strapi.log.error('Missing author or category IDs', { authorId, categoryIds });
         return ctx.internalServerError('Missing author or category information');
       }
 
@@ -493,13 +500,13 @@ export default {
           slug,
           description: sanitizedData.articleDescription,
           blocks,
-          category: categoryId,
+          categories: categoryIds, // Direct array for many-to-many in Strapi v5
           author: authorId,
           publish_date: sanitizedData.publishDate ? new Date(sanitizedData.publishDate) : null,
           is_featured: false,
           publishedAt: null // This makes it a draft
         }
-      });
+      } as any); // Type assertion to bypass TypeScript check
 
       // Log successful submission for security monitoring
       strapi.log.info('Article submission completed successfully', {
@@ -507,6 +514,7 @@ export default {
         authorEmail: sanitizedData.authorEmail,
         authorName: sanitizedData.authorName,
         articleTitle: sanitizedData.articleTitle,
+        categories: sanitizedData.articleCategories,
         clientIP,
         userAgent,
         timestamp: new Date().toISOString(),

@@ -22,10 +22,10 @@ interface SavedArticle {
     width?: number;
     height?: number;
   };
-  category?: {
+  categories?: {
     name: string;
     slug: string;
-  };
+  }[];
   author?: {
     name: string;
     jobTitle?: string;
@@ -158,15 +158,20 @@ export default async function SavedArticlesPage() {
                     {/* Article Content */}
                     <div className={`md:order-1 ${article.cover_image ? 'md:col-span-3' : 'md:col-span-4'} flex flex-col justify-between`}>
                       <div>
-                        {/* Category */}
-                        {article.category && (
+                        {/* Categories */}
+                        {article.categories && article.categories.length > 0 && (
                           <div className="mb-4">
-                            <Link
-                              href={`/categories/${article.category.slug}`}
-                              className="inline-block text-sm font-semibold text-orange-600 hover:text-orange-700 bg-orange-50 hover:bg-orange-100 px-3 py-2 rounded-full"
-                            >
-                              {article.category.name}
-                            </Link>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              {article.categories.map((category, index) => (
+                                <Link
+                                  key={`${category.slug}-${index}`}
+                                  href={`/categories/${category.slug}`}
+                                  className="inline-block text-sm font-semibold text-orange-600 hover:text-orange-700 bg-orange-50 hover:bg-orange-100 px-3 py-2 rounded-full"
+                                >
+                                  {category.name}
+                                </Link>
+                              ))}
+                            </div>
                           </div>
                         )}
 

@@ -32,7 +32,7 @@ interface SubmissionFormData {
   // Article Information
   articleTitle: string;
   articleDescription: string;
-  articleCategory: string;
+  articleCategories: string[]; // Changed from single string to array
   articleContent: string;
   articleKeywords: string;
   publishDate: string;
@@ -85,7 +85,7 @@ export default function SubmitPage() {
     authorBio: '',
     articleTitle: '',
     articleDescription: '',
-    articleCategory: '',
+    articleCategories: [], // Changed from single string to array
     articleContent: '',
     articleKeywords: '',
     publishDate: '',
@@ -387,6 +387,29 @@ export default function SubmitPage() {
     }
   };
 
+  const handleCategoryChange = (categoryName: string, isChecked: boolean) => {
+    setFormData(prev => {
+      const currentCategories = prev.articleCategories || [];
+
+      if (isChecked) {
+        // Add category if not already present
+        if (!currentCategories.includes(categoryName)) {
+          return { ...prev, articleCategories: [...currentCategories, categoryName] };
+        }
+      } else {
+        // Remove category
+        return { ...prev, articleCategories: currentCategories.filter(cat => cat !== categoryName) };
+      }
+
+      return prev;
+    });
+
+    // Clear category error when user selects a category
+    if (errors.articleCategories) {
+      setErrors(prev => ({ ...prev, articleCategories: '' }));
+    }
+  };
+
   const handleFileChange = (field: 'coverImage', file: File | null) => {
     if (file) {
       // Get dynamic file size limit
@@ -487,8 +510,8 @@ export default function SubmitPage() {
         newErrors.articleDescription = getValidationMessage('article.descriptionMaxLength', 'وصف المقال طويل جداً (الحد الأقصى 500 حرف)');
       }
 
-      if (!formData.articleCategory) {
-        newErrors.articleCategory = getValidationMessage('article.categoryRequired', 'فئة المقال مطلوبة');
+      if (!formData.articleCategories || formData.articleCategories.length === 0) {
+        newErrors.articleCategories = getValidationMessage('article.categoryRequired', 'يجب اختيار فئة واحدة على الأقل للمقال');
       }
 
       if (!formData.articleContent) {
@@ -589,7 +612,7 @@ export default function SubmitPage() {
         authorBio: sanitizeInput(formData.authorBio),
         articleTitle: sanitizeInput(formData.articleTitle),
         articleDescription: sanitizeInput(formData.articleDescription),
-        articleCategory: sanitizeInput(formData.articleCategory),
+        articleCategories: formData.articleCategories, // Send array of categories
         articleContent: formData.articleContent, // Don't sanitize markdown content, backend handles it
         articleKeywords: sanitizeInput(formData.articleKeywords),
         publishDate: formData.publishDate,
@@ -602,6 +625,10 @@ export default function SubmitPage() {
       // Validate critical fields one more time
       if (!validateEmail(submissionData.authorEmail)) {
         throw new Error(getValidationMessage('email.invalid', 'البريد الإلكتروني غير صحيح'));
+      }
+
+      if (!submissionData.articleCategories || submissionData.articleCategories.length === 0) {
+        throw new Error(getValidationMessage('article.categoryRequired', 'يجب اختيار فئة واحدة على الأقل للمقال'));
       }
 
       const minWords = getMinWordCount();
@@ -629,7 +656,7 @@ export default function SubmitPage() {
           authorBio: '',
           articleTitle: '',
           articleDescription: '',
-          articleCategory: '',
+          articleCategories: [], // Changed from single string to array
           articleContent: '',
           articleKeywords: '',
           publishDate: '',
@@ -1230,35 +1257,58 @@ export default function SubmitPage() {
               </div>
 
               <div className="grid md:grid-cols-1 gap-6">
-                {/* Article Category */}
+                {/* Article Categories */}
                 <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-gray-700">فئة المقال *</label>
-                  <div className="relative">
-                    <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400">
-                      <Tag className="w-5 h-5" />
-                    </div>
-                    <select
-                      value={formData.articleCategory}
-                      onChange={(e) => handleInputChange('articleCategory', e.target.value)}
-                      className={`w-full pr-12 pl-4 py-4 border-2 focus:outline-none focus:ring-4 focus:ring-gray-100 text-base transition-all duration-200 bg-gray-50 focus:bg-white ${
-                        errors.articleCategory ? 'border-red-300 focus:border-red-400' : 'border-gray-200 focus:border-gray-400'
-                      }`}
-                      disabled={isLoadingCategories}
-                    >
-                      <option value="">
-                        {isLoadingCategories ? 'جاري تحميل الفئات...' : 'اختر الفئة المناسبة'}
-                      </option>
-                      {categories.map((category) => (
-                        <option key={category.id} value={category.name}>
-                          {category.name}
-                        </option>
-                      ))}
-                    </select>
+                  <label className="block text-sm font-semibold text-gray-700">فئات المقال *</label>
+                  <p className="text-sm text-gray-500 mb-3">اختر فئة واحدة أو أكثر تناسب محتوى مقالك</p>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 p-4 border-2 border-gray-200 bg-gray-50 rounded-lg">
+                    {isLoadingCategories ? (
+                      <div className="col-span-full text-center text-gray-500 py-4">
+                        جاري تحميل الفئات...
+                      </div>
+                    ) : (
+                      categories.map((category) => (
+                        <label
+                          key={category.id}
+                          className="flex items-center space-x-2 space-x-reverse cursor-pointer hover:bg-white hover:shadow-sm p-3 rounded-lg border border-transparent hover:border-gray-300 transition-all duration-200"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={formData.articleCategories.includes(category.name)}
+                            onChange={(e) => handleCategoryChange(category.name, e.target.checked)}
+                            className="w-4 h-4 text-black border-gray-300 rounded focus:ring-black focus:ring-2"
+                          />
+                          <span className="text-sm font-medium text-gray-700">{category.name}</span>
+                        </label>
+                      ))
+                    )}
                   </div>
-                  {errors.articleCategory && (
+                  {formData.articleCategories.length > 0 && (
+                    <div className="mt-2 p-2 bg-black/5 rounded border">
+                      <p className="text-xs text-gray-600 mb-1">الفئات المختارة:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {formData.articleCategories.map((categoryName, index) => (
+                          <span
+                            key={index}
+                            className="inline-flex items-center px-2 py-1 text-xs font-medium bg-black text-white rounded"
+                          >
+                            {categoryName}
+                            <button
+                              type="button"
+                              onClick={() => handleCategoryChange(categoryName, false)}
+                              className="ml-1 hover:bg-gray-700 rounded-full p-0.5"
+                            >
+                              ×
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {errors.articleCategories && (
                     <p className="text-red-500 text-sm flex items-center">
                       <AlertCircle className="w-4 h-4 ml-1" />
-                      {errors.articleCategory}
+                      {errors.articleCategories}
                     </p>
                   )}
                 </div>
@@ -1461,7 +1511,7 @@ export default function SubmitPage() {
                 <div className="space-y-2 text-sm">
                   <div><span className="font-medium">العنوان:</span> {formData.articleTitle || 'غير محدد'}</div>
                   <div><span className="font-medium">الكاتب:</span> {formData.authorName || 'غير محدد'}</div>
-                  <div><span className="font-medium">الفئة:</span> {formData.articleCategory || 'غير محددة'}</div>
+                  <div><span className="font-medium">الفئات:</span> {formData.articleCategories && formData.articleCategories.length > 0 ? formData.articleCategories.join('، ') : 'غير محددة'}</div>
                   <div><span className="font-medium">عدد الكلمات:</span> {getWordCount(formData.articleContent)}</div>
                   <div><span className="font-medium">صورة الغلاف:</span> {formData.coverImage ? 'مرفقة' : 'غير مرفقة'}</div>
                 </div>

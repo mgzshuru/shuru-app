@@ -8,7 +8,7 @@ const populateQuery = {
   cover_image: { // Changed from 'cover' to 'cover_image'
     fields: ["name", "alternativeText", "url", "width", "height"],
   },
-  category: {
+  categories: {
     fields: ["name", "slug", "description"],
     populate: {
       SEO: true, // Add SEO if needed
@@ -60,11 +60,11 @@ const populateQuery = {
       "content.call-to-action": { // Added missing component
         fields: [
           "title",
-          "description", 
-          "button_text", 
-          "button_url", 
-          "style", 
-          "background_color", 
+          "description",
+          "button_text",
+          "button_url",
+          "style",
+          "background_color",
           "open_in_new_tab"
         ],
       },
