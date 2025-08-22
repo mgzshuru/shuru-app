@@ -86,7 +86,7 @@ const validateURL = (url: string): boolean => {
   }
 };
 
-// Enhanced word count validation with better filtering and space handling
+// Enhanced word count validation with better filtering and space handling for Arabic and English
 const getWordCount = (text: string): number => {
   if (!text) return 0;
 
@@ -95,11 +95,12 @@ const getWordCount = (text: string): number => {
     .replace(/[#*`_~\[\]()]/g, '') // Remove markdown symbols
     .replace(/https?:\/\/[^\s]+/g, '') // Remove URLs
     .replace(/\s+/g, ' ') // Normalize multiple spaces to single space
-    .split(' ') // Split by single space to count words properly
+    .trim() // Remove leading/trailing spaces for accurate counting
+    .split(/\s+/) // Split by any whitespace characters
     .filter(word => {
-      // Only count meaningful words (allow single characters and numbers)
+      // Only count meaningful words (support Arabic, English, numbers)
       return word.length > 0 &&
-             /\w/.test(word); // Contains word characters (letters, numbers, underscore)
+             /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\w]/.test(word); // Arabic ranges + word characters
     })
     .length;
 };
@@ -188,14 +189,112 @@ export default {
       const clientIP = ctx.request.ip || ctx.request.socket.remoteAddress || 'unknown';
       const userAgent = ctx.request.headers['user-agent'] || '';
 
+      // Handle both FormData and JSON submissions
+      let data = ctx.request.body;
+      const files = ctx.request.files;
+
       // Basic validation - log the attempt but allow all valid requests
       strapi.log.info('Article submission attempt', {
         ip: clientIP,
         userAgent: userAgent?.substring(0, 100), // Limit user agent length for logging
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        hasCoverImage: !!(files && files.coverImage),
+        authorEmail: data.authorEmail
       });
 
-      const data = ctx.request.body;
+      // If articleCategories is a string (from FormData), parse it
+      if (typeof data.articleCategories === 'string') {
+        try {
+          data.articleCategories = JSON.parse(data.articleCategories);
+        } catch (error) {
+          strapi.log.error('Error parsing articleCategories:', error);
+          data.articleCategories = [];
+        }
+      }
+
+      // If blocks is a string (from FormData), parse it
+      if (typeof data.blocks === 'string') {
+        try {
+          data.blocks = JSON.parse(data.blocks);
+        } catch (error) {
+          strapi.log.error('Error parsing blocks:', error);
+          data.blocks = [];
+        }
+      }
+
+      // Handle cover image from files
+      let coverImageId = null;
+      if (files && files.coverImage) {
+        try {
+          const coverImageFile = Array.isArray(files.coverImage) ? files.coverImage[0] : files.coverImage;
+
+          // Debug logging
+          strapi.log.info('Cover image file details:', {
+            type: coverImageFile.type,
+            size: coverImageFile.size,
+            name: coverImageFile.name,
+            originalFilename: coverImageFile.originalFilename,
+            mimetype: coverImageFile.mimetype
+          });
+
+          // Validate file type - use both type and mimetype fields and check file extension
+          const fileType = coverImageFile.type || coverImageFile.mimetype;
+          const fileName = coverImageFile.name || coverImageFile.originalFilename || '';
+          const fileExtension = fileName.toLowerCase().split('.').pop();
+
+          const allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+          const allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+
+          const isValidMimeType = fileType && allowedMimeTypes.includes(fileType);
+          const isValidExtension = fileExtension && allowedExtensions.includes(fileExtension);
+
+          if (!isValidMimeType && !isValidExtension) {
+            strapi.log.warn('Invalid cover image type uploaded:', {
+              type: coverImageFile.type,
+              mimetype: coverImageFile.mimetype,
+              detectedType: fileType,
+              fileName: fileName,
+              fileExtension: fileExtension,
+              allowedTypes: allowedMimeTypes,
+              allowedExtensions: allowedExtensions
+            });
+            return ctx.badRequest('نوع ملف الصورة غير مدعوم. الأنواع المسموحة: JPG, PNG, WebP');
+          }
+
+          // Validate file size (max 5MB)
+          const maxSizeBytes = 5 * 1024 * 1024; // 5MB
+          if (coverImageFile.size > maxSizeBytes) {
+            strapi.log.warn('Cover image too large:', {
+              size: coverImageFile.size,
+              maxSize: maxSizeBytes
+            });
+            return ctx.badRequest('حجم الصورة كبير جداً (الحد الأقصى 5 ميجابايت)');
+          }
+
+          // Upload the cover image to Strapi media library
+          const uploadService = strapi.plugin('upload').service('upload');
+          const uploadedFiles = await uploadService.upload({
+            data: {
+              refId: null,
+              ref: null,
+              field: null,
+            },
+            files: [coverImageFile],
+          });
+
+          if (uploadedFiles && uploadedFiles.length > 0) {
+            coverImageId = uploadedFiles[0].id;
+            strapi.log.info('Cover image uploaded successfully:', {
+              imageId: coverImageId,
+              filename: uploadedFiles[0].name,
+              size: uploadedFiles[0].size
+            });
+          }
+        } catch (uploadError) {
+          strapi.log.error('Error uploading cover image:', uploadError);
+          return ctx.badRequest('فشل في رفع صورة الغلاف. يرجى المحاولة مرة أخرى.');
+        }
+      }
 
       // Rate limiting check
       if (data.authorEmail && !checkRateLimit(data.authorEmail, clientIP)) {
@@ -251,17 +350,26 @@ export default {
       }
 
       // Article content validation with security checks
-      if (!data.articleContent || typeof data.articleContent !== 'string') {
-        validationErrors.articleContent = 'Article content is required';
+      if (!data.blocks || !Array.isArray(data.blocks) || data.blocks.length === 0) {
+        validationErrors.blocks = 'Article content is required';
       } else {
-        const wordCount = getWordCount(data.articleContent);
-        if (wordCount < 50) {
-          validationErrors.articleContent = `Article is too short (${wordCount} words, minimum 50 words)`;
-        } else if (wordCount > 5000) {
-          validationErrors.articleContent = `Article is too long (${wordCount} words, maximum 5000 words)`;
+        // Calculate total word count from all blocks
+        const totalWordCount = data.blocks.reduce((total, block) => {
+          if (block.__component === 'content.rich-text' && block.content) {
+            return total + getWordCount(block.content);
+          } else if (block.__component === 'content.quote' && block.quote_text) {
+            return total + getWordCount(block.quote_text);
+          }
+          return total;
+        }, 0);
+
+        if (totalWordCount < 50) {
+          validationErrors.blocks = `Article is too short (${totalWordCount} words, minimum 50 words)`;
+        } else if (totalWordCount > 5000) {
+          validationErrors.blocks = `Article is too long (${totalWordCount} words, maximum 5000 words)`;
         }
 
-        // Check for suspicious content patterns
+        // Check for suspicious content patterns in text blocks
         const suspiciousPatterns = [
           /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
           /javascript:/gi,
@@ -276,13 +384,19 @@ export default {
           /charset\s*=/gi
         ];
 
-        if (suspiciousPatterns.some(pattern => pattern.test(data.articleContent))) {
-          strapi.log.warn('Suspicious content detected in article submission', {
-            email: data.authorEmail,
-            title: data.articleTitle,
-            suspiciousContent: true
-          });
-          validationErrors.articleContent = 'Article content contains prohibited elements';
+        for (const block of data.blocks) {
+          if (block.__component === 'content.rich-text' && block.content) {
+            if (suspiciousPatterns.some(pattern => pattern.test(block.content))) {
+              strapi.log.warn('Suspicious content detected in article submission', {
+                email: data.authorEmail,
+                title: data.articleTitle,
+                suspiciousContent: true,
+                blockComponent: block.__component
+              });
+              validationErrors.blocks = 'Article content contains prohibited elements';
+              break;
+            }
+          }
         }
       }
 
@@ -330,7 +444,7 @@ export default {
         articleTitle: sanitizeInput(data.articleTitle).trim(),
         articleDescription: sanitizeInput(data.articleDescription).trim(),
         articleCategories: data.articleCategories.map(cat => sanitizeInput(cat).trim()),
-        articleContent: data.articleContent, // Don't sanitize markdown content
+        blocks: data.blocks, // Keep blocks as-is for processing
         articleKeywords: sanitizeInput(data.articleKeywords || '').trim(),
         publishDate: data.publishDate,
         previousPublications: sanitizeInput(data.previousPublications || '').trim(),
@@ -450,13 +564,109 @@ export default {
         categoryIds.push(category.id);
       }
 
-      // Convert markdown content to blocks format
-      const blocks = [
-        {
-          __component: 'content.rich-text' as const,
-          content: sanitizedData.articleContent
+      // Convert blocks to Strapi format and process media uploads
+      const processedBlocks = [];
+
+      for (const block of sanitizedData.blocks) {
+        const processedBlock = { ...block };
+
+        // Handle image blocks that might have files
+        if (block.__component === 'content.image') {
+          // Check if this block has an image file reference
+          if (block.image && typeof block.image === 'string' && block.image.startsWith('blockImage_')) {
+            // Find the corresponding file in the files object
+            const imageFile = files[block.image];
+
+            if (imageFile) {
+              try {
+                // Use the same upload logic as cover image
+                const blockImageFile = Array.isArray(imageFile) ? imageFile[0] : imageFile;
+
+                // Validate file type
+                const fileType = blockImageFile.type || blockImageFile.mimetype;
+                const fileName = blockImageFile.name || blockImageFile.originalFilename || '';
+                const fileExtension = fileName.toLowerCase().split('.').pop();
+
+                const allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+                const allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+
+                const isValidMimeType = fileType && allowedMimeTypes.includes(fileType);
+                const isValidExtension = fileExtension && allowedExtensions.includes(fileExtension);
+
+                if (!isValidMimeType && !isValidExtension) {
+                  strapi.log.warn('Invalid block image type uploaded:', {
+                    type: blockImageFile.type,
+                    mimetype: blockImageFile.mimetype,
+                    fileName: fileName
+                  });
+                  // Skip this block if image is invalid
+                  continue;
+                }
+
+                // Validate file size (max 5MB)
+                const maxSizeBytes = 5 * 1024 * 1024; // 5MB
+                if (blockImageFile.size > maxSizeBytes) {
+                  strapi.log.warn('Block image too large:', {
+                    size: blockImageFile.size,
+                    maxSize: maxSizeBytes
+                  });
+                  // Skip this block if image is too large
+                  continue;
+                }
+
+                // Upload the block image to Strapi media library
+                const uploadService = strapi.plugin('upload').service('upload');
+                const uploadedFiles = await uploadService.upload({
+                  data: {
+                    refId: null,
+                    ref: null,
+                    field: null,
+                  },
+                  files: [blockImageFile],
+                });
+
+                if (uploadedFiles && uploadedFiles.length > 0) {
+                  // Replace the file reference with the uploaded file ID
+                  processedBlock.image = uploadedFiles[0].id;
+                  strapi.log.info('Block image uploaded successfully:', {
+                    imageId: uploadedFiles[0].id,
+                    filename: uploadedFiles[0].name
+                  });
+                } else {
+                  // If upload failed, skip this block
+                  strapi.log.error('Failed to upload block image');
+                  continue;
+                }
+              } catch (uploadError) {
+                strapi.log.error('Error uploading block image:', uploadError);
+                // Skip this block if upload failed
+                continue;
+              }
+            } else {
+              // If no file found for the reference, skip the image property
+              delete processedBlock.image;
+            }
+          } else if (block.image && typeof block.image === 'object') {
+            // This shouldn't happen with the new implementation, but skip just in case
+            strapi.log.warn('Unexpected image object in block, skipping');
+            continue;
+          }
+          // If no image or image is already an ID, keep as is
         }
-      ];
+
+        // Clean up block ID for Strapi (Strapi will generate its own IDs)
+        delete processedBlock.id;
+
+        processedBlocks.push(processedBlock);
+      }
+
+      // Ensure we have at least one block
+      if (processedBlocks.length === 0) {
+        processedBlocks.push({
+          __component: 'content.rich-text',
+          content: 'محتوى المقال'
+        });
+      }
 
       // Generate unique slug for the article with improved handling
       const baseSlug = sanitizedData.articleTitle.toLowerCase()
@@ -494,18 +704,27 @@ export default {
         return ctx.internalServerError('Missing author or category information');
       }
 
+      // Prepare article data
+      const articleData: any = {
+        title: sanitizedData.articleTitle,
+        slug,
+        description: sanitizedData.articleDescription,
+        blocks: processedBlocks,
+        categories: categoryIds, // Direct array for many-to-many in Strapi v5
+        author: authorId,
+        publish_date: sanitizedData.publishDate ? new Date(sanitizedData.publishDate) : null,
+        is_featured: false,
+        enable_cover_image: !!coverImageId, // Enable cover image if uploaded
+        publishedAt: null // This makes it a draft
+      };
+
+      // Add cover image if uploaded
+      if (coverImageId) {
+        articleData.cover_image = coverImageId;
+      }
+
       const article = await strapi.entityService.create('api::article.article', {
-        data: {
-          title: sanitizedData.articleTitle,
-          slug,
-          description: sanitizedData.articleDescription,
-          blocks,
-          categories: categoryIds, // Direct array for many-to-many in Strapi v5
-          author: authorId,
-          publish_date: sanitizedData.publishDate ? new Date(sanitizedData.publishDate) : null,
-          is_featured: false,
-          publishedAt: null // This makes it a draft
-        }
+        data: articleData
       } as any); // Type assertion to bypass TypeScript check
 
       // Log successful submission for security monitoring
@@ -515,10 +734,19 @@ export default {
         authorName: sanitizedData.authorName,
         articleTitle: sanitizedData.articleTitle,
         categories: sanitizedData.articleCategories,
+        hasCoverImage: !!coverImageId,
+        coverImageId: coverImageId,
         clientIP,
         userAgent,
         timestamp: new Date().toISOString(),
-        wordCount: getWordCount(sanitizedData.articleContent)
+        wordCount: sanitizedData.blocks.reduce((total, block) => {
+          if (block.__component === 'content.rich-text' && block.content) {
+            return total + getWordCount(block.content);
+          } else if (block.__component === 'content.quote' && block.quote_text) {
+            return total + getWordCount(block.quote_text);
+          }
+          return total;
+        }, 0)
       });
 
       return {

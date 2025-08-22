@@ -61,8 +61,26 @@ export async function submitArticle(data: SubmissionData) {
       };
     }
 
+    // Enhanced word count validation for Arabic and English
+    const getWordCount = (text: string): number => {
+      if (!text) return 0;
+
+      return text
+        .replace(/[#*`_~\[\]()]/g, '') // Remove markdown symbols
+        .replace(/https?:\/\/[^\s]+/g, '') // Remove URLs
+        .replace(/\s+/g, ' ') // Normalize multiple spaces to single space
+        .trim() // Remove leading/trailing spaces for accurate counting
+        .split(/\s+/) // Split by any whitespace characters
+        .filter(word => {
+          // Only count meaningful words (support Arabic, English, numbers)
+          return word.length > 0 &&
+                 /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\w]/.test(word); // Arabic ranges + word characters
+        })
+        .length;
+    };
+
     // Validate article length (minimum 100 words)
-    const wordCount = data.articleContent.trim().split(/\s+/).length;
+    const wordCount = getWordCount(data.articleContent);
     if (wordCount < 100) {
       return {
         success: false,

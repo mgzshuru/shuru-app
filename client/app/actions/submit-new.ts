@@ -16,9 +16,12 @@ export interface SubmissionData {
   articleTitle: string;
   articleDescription: string;
   articleCategories: string[]; // Changed from single string to array
-  articleContent: string;
+  blocks: any[]; // Dynamic blocks array
   articleKeywords: string;
   publishDate: string;
+
+  // Media
+  coverImage?: File | null;
 
   // Additional Info
   previousPublications: string;
@@ -128,7 +131,7 @@ const validateURL = (url: string): boolean => {
   }
 };
 
-// Enhanced word count validation with better filtering and space handling
+// Enhanced word count validation with better filtering and space handling for Arabic and English
 const getWordCount = (text: string): number => {
   if (!text) return 0;
 
@@ -137,11 +140,12 @@ const getWordCount = (text: string): number => {
     .replace(/[#*`_~\[\]()]/g, '') // Remove markdown symbols
     .replace(/https?:\/\/[^\s]+/g, '') // Remove URLs
     .replace(/\s+/g, ' ') // Normalize multiple spaces to single space
-    .split(' ') // Split by single space to count words properly
+    .trim() // Remove leading/trailing spaces for accurate counting
+    .split(/\s+/) // Split by any whitespace characters
     .filter(word => {
-      // Only count meaningful words (allow single characters and numbers)
+      // Only count meaningful words (support Arabic, English, numbers)
       return word.length > 0 &&
-             /\w/.test(word); // Contains word characters (letters, numbers, underscore)
+             /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\w]/.test(word); // Arabic ranges + word characters
     })
     .length;
 };
@@ -257,17 +261,26 @@ export async function submitArticle(data: SubmissionData) {
     }
 
     // Article content validation with security checks
-    if (!data.articleContent) {
-      validationErrors.articleContent = 'محتوى المقال مطلوب';
+    if (!data.blocks || data.blocks.length === 0) {
+      validationErrors.blocks = 'محتوى المقال مطلوب';
     } else {
-      const wordCount = getWordCount(data.articleContent);
-      if (wordCount < 50) {
-        validationErrors.articleContent = `محتوى المقال قصير جداً (${wordCount} كلمة، الحد الأدنى 50 كلمة)`;
-      } else if (wordCount > 5000) {
-        validationErrors.articleContent = `محتوى المقال طويل جداً (${wordCount} كلمة، الحد الأقصى 5000 كلمة)`;
+      // Calculate total word count from all blocks
+      const totalWordCount = data.blocks.reduce((total, block) => {
+        if (block.__component === 'content.rich-text' && block.content) {
+          return total + getWordCount(block.content);
+        } else if (block.__component === 'content.quote' && block.quote_text) {
+          return total + getWordCount(block.quote_text);
+        }
+        return total;
+      }, 0);
+
+      if (totalWordCount < 50) {
+        validationErrors.blocks = `محتوى المقال قصير جداً (${totalWordCount} كلمة، الحد الأدنى 50 كلمة)`;
+      } else if (totalWordCount > 5000) {
+        validationErrors.blocks = `محتوى المقال طويل جداً (${totalWordCount} كلمة، الحد الأقصى 5000 كلمة)`;
       }
 
-      // Check for suspicious content patterns
+      // Check for suspicious content patterns in text blocks
       const suspiciousPatterns = [
         /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
         /javascript:/gi,
@@ -278,8 +291,13 @@ export async function submitArticle(data: SubmissionData) {
         /onerror\s*=/gi
       ];
 
-      if (suspiciousPatterns.some(pattern => pattern.test(data.articleContent))) {
-        validationErrors.articleContent = 'محتوى المقال يحتوي على نصوص غير مسموحة';
+      for (const block of data.blocks) {
+        if (block.__component === 'content.rich-text' && block.content) {
+          if (suspiciousPatterns.some(pattern => pattern.test(block.content))) {
+            validationErrors.blocks = 'محتوى المقال يحتوي على نصوص غير مسموحة';
+            break;
+          }
+        }
       }
     }
 
@@ -334,15 +352,70 @@ export async function submitArticle(data: SubmissionData) {
 
     console.log('All validations passed, submitting to Strapi...');
     console.log('STRAPI_URL:', STRAPI_URL);
+    console.log('Has cover image:', !!data.coverImage);
+
+    // Create FormData for file upload support
+    const formData = new FormData();
+
+    // Add text fields
+    formData.append('authorName', sanitizeInput(data.authorName));
+    formData.append('authorEmail', sanitizeInput(data.authorEmail));
+    formData.append('authorPhone', sanitizeInput(data.authorPhone));
+    formData.append('authorTitle', sanitizeInput(data.authorTitle));
+    formData.append('authorOrganization', sanitizeInput(data.authorOrganization));
+    formData.append('authorLinkedIn', sanitizeInput(data.authorLinkedIn));
+    formData.append('authorBio', sanitizeInput(data.authorBio));
+    formData.append('articleTitle', sanitizeInput(data.articleTitle));
+    formData.append('articleDescription', sanitizeInput(data.articleDescription));
+    formData.append('articleCategories', JSON.stringify(data.articleCategories));
+    // Process blocks to handle images separately
+    const processedBlocks = [];
+    let blockImageIndex = 0;
+
+    for (const block of data.blocks) {
+      if (block.__component === 'content.image' && block.image) {
+        // Extract image file and send it separately
+        const imageFieldName = `blockImage_${blockImageIndex}`;
+        formData.append(imageFieldName, block.image);
+
+        // Create a processed block with image reference instead of file
+        const processedBlock = {
+          ...block,
+          image: imageFieldName, // Reference to the uploaded file
+        };
+        processedBlocks.push(processedBlock);
+        blockImageIndex++;
+      } else {
+        // For non-image blocks or image blocks without files, keep as is
+        processedBlocks.push(block);
+      }
+    }
+
+    formData.append('blocks', JSON.stringify(processedBlocks)); // Send processed blocks as JSON
+    formData.append('articleKeywords', sanitizeInput(data.articleKeywords));
+    formData.append('publishDate', data.publishDate);
+    formData.append('previousPublications', sanitizeInput(data.previousPublications));
+    formData.append('websiteUrl', sanitizeInput(data.websiteUrl));
+    formData.append('socialMediaLinks', sanitizeInput(data.socialMediaLinks));
+    formData.append('additionalNotes', sanitizeInput(data.additionalNotes));
+
+    // Add cover image if provided
+    if (data.coverImage) {
+      console.log('Cover image details:', {
+        name: data.coverImage.name,
+        type: data.coverImage.type,
+        size: data.coverImage.size,
+        lastModified: data.coverImage.lastModified
+      });
+      formData.append('coverImage', data.coverImage);
+      console.log('Cover image added to FormData:', data.coverImage.name, data.coverImage.size);
+    }
 
     // Submit to Strapi with timeout
     const response = await fetch(`${STRAPI_URL}/api/article-submissions`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(sanitizedData),
-      // Add timeout
+      body: formData, // Send FormData instead of JSON
+      // Remove Content-Type header to let browser set it for FormData
       signal: AbortSignal.timeout(30000) // 30 second timeout
     });
 

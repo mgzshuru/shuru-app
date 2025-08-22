@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { submitArticle, checkEmail, type SubmissionData, type EmailCheckResult } from '@/app/actions/submit-new';
 import ArabicMarkdownEditor from '@/components/custom/ArabicMarkdownEditor';
+import BlocksEditor from '@/components/custom/BlocksEditor';
 import type { SubmitPageData } from '@/lib/strapi-optimized';
 import {
   FileText,
@@ -19,6 +20,44 @@ import {
   ArrowRight
 } from 'lucide-react';
 
+interface ContentBlock {
+  id: string;
+  __component: string;
+  [key: string]: any;
+}
+
+interface RichTextBlock extends ContentBlock {
+  __component: 'content.rich-text';
+  content: string;
+}
+
+interface ImageBlock extends ContentBlock {
+  __component: 'content.image';
+  image: File | null;
+  caption?: string;
+  alt_text: string;
+  width: 'small' | 'medium' | 'large' | 'full';
+}
+
+interface QuoteBlock extends ContentBlock {
+  __component: 'content.quote';
+  quote_text: string;
+  author?: string;
+  author_title?: string;
+  style: 'default' | 'highlighted' | 'pullquote';
+}
+
+interface VideoEmbedBlock extends ContentBlock {
+  __component: 'content.video-embed';
+  video_url: string;
+  title?: string;
+  description?: string;
+  thumbnail?: File | null;
+  autoplay: boolean;
+}
+
+type BlockType = RichTextBlock | ImageBlock;
+
 interface SubmissionFormData {
   // Author Information
   authorName: string;
@@ -33,7 +72,7 @@ interface SubmissionFormData {
   articleTitle: string;
   articleDescription: string;
   articleCategories: string[]; // Changed from single string to array
-  articleContent: string;
+  blocks: BlockType[]; // Changed from articleContent to blocks
   articleKeywords: string;
   publishDate: string;
 
@@ -86,7 +125,11 @@ export default function SubmitPage() {
     articleTitle: '',
     articleDescription: '',
     articleCategories: [], // Changed from single string to array
-    articleContent: '',
+    blocks: [{
+      id: 'block-1',
+      __component: 'content.rich-text',
+      content: ''
+    }], // Start with one rich text block
     articleKeywords: '',
     publishDate: '',
     coverImage: null,
@@ -359,7 +402,7 @@ export default function SubmitPage() {
     return types.split(',').map(type => type.trim());
   };
 
-  // Enhanced word count validation with better space handling
+  // Enhanced word count validation with better space handling for Arabic and English
   const getWordCount = (text: string): number => {
     if (!text) return 0;
 
@@ -368,13 +411,130 @@ export default function SubmitPage() {
       .replace(/[#*`_~\[\]()]/g, '') // Remove markdown symbols
       .replace(/https?:\/\/[^\s]+/g, '') // Remove URLs
       .replace(/\s+/g, ' ') // Normalize multiple spaces to single space
-      .split(' ') // Split by single space to count words properly
+      .trim() // Remove leading/trailing spaces for accurate counting
+      .split(/\s+/) // Split by any whitespace characters
       .filter(word => {
-        // Only count meaningful words (allow single characters and numbers)
+        // Only count meaningful words (support Arabic, English, numbers)
         return word.length > 0 &&
-               /\w/.test(word); // Contains word characters (letters, numbers, underscore)
+               /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\w]/.test(word); // Arabic ranges + word characters
       })
       .length;
+  };
+
+  // Helper function to get total word count from all blocks
+  const getTotalWordCount = (): number => {
+    return formData.blocks.reduce((total, block) => {
+      if (block.__component === 'content.rich-text') {
+        return total + getWordCount((block as RichTextBlock).content);
+      }
+      return total;
+    }, 0);
+  };
+
+  // Helper function to extract text content from blocks for word counting
+  const getBlocksTextContent = (blocks: BlockType[]): string => {
+    return blocks.map(block => {
+      if (block.__component === 'content.rich-text') {
+        return (block as RichTextBlock).content;
+      }
+      return '';
+    }).join(' ');
+  };
+
+  // Handle blocks change
+  const handleBlocksChange = (blocks: BlockType[]) => {
+    setFormData(prev => ({ ...prev, blocks }));
+
+    // Clear errors when user makes changes
+    if (errors.blocks) {
+      setErrors(prev => ({ ...prev, blocks: '' }));
+    }
+  };
+
+  // Helper function to generate unique block ID
+  const generateBlockId = (): string => {
+    return 'block-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+  };
+
+  // Helper function to add a new block
+  const addBlock = (type: string) => {
+    let newBlock: BlockType;
+
+    switch (type) {
+      case 'content.rich-text':
+        newBlock = {
+          id: generateBlockId(),
+          __component: 'content.rich-text',
+          content: ''
+        } as RichTextBlock;
+        break;
+      case 'content.image':
+        newBlock = {
+          id: generateBlockId(),
+          __component: 'content.image',
+          image: null,
+          caption: '',
+          alt_text: '',
+          width: 'medium'
+        } as ImageBlock;
+        break;
+      case 'content.image':
+        newBlock = {
+          id: generateBlockId(),
+          __component: 'content.image',
+          image: null,
+          caption: '',
+          alt_text: '',
+          width: 'medium'
+        } as ImageBlock;
+        break;
+      default:
+        return;
+    }
+
+    setFormData(prev => ({
+      ...prev,
+      blocks: [...prev.blocks, newBlock]
+    }));
+  };
+
+  // Helper function to update a block
+  const updateBlock = (blockId: string, updates: Partial<BlockType>) => {
+    setFormData(prev => ({
+      ...prev,
+      blocks: prev.blocks.map(block =>
+        block.id === blockId
+          ? { ...block, ...updates } as BlockType
+          : block
+      )
+    }));
+  };
+
+  // Helper function to remove a block
+  const removeBlock = (blockId: string) => {
+    if (formData.blocks.length <= 1) return; // Keep at least one block
+
+    setFormData(prev => ({
+      ...prev,
+      blocks: prev.blocks.filter(block => block.id !== blockId)
+    }));
+  };
+
+  // Helper function to move block up/down
+  const moveBlock = (blockId: string, direction: 'up' | 'down') => {
+    const currentIndex = formData.blocks.findIndex(block => block.id === blockId);
+    if (currentIndex === -1) return;
+
+    const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+    if (newIndex < 0 || newIndex >= formData.blocks.length) return;
+
+    const newBlocks = [...formData.blocks];
+    [newBlocks[currentIndex], newBlocks[newIndex]] = [newBlocks[newIndex], newBlocks[currentIndex]];
+
+    setFormData(prev => ({
+      ...prev,
+      blocks: newBlocks
+    }));
   };
 
   const handleInputChange = (field: keyof SubmissionFormData, value: string) => {
@@ -514,10 +674,10 @@ export default function SubmitPage() {
         newErrors.articleCategories = getValidationMessage('article.categoryRequired', 'يجب اختيار فئة واحدة على الأقل للمقال');
       }
 
-      if (!formData.articleContent) {
-        newErrors.articleContent = getValidationMessage('article.contentRequired', 'محتوى المقال مطلوب');
+      if (!formData.blocks || formData.blocks.length === 0) {
+        newErrors.blocks = getValidationMessage('article.contentRequired', 'محتوى المقال مطلوب');
       } else {
-        const wordCount = getWordCount(formData.articleContent);
+        const wordCount = getTotalWordCount();
         const minWords = getMinWordCount();
         const maxWords = getMaxWordCount();
 
@@ -525,12 +685,12 @@ export default function SubmitPage() {
           const message = getValidationMessage('article.contentMinWords', `محتوى المقال قصير جداً ({count} كلمة، الحد الأدنى {min} كلمة)`)
             .replace('{count}', wordCount.toString())
             .replace('{min}', minWords.toString());
-          newErrors.articleContent = message;
+          newErrors.blocks = message;
         } else if (wordCount > maxWords) {
           const message = getValidationMessage('article.contentMaxWords', `محتوى المقال طويل جداً ({count} كلمة، الحد الأقصى {max} كلمة)`)
             .replace('{count}', wordCount.toString())
             .replace('{max}', maxWords.toString());
-          newErrors.articleContent = message;
+          newErrors.blocks = message;
         }
       }
 
@@ -613,9 +773,10 @@ export default function SubmitPage() {
         articleTitle: sanitizeInput(formData.articleTitle),
         articleDescription: sanitizeInput(formData.articleDescription),
         articleCategories: formData.articleCategories, // Send array of categories
-        articleContent: formData.articleContent, // Don't sanitize markdown content, backend handles it
+        blocks: formData.blocks, // Send dynamic blocks instead of single content
         articleKeywords: sanitizeInput(formData.articleKeywords),
         publishDate: formData.publishDate,
+        coverImage: formData.coverImage, // Include cover image
         previousPublications: sanitizeInput(formData.previousPublications),
         websiteUrl: sanitizeInput(formData.websiteUrl),
         socialMediaLinks: sanitizeInput(formData.socialMediaLinks),
@@ -632,7 +793,7 @@ export default function SubmitPage() {
       }
 
       const minWords = getMinWordCount();
-      if (getWordCount(submissionData.articleContent) < minWords) {
+      if (getWordCount(getBlocksTextContent(submissionData.blocks)) < minWords) {
         throw new Error(getValidationMessage('article.contentMinWords', `محتوى المقال قصير جداً (الحد الأدنى ${minWords} كلمة)`)
           .replace('{min}', minWords.toString()));
       }
@@ -657,7 +818,11 @@ export default function SubmitPage() {
           articleTitle: '',
           articleDescription: '',
           articleCategories: [], // Changed from single string to array
-          articleContent: '',
+          blocks: [{
+            id: 'block-1',
+            __component: 'content.rich-text',
+            content: ''
+          }], // Reset to one empty rich text block
           articleKeywords: '',
           publishDate: '',
           coverImage: null,
@@ -1314,30 +1479,17 @@ export default function SubmitPage() {
                 </div>
               </div>
 
-              {/* Article Content */}
+              {/* Article Content - Dynamic Blocks */}
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700">محتوى المقال *</label>
-                <div className={`${
-                  errors.articleContent ? 'border-red-300' : 'border-gray-200'
-                } transition-all duration-200`}>
-                  <ArabicMarkdownEditor
-                    value={formData.articleContent}
-                    onChange={(value: string) => handleInputChange('articleContent', value)}
-                    placeholder="اكتب محتوى المقال هنا...\n\nيمكنك استخدام تنسيق Markdown:\n# عنوان رئيسي\n## عنوان فرعي\n**نص مهم**\n*نص مائل*\n- قائمة\n1. قائمة مرقمة\n\nاكتب محتوى غني ومفيد يقدم قيمة حقيقية للقراء"
-                    minHeight={450}
-                    className={errors.articleContent ? 'border-red-300' : ''}
-                  />
-                </div>
-                {errors.articleContent && (
-                  <p className="text-red-500 text-sm flex items-center">
-                    <AlertCircle className="w-4 h-4 ml-1" />
-                    {errors.articleContent}
-                  </p>
-                )}
+                <BlocksEditor
+                  blocks={formData.blocks}
+                  onChange={handleBlocksChange}
+                  errors={errors}
+                />
                 <div className="flex justify-between items-center text-xs text-gray-500">
                   <span>يُنصح بأن يكون المقال بين 300-2000 كلمة للحصول على أفضل تجربة قراءة (الحد الأدنى 50 كلمة)</span>
                   <span className="bg-gray-100 px-3 py-1 rounded-full font-medium">
-                    عدد الكلمات: {getWordCount(formData.articleContent)}
+                    عدد الكلمات: {getWordCount(getBlocksTextContent(formData.blocks))}
                   </span>
                 </div>
               </div>
@@ -1512,7 +1664,7 @@ export default function SubmitPage() {
                   <div><span className="font-medium">العنوان:</span> {formData.articleTitle || 'غير محدد'}</div>
                   <div><span className="font-medium">الكاتب:</span> {formData.authorName || 'غير محدد'}</div>
                   <div><span className="font-medium">الفئات:</span> {formData.articleCategories && formData.articleCategories.length > 0 ? formData.articleCategories.join('، ') : 'غير محددة'}</div>
-                  <div><span className="font-medium">عدد الكلمات:</span> {getWordCount(formData.articleContent)}</div>
+                  <div><span className="font-medium">عدد الكلمات:</span> {getWordCount(getBlocksTextContent(formData.blocks))}</div>
                   <div><span className="font-medium">صورة الغلاف:</span> {formData.coverImage ? 'مرفقة' : 'غير مرفقة'}</div>
                 </div>
               </div>
