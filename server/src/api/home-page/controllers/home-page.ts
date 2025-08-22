@@ -9,6 +9,7 @@ export default factories.createCoreController('api::home-page.home-page', ({ str
     try {
       // First, try to find any home page document
       const entities = await strapi.documents('api::home-page.home-page').findMany({
+        status: 'published',
         populate: {
           blocks: {
             on: {
