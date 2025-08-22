@@ -123,20 +123,15 @@ export const HomePageBlocksRenderer: React.FC<HomePageBlocksRendererProps> = ({
   );
 };
 
-// Fetch home page data from Strapi
+// Fetch home page data from Strapi - server handles proper population
 export async function fetchHomePageData(): Promise<HomePageData | null> {
   try {
     const baseUrl = getStrapiURL();
     const path = '/api/home-page';
-    const url = new URL(path, baseUrl);
 
-    // Add query parameters
-    url.searchParams.append('populate[blocks][populate]', '*');
-    url.searchParams.append('populate[seo][populate]', '*');
+    console.log('Fetching home page data from:', `${baseUrl}${path}`);
 
-    console.log('Fetching home page data from:', url.toString());
-
-    const response = await fetch(url.toString(), {
+    const response = await fetch(`${baseUrl}${path}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
