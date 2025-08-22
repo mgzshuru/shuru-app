@@ -134,11 +134,20 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
 
         {/* Left Sidebar Articles */}
         <div className="col-span-4 col-start-1 row-start-4 flex flex-col gap-y-5 border-primary-light md:mt-[-1.5rem] lg:col-span-1 lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:mt-0 lg:border-r lg:pr-6">
-          {sideArticles.length > 0 ? sideArticles.map((article, index) => (
+          {/* Section Title */}
+          <div className="mb-4">
+            <h3 className="text-right font-centra text-[16px] font-bold leading-[18px] text-black border-b border-primary-light pb-2">
+              مقالات مختارة
+            </h3>
+          </div>
+
+          {/* Articles Container Box */}
+          <div className="bg-white border border-primary-light rounded-none p-4 shadow-sm">
+            {sideArticles.length > 0 ? sideArticles.map((article, index) => (
             <div
               key={article.id}
               data-parsely-slot={`text-only-article-${index + 1}`}
-              className="border-b border-primary-light pb-6 last-of-type:border-b-0 lg:pb-5"
+              className="border-b border-primary-light pt-2 pb-6 last-of-type:border-b-0 lg:pb-5"
             >
               <article className="grid grid-flow-row auto-rows-max gap-2" aria-label="Landing page card">
                 {/* Category */}
@@ -182,6 +191,7 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
               <p className="text-gray-500 text-sm font-medium">لا توجد مقالات جانبية</p>
             </div>
           )}
+          </div>
         </div>
 
         {/* Right Sidebar - Most Read */}
