@@ -1,4 +1,5 @@
-import { HomePageBlocksRenderer, fetchHomePageData } from '@/lib/home-blocks';
+import { HomePageBlocksRenderer } from '@/lib/home-blocks';
+import { fetchHomePageData } from '@/lib/strapi-client'
 import { getArticlesOptimized, getAllCategories } from '@/lib/strapi-optimized';
 
 // Force static generation
@@ -13,8 +14,8 @@ export default async function Home() {
       getArticlesOptimized({ pageSize: 20 }).catch(() => ({ data: [], meta: { total: 0 } })),
       getAllCategories().catch(() => ({ data: [] }))
     ]);
-    console.log('Fetched home page data:', JSON.stringify(homePageData?.blocks[0], null, 2));
-    console.log('Sidebar articles count:', homePageData?.blocks[0]?.sidebarArticles?.length);
+    console.log('Fetched home page data:', JSON.stringify(homePageData, null, 2));
+    // console.log('Sidebar articles count:', homePageData?.blocks[0]?.sidebarArticles?.length);
     const articles = Array.isArray(articlesResponse.data) ? articlesResponse.data : [];
     const categories = Array.isArray(categoriesResponse.data) ? categoriesResponse.data : [];
 

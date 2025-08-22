@@ -62,6 +62,13 @@ const populateQuery = {
             fields: ['name', 'slug', 'description']
           }
         }
+      },
+      'home.featured-categories-section': {
+        populate: {
+          categories: {
+            fields: ['name', 'slug', 'description']
+          }
+        }
       }
     }
   },
@@ -69,15 +76,16 @@ const populateQuery = {
     populate: ['og_image']
   }
 };
-
 export default (config, { strapi }: { strapi: Core.Strapi }) => {
   return async (ctx, next) => {
     const { method, path } = ctx.request;
 
     // Only apply to GET requests for home-page
-    if (method !== 'GET' || !path.includes('/home-page')) {
+    if (method !== 'GET' || !path.includes('home-page')) {
       return await next();
     }
+
+    strapi.log.info('Applying home-page population middleware for path:', path);
 
     // Apply population strategy
     ctx.query = {

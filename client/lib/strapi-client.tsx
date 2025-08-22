@@ -826,6 +826,95 @@ export async function searchContent(searchTerm: string, contentTypes?: string[],
 }
 
 // =====================
+// Home Page FUNCTIONS fetchHomePageData
+// =====================
+export async function fetchHomePageData() {
+  try {
+    const response = await client.single("home-page").find({
+      populate: {
+        blocks: {
+          on: {
+            'home.hero-complex-section': {
+              populate: {
+                featuredArticle: {
+                  populate: {
+                    categories: {
+                      fields: ['name', 'slug']
+                    },
+                    cover_image: {
+                      fields: ['url', 'alternativeText', 'width', 'height']
+                    }
+                  }
+                },
+                sidebarArticles: {
+                  populate: {
+                    categories: {
+                      fields: ['name', 'slug']
+                    }
+                  }
+                },
+                mostReadArticles: {
+                  populate: {
+                    categories: {
+                      fields: ['name', 'slug']
+                    },
+                    cover_image: {
+                      fields: ['url', 'alternativeText', 'width', 'height']
+                    }
+                  }
+                }
+              }
+            },
+            'home.article-grid-section': {
+              populate: {
+                articles: {
+                  populate: {
+                    categories: {
+                      fields: ['name', 'slug']
+                    },
+                    cover_image: {
+                      fields: ['url', 'alternativeText', 'width', 'height']
+                    },
+                    author: {
+                      fields: ['name', 'jobTitle'],
+                      populate: {
+                        avatar: {
+                          fields: ['url', 'alternativeText']
+                        }
+                      }
+                    }
+                  }
+                },
+                category: {
+                  fields: ['name', 'slug', 'description']
+                }
+              }
+            },
+            'home.featured-categories-section': {
+              populate: {
+                categories: {
+                  fields: ['name', 'slug', 'description']
+                }
+              }
+            }
+          }
+        },
+        seo: {
+          populate: ['og_image']
+        }
+      }
+    });
+
+    if (response && response.data) {
+      return response.data;
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching home page data:", error);
+    return null;
+  }
+}
+// =====================
 // GLOBAL FUNCTIONS
 // =====================
 
