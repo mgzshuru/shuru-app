@@ -22,14 +22,6 @@ export default factories.createCoreController('api::home-page.home-page', ({ str
                       },
                       cover_image: {
                         fields: ['url', 'alternativeText', 'width', 'height']
-                      },
-                      author: {
-                        fields: ['name', 'jobTitle'],
-                        populate: {
-                          avatar: {
-                            fields: ['url', 'alternativeText']
-                          }
-                        }
                       }
                     }
                   },
@@ -37,17 +29,6 @@ export default factories.createCoreController('api::home-page.home-page', ({ str
                     populate: {
                       categories: {
                         fields: ['name', 'slug']
-                      },
-                      cover_image: {
-                        fields: ['url', 'alternativeText', 'width', 'height']
-                      },
-                      author: {
-                        fields: ['name', 'jobTitle'],
-                        populate: {
-                          avatar: {
-                            fields: ['url', 'alternativeText']
-                          }
-                        }
                       }
                     }
                   },
@@ -58,14 +39,6 @@ export default factories.createCoreController('api::home-page.home-page', ({ str
                       },
                       cover_image: {
                         fields: ['url', 'alternativeText', 'width', 'height']
-                      },
-                      author: {
-                        fields: ['name', 'jobTitle'],
-                        populate: {
-                          avatar: {
-                            fields: ['url', 'alternativeText']
-                          }
-                        }
                       }
                     }
                   }
@@ -94,11 +67,6 @@ export default factories.createCoreController('api::home-page.home-page', ({ str
                   category: {
                     fields: ['name', 'slug', 'description']
                   }
-                }
-              },
-              'home.featured-categories-section': {
-                populate: {
-                  categories: true
                 }
               }
             }
