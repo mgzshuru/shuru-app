@@ -10,7 +10,6 @@ import {
   User,
   Mail,
   Building,
-  Tag,
   Link,
   ImageIcon,
   CheckCircle,
@@ -71,9 +70,7 @@ interface SubmissionFormData {
   // Article Information
   articleTitle: string;
   articleDescription: string;
-  articleCategories: string[]; // Changed from single string to array
   blocks: BlockType[]; // Changed from articleContent to blocks
-  articleKeywords: string;
   publishDate: string;
 
   // Media
@@ -90,12 +87,6 @@ interface FormErrors {
   [key: string]: string;
 }
 
-interface Category {
-  id: number;
-  name: string;
-  slug: string;
-}
-
 export default function SubmitPage() {
   // Submit page content from Strapi
   const [submitPageContent, setSubmitPageContent] = useState<SubmitPageData | null>(null);
@@ -110,8 +101,6 @@ export default function SubmitPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState<any>(null);
   const [authorData, setAuthorData] = useState<any>(null);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const [submissionInProgress, setSubmissionInProgress] = useState(false); // Prevent double submission
 
   const [formData, setFormData] = useState<SubmissionFormData>({
@@ -124,13 +113,11 @@ export default function SubmitPage() {
     authorBio: '',
     articleTitle: '',
     articleDescription: '',
-    articleCategories: [], // Changed from single string to array
     blocks: [{
       id: 'block-1',
       __component: 'content.rich-text',
       content: ''
     }], // Start with one rich text block
-    articleKeywords: '',
     publishDate: '',
     coverImage: null,
     previousPublications: '',
@@ -170,52 +157,6 @@ export default function SubmitPage() {
     fetchSubmitPageContent();
   }, []);
 
-  // Fetch categories from API
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch('/api/categories');
-        if (response.ok) {
-          const data = await response.json();
-          setCategories(data.categories);
-        } else {
-          console.error('Failed to fetch categories');
-          // Fallback to default categories if API fails
-          setCategories([
-            { id: 1, name: 'ريادة الأعمال', slug: 'entrepreneurship' },
-            { id: 2, name: 'التقنية والابتكار', slug: 'technology-innovation' },
-            { id: 3, name: 'القيادة والإدارة', slug: 'leadership-management' },
-            { id: 4, name: 'التحول الرقمي', slug: 'digital-transformation' },
-            { id: 5, name: 'الاستثمار والتمويل', slug: 'investment-finance' },
-            { id: 6, name: 'التطوير المؤسسي', slug: 'institutional-development' },
-            { id: 7, name: 'التسويق والمبيعات', slug: 'marketing-sales' },
-            { id: 8, name: 'الموارد البشرية', slug: 'human-resources' },
-            { id: 9, name: 'الاقتصاد والأعمال', slug: 'economy-business' },
-            { id: 10, name: 'أخرى', slug: 'other' }
-          ]);
-        }
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-        // Fallback to default categories
-        setCategories([
-          { id: 1, name: 'ريادة الأعمال', slug: 'entrepreneurship' },
-          { id: 2, name: 'التقنية والابتكار', slug: 'technology-innovation' },
-          { id: 3, name: 'القيادة والإدارة', slug: 'leadership-management' },
-          { id: 4, name: 'التحول الرقمي', slug: 'digital-transformation' },
-          { id: 5, name: 'الاستثمار والتمويل', slug: 'investment-finance' },
-          { id: 6, name: 'التطوير المؤسسي', slug: 'institutional-development' },
-          { id: 7, name: 'التسويق والمبيعات', slug: 'marketing-sales' },
-          { id: 8, name: 'الموارد البشرية', slug: 'human-resources' },
-          { id: 9, name: 'الاقتصاد والأعمال', slug: 'economy-business' },
-          { id: 10, name: 'أخرى', slug: 'other' }
-        ]);
-      } finally {
-        setIsLoadingCategories(false);
-      }
-    };
-
-    fetchCategories();
-  }, []);
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
@@ -547,29 +488,6 @@ export default function SubmitPage() {
     }
   };
 
-  const handleCategoryChange = (categoryName: string, isChecked: boolean) => {
-    setFormData(prev => {
-      const currentCategories = prev.articleCategories || [];
-
-      if (isChecked) {
-        // Add category if not already present
-        if (!currentCategories.includes(categoryName)) {
-          return { ...prev, articleCategories: [...currentCategories, categoryName] };
-        }
-      } else {
-        // Remove category
-        return { ...prev, articleCategories: currentCategories.filter(cat => cat !== categoryName) };
-      }
-
-      return prev;
-    });
-
-    // Clear category error when user selects a category
-    if (errors.articleCategories) {
-      setErrors(prev => ({ ...prev, articleCategories: '' }));
-    }
-  };
-
   const handleFileChange = (field: 'coverImage', file: File | null) => {
     if (file) {
       // Get dynamic file size limit
@@ -670,10 +588,6 @@ export default function SubmitPage() {
         newErrors.articleDescription = getValidationMessage('article.descriptionMaxLength', 'وصف المقال طويل جداً (الحد الأقصى 500 حرف)');
       }
 
-      if (!formData.articleCategories || formData.articleCategories.length === 0) {
-        newErrors.articleCategories = getValidationMessage('article.categoryRequired', 'يجب اختيار فئة واحدة على الأقل للمقال');
-      }
-
       if (!formData.blocks || formData.blocks.length === 0) {
         newErrors.blocks = getValidationMessage('article.contentRequired', 'محتوى المقال مطلوب');
       } else {
@@ -692,11 +606,6 @@ export default function SubmitPage() {
             .replace('{max}', maxWords.toString());
           newErrors.blocks = message;
         }
-      }
-
-      // Optional field validations
-      if (formData.articleKeywords && formData.articleKeywords.length > 200) {
-        newErrors.articleKeywords = getValidationMessage('article.keywordsMaxLength', 'الكلمات المفتاحية طويلة جداً (الحد الأقصى 200 حرف)');
       }
 
     } else if (step === 3) {
@@ -772,9 +681,7 @@ export default function SubmitPage() {
         authorBio: sanitizeInput(formData.authorBio),
         articleTitle: sanitizeInput(formData.articleTitle),
         articleDescription: sanitizeInput(formData.articleDescription),
-        articleCategories: formData.articleCategories, // Send array of categories
         blocks: formData.blocks, // Send dynamic blocks instead of single content
-        articleKeywords: sanitizeInput(formData.articleKeywords),
         publishDate: formData.publishDate,
         coverImage: formData.coverImage, // Include cover image
         previousPublications: sanitizeInput(formData.previousPublications),
@@ -786,10 +693,6 @@ export default function SubmitPage() {
       // Validate critical fields one more time
       if (!validateEmail(submissionData.authorEmail)) {
         throw new Error(getValidationMessage('email.invalid', 'البريد الإلكتروني غير صحيح'));
-      }
-
-      if (!submissionData.articleCategories || submissionData.articleCategories.length === 0) {
-        throw new Error(getValidationMessage('article.categoryRequired', 'يجب اختيار فئة واحدة على الأقل للمقال'));
       }
 
       const minWords = getMinWordCount();
@@ -817,13 +720,11 @@ export default function SubmitPage() {
           authorBio: '',
           articleTitle: '',
           articleDescription: '',
-          articleCategories: [], // Changed from single string to array
           blocks: [{
             id: 'block-1',
             __component: 'content.rich-text',
             content: ''
           }], // Reset to one empty rich text block
-          articleKeywords: '',
           publishDate: '',
           coverImage: null,
           previousPublications: '',
@@ -1421,64 +1322,6 @@ export default function SubmitPage() {
                 )}
               </div>
 
-              <div className="grid md:grid-cols-1 gap-6">
-                {/* Article Categories */}
-                <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-gray-700">فئات المقال *</label>
-                  <p className="text-sm text-gray-500 mb-3">اختر فئة واحدة أو أكثر تناسب محتوى مقالك</p>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 p-4 border-2 border-gray-200 bg-gray-50 rounded-lg">
-                    {isLoadingCategories ? (
-                      <div className="col-span-full text-center text-gray-500 py-4">
-                        جاري تحميل الفئات...
-                      </div>
-                    ) : (
-                      categories.map((category) => (
-                        <label
-                          key={category.id}
-                          className="flex items-center space-x-2 space-x-reverse cursor-pointer hover:bg-white hover:shadow-sm p-3 rounded-lg border border-transparent hover:border-gray-300 transition-all duration-200"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={formData.articleCategories.includes(category.name)}
-                            onChange={(e) => handleCategoryChange(category.name, e.target.checked)}
-                            className="w-4 h-4 text-black border-gray-300 rounded focus:ring-black focus:ring-2"
-                          />
-                          <span className="text-sm font-medium text-gray-700">{category.name}</span>
-                        </label>
-                      ))
-                    )}
-                  </div>
-                  {formData.articleCategories.length > 0 && (
-                    <div className="mt-2 p-2 bg-black/5 rounded border">
-                      <p className="text-xs text-gray-600 mb-1">الفئات المختارة:</p>
-                      <div className="flex flex-wrap gap-2">
-                        {formData.articleCategories.map((categoryName, index) => (
-                          <span
-                            key={index}
-                            className="inline-flex items-center px-2 py-1 text-xs font-medium bg-black text-white rounded"
-                          >
-                            {categoryName}
-                            <button
-                              type="button"
-                              onClick={() => handleCategoryChange(categoryName, false)}
-                              className="ml-1 hover:bg-gray-700 rounded-full p-0.5"
-                            >
-                              ×
-                            </button>
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {errors.articleCategories && (
-                    <p className="text-red-500 text-sm flex items-center">
-                      <AlertCircle className="w-4 h-4 ml-1" />
-                      {errors.articleCategories}
-                    </p>
-                  )}
-                </div>
-              </div>
-
               {/* Article Content - Dynamic Blocks */}
               <div className="space-y-2">
                 <BlocksEditor
@@ -1494,17 +1337,6 @@ export default function SubmitPage() {
                 </div>
               </div>
 
-              {/* Keywords */}
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700">الكلمات المفتاحية</label>
-                <input
-                  type="text"
-                  value={formData.articleKeywords}
-                  onChange={(e) => handleInputChange('articleKeywords', e.target.value)}
-                  className="w-full p-4 border-2 border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 focus:border-gray-400 text-base transition-all duration-200 bg-gray-50 focus:bg-white"
-                  placeholder="مثال: ريادة الأعمال، الابتكار، التقنية، القيادة (افصل بفواصل)"
-                />
-              </div>
 
               {/* File Upload */}
               <div className="space-y-2">
@@ -1663,7 +1495,6 @@ export default function SubmitPage() {
                 <div className="space-y-2 text-sm">
                   <div><span className="font-medium">العنوان:</span> {formData.articleTitle || 'غير محدد'}</div>
                   <div><span className="font-medium">الكاتب:</span> {formData.authorName || 'غير محدد'}</div>
-                  <div><span className="font-medium">الفئات:</span> {formData.articleCategories && formData.articleCategories.length > 0 ? formData.articleCategories.join('، ') : 'غير محددة'}</div>
                   <div><span className="font-medium">عدد الكلمات:</span> {getWordCount(getBlocksTextContent(formData.blocks))}</div>
                   <div><span className="font-medium">صورة الغلاف:</span> {formData.coverImage ? 'مرفقة' : 'غير مرفقة'}</div>
                 </div>

@@ -15,9 +15,7 @@ export interface SubmissionData {
   // Article Information
   articleTitle: string;
   articleDescription: string;
-  articleCategories: string[]; // Changed from single string to array
   blocks: any[]; // Dynamic blocks array
-  articleKeywords: string;
   publishDate: string;
 
   // Media
@@ -215,7 +213,6 @@ export async function submitArticle(data: SubmissionData) {
       authorName: data.authorName,
       authorEmail: data.authorEmail,
       articleTitle: data.articleTitle,
-      articleCategories: data.articleCategories,
     });
 
     // Comprehensive server-side validation
@@ -256,9 +253,6 @@ export async function submitArticle(data: SubmissionData) {
       validationErrors.articleDescription = 'وصف المقال يجب أن يكون بين 20 و 500 حرف';
     }
 
-    if (!data.articleCategories || data.articleCategories.length === 0) {
-      validationErrors.articleCategories = 'يجب اختيار فئة واحدة على الأقل للمقال';
-    }
 
     // Article content validation with security checks
     if (!data.blocks || data.blocks.length === 0) {
@@ -341,9 +335,7 @@ export async function submitArticle(data: SubmissionData) {
       authorBio: sanitizeInput(data.authorBio),
       articleTitle: sanitizeInput(data.articleTitle),
       articleDescription: sanitizeInput(data.articleDescription),
-      articleCategories: data.articleCategories, // Keep array as is, individual items are sanitized
       // Don't sanitize article content as it contains markdown
-      articleKeywords: sanitizeInput(data.articleKeywords),
       previousPublications: sanitizeInput(data.previousPublications),
       websiteUrl: sanitizeInput(data.websiteUrl),
       socialMediaLinks: sanitizeInput(data.socialMediaLinks),
@@ -367,7 +359,6 @@ export async function submitArticle(data: SubmissionData) {
     formData.append('authorBio', sanitizeInput(data.authorBio));
     formData.append('articleTitle', sanitizeInput(data.articleTitle));
     formData.append('articleDescription', sanitizeInput(data.articleDescription));
-    formData.append('articleCategories', JSON.stringify(data.articleCategories));
     // Process blocks to handle images separately
     const processedBlocks = [];
     let blockImageIndex = 0;
@@ -392,7 +383,6 @@ export async function submitArticle(data: SubmissionData) {
     }
 
     formData.append('blocks', JSON.stringify(processedBlocks)); // Send processed blocks as JSON
-    formData.append('articleKeywords', sanitizeInput(data.articleKeywords));
     formData.append('publishDate', data.publishDate);
     formData.append('previousPublications', sanitizeInput(data.previousPublications));
     formData.append('websiteUrl', sanitizeInput(data.websiteUrl));

@@ -15,9 +15,7 @@ export interface SubmissionData {
   // Article Information
   articleTitle: string;
   articleDescription: string;
-  articleCategory: string;
   articleContent: string;
-  articleKeywords: string;
   publishDate: string;
 
   // Additional Info
@@ -37,7 +35,6 @@ export async function submitArticle(data: SubmissionData) {
       'authorOrganization',
       'articleTitle',
       'articleDescription',
-      'articleCategory',
       'articleContent'
     ];
 
@@ -100,39 +97,12 @@ export async function submitArticle(data: SubmissionData) {
       title: data.articleTitle,
       author: data.authorName,
       email: data.authorEmail,
-      category: data.articleCategory,
       wordCount,
       submittedAt: new Date().toISOString()
     });
 
     // Simulate processing time
     await new Promise(resolve => setTimeout(resolve, 1000));
-
-    // TODO: Integrate with Strapi to create a draft article
-    // const articleData = {
-    //   title: data.articleTitle,
-    //   description: data.articleDescription,
-    //   slug: generateSlug(data.articleTitle),
-    //   content: data.articleContent,
-    //   status: 'draft',
-    //   author: {
-    //     name: data.authorName,
-    //     email: data.authorEmail,
-    //     title: data.authorTitle,
-    //     organization: data.authorOrganization,
-    //     linkedin_url: data.authorLinkedIn,
-    //     bio: data.authorBio
-    //   },
-    //   category: data.articleCategory,
-    //   keywords: data.articleKeywords.split(',').map(k => k.trim()),
-    //   metadata: {
-    //     previousPublications: data.previousPublications,
-    //     websiteUrl: data.websiteUrl,
-    //     socialMediaLinks: data.socialMediaLinks,
-    //     additionalNotes: data.additionalNotes,
-    //     submissionDate: new Date().toISOString()
-    //   }
-    // };
 
     // TODO: Send confirmation email to author
     // TODO: Send notification to editorial team

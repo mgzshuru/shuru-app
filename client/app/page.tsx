@@ -3,7 +3,7 @@ import { fetchHomePageData } from '@/lib/strapi-client'
 import { getArticlesOptimized, getAllCategories } from '@/lib/strapi-optimized';
 
 // Force static generation
-export const dynamic = 'force-static'
+// export const dynamic = 'force-static'
 export const revalidate = 3600 // Revalidate every hour
 
 export default async function Home() {
