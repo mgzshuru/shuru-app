@@ -240,9 +240,16 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
                     </div>
                     <Link href={`/articles/${article.slug}`}>
                       <div className="mt-2 flex justify-between gap-4">
-                        <h2 className="flex-1 font-centra text-[14px] font-bold leading-[16px] md:text-[20px] md:leading-[22px] lg:text-[14px] lg:leading-[16px] text-right">
-                          {article.title}
-                        </h2>
+                        <div className="flex-1">
+                          <h2 className="font-centra text-[14px] font-bold leading-[16px] md:text-[20px] md:leading-[22px] lg:text-[14px] lg:leading-[16px] text-right">
+                            {article.title}
+                          </h2>
+                          {article.description && (
+                            <p className="mt-1 text-[12px] md:text-[14px] lg:text-[12px] text-gray-600 leading-tight text-right line-clamp-2">
+                              {article.description}
+                            </p>
+                          )}
+                        </div>
                         <div className="relative aspect-[16/9] flex-[0_0_120px] md:flex-[0_0_318px] lg:flex-[0_0_120px]">
                           <div className="relative">
                             {article.cover_image && getStrapiMedia(article.cover_image.url) ? (

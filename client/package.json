@@ -40,7 +40,6 @@
     "@radix-ui/react-tooltip": "1.1.6",
     "@strapi/client": "^1.4.0",
     "@swc/helpers": "^0.5.17",
-    "@tailwindcss/line-clamp": "^0.4.4",
     "@toast-ui/editor": "^3.2.2",
     "@toast-ui/react-editor": "^3.2.3",
     "@types/jest": "^30.0.0",
