@@ -9,6 +9,7 @@ import { SaveButton } from '@/components/custom/save-button';
 import { formatDate } from '@/lib/utils';
 import { Article, Category } from '@/lib/types';
 import { CategoryStructuredData } from '@/components/seo/StructuredData';
+import { LatestArticles } from '@/components/custom/latest-articles';
 
 interface CategoryPageProps {
   params: {
@@ -435,6 +436,14 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
               </div>
             )}
           </section>
+
+          {/* Latest Articles Section */}
+          <LatestArticles 
+            articles={articles}
+            title={`أحدث مقالات ${category.name}`}
+            categoryName={category.name}
+            showMore={false}
+          />
 
           {/* Related Categories */}
           {category.children_categories && category.children_categories.length > 0 && (
