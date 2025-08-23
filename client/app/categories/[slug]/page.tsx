@@ -292,71 +292,88 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
 
             {articles.length > 0 ? (
               <>
-                {/* Featured Article - First Article Large */}
-                {articles.length > 0 && (
-                  <div className="mb-16 pb-16 border-b border-gray-200">
-                    <Link href={`/articles/${articles[0].slug}`} className="block">
-                      <div className="grid lg:grid-cols-2 gap-12 items-center">
-                        {articles[0].cover_image && (
-                          <div className="relative aspect-[16/9] overflow-hidden bg-gray-100">
-                            <Image
-                              src={getStrapiMedia(articles[0].cover_image.url) || ''}
-                              alt={articles[0].cover_image?.alternativeText || articles[0].title}
-                              fill
-                              className="object-cover"
-                              sizes="(max-width: 1024px) 100vw, 50vw"
-                              priority
-                            />
-                            {articles[0].is_featured && (
-                              <div className="absolute top-4 right-4">
-                                <span className="bg-gray-900 text-white px-3 py-1 text-xs font-semibold">
-                                  مميز
-                                </span>
-                              </div>
-                            )}
+                {/* Articles Grid with Featured Layout */}
+                <div className="grid grid-cols-1 gap-10 px-5 md:grid-cols-2 md:px-10 lg:grid-cols-3 xl:grid-cols-[minmax(42%,532px)_repeat(2,1fr)] xl:px-0">
+                  {/* Featured Article - Large */}
+                  {articles.length > 0 && (
+                    <div className="space-y-4 md:col-span-2 lg:col-span-1 lg:row-span-2">
+                      <article className="flex flex-col gap-1 md:col-span-2 lg:col-span-1 lg:row-span-2">
+                        <div className="flex flex-col-reverse">
+                          <div className="w-full space-y-1">
+                            <Link href={`/articles/${articles[0].slug}`}>
+                              <p className="font-bold text-black text-[25px] leading-[28px] md:text-[36px] md:leading-10 text-right">
+                                {articles[0].title}
+                              </p>
+                              {articles[0].description && (
+                                <p className="text-sm font-normal leading-4 tracking-[0.2px] text-gray-600 text-right">
+                                  {articles[0].description}
+                                </p>
+                              )}
+                            </Link>
                           </div>
-                        )}
-                        <div className="space-y-6" dir="rtl">
-                          {articles[0].categories && articles[0].categories.length > 0 && (
-                            <div className="flex items-center gap-2 flex-wrap justify-end">
-                              {articles[0].categories.map((category) => (
-                                <span key={category.id} className="text-gray-700 font-medium text-xs uppercase tracking-wide border border-gray-300 px-2 py-1">
-                                  {category.name}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                          <h3 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight text-right">
-                            {articles[0].title}
-                          </h3>
-                          {articles[0].description && (
-                            <p className="text-gray-600 text-lg leading-relaxed text-right">
-                              {articles[0].description}
-                            </p>
-                          )}
-                          <div className="flex items-center gap-4 text-sm text-gray-500 justify-end" dir="rtl">
-                            {articles[0].author && (
-                              <>
-                                <span className="font-medium text-gray-700">{articles[0].author.name}</span>
-                                <span>•</span>
-                              </>
+                          <Link className="pb-5" href={`/articles/${articles[0].slug}`}>
+                            {articles[0].cover_image && (
+                              <Image
+                                alt={articles[0].cover_image?.alternativeText || articles[0].title}
+                                loading="lazy"
+                                width={825}
+                                height={541}
+                                decoding="async"
+                                className="aspect-video w-full object-cover"
+                                src={getStrapiMedia(articles[0].cover_image.url) || ''}
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 42vw"
+                                priority
+                              />
                             )}
-                            <time dateTime={articles[0].publish_date}>
-                              {formatDate(articles[0].publish_date)}
-                            </time>
-                          </div>
+                          </Link>
                         </div>
-                      </div>
-                    </Link>
-                  </div>
-                )}
+                      </article>
+                    </div>
+                  )}
 
-                {/* Regular Articles Grid */}
-                {articles.length > 1 && (
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {articles.slice(1).map((article) => (
-                      <ArticleCard key={article.id} article={article} />
-                    ))}
+                  {/* Regular Articles - Smaller Grid Items */}
+                  {articles.slice(1, 5).map((article) => (
+                    <article key={article.id} className="flex flex-col gap-1">
+                      <div className="flex flex-col-reverse">
+                        <div className="w-full space-y-1">
+                          <Link href={`/articles/${article.slug}`}>
+                            <p className="font-bold text-black text-[25px] md:text-[16px] leading-[28px] md:leading-[19px] text-right">
+                              {article.title}
+                            </p>
+                            {article.description && (
+                              <p className="text-sm font-normal leading-4 tracking-[0.2px] text-gray-600 text-right">
+                                {article.description}
+                              </p>
+                            )}
+                          </Link>
+                        </div>
+                        <Link className="pb-5" href={`/articles/${article.slug}`}>
+                          {article.cover_image && (
+                            <Image
+                              alt={article.cover_image?.alternativeText || article.title}
+                              loading="lazy"
+                              width={825}
+                              height={541}
+                              decoding="async"
+                              className="aspect-video w-full object-cover"
+                              src={getStrapiMedia(article.cover_image.url) || ''}
+                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            />
+                          )}
+                        </Link>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+
+                {/* Additional Articles if more than 5 */}
+                {articles.length > 5 && (
+                  <div className="mt-16 pt-16 border-t border-gray-200">
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                      {articles.slice(5).map((article) => (
+                        <ArticleCard key={article.id} article={article} />
+                      ))}
+                    </div>
                   </div>
                 )}
 
