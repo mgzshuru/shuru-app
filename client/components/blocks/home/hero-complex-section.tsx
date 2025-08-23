@@ -152,7 +152,7 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
           </div>
 
           {/* Articles Container Box */}
-          <div className="bg-white border border-primary-light rounded-none p-4 shadow-sm">
+          <div className="bg-white border border-primary-light rounded-none p-4 shadow-sm pb-6">
             {sideArticles.length > 0 ? sideArticles.map((article, index) => (
             <div
               key={article.id}

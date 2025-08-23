@@ -11,8 +11,8 @@
         "type": "enumeration",
         "enum": [
           "facebook",
-          "twitter",
-          "instagram", 
+          "x",
+          "instagram",
           "linkedin",
           "youtube",
           "tiktok",

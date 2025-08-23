@@ -1365,7 +1365,7 @@ export interface SharedSocialLink extends Struct.ComponentSchema {
     platform: Schema.Attribute.Enumeration<
       [
         'facebook',
-        'twitter',
+        'x',
         'instagram',
         'linkedin',
         'youtube',

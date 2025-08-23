@@ -3509,6 +3509,14 @@
     url-join "4.0.1"
     yup "0.32.9"
 
+"@strapi/provider-email-nodemailer@^5.23.0":
+  version "5.23.0"
+  resolved "https://registry.yarnpkg.com/@strapi/provider-email-nodemailer/-/provider-email-nodemailer-5.23.0.tgz#2efe1682be338359b7b2190b945082ffcb3dfb1f"
+  integrity sha512-0e/KC+uu3E2u0pHQTuSBFRFDidR731aCGXgUVPlz6xV2xM8F9kTVmYnfrdKUuCgxmbC0plpbUomIvjP1GChi8A==
+  dependencies:
+    lodash "4.17.21"
+    nodemailer "6.10.1"
+
 "@strapi/provider-email-sendmail@5.13.1":
   version "5.13.1"
   resolved "https://registry.yarnpkg.com/@strapi/provider-email-sendmail/-/provider-email-sendmail-5.13.1.tgz#8b6bac33dabdc83e80c70fb1baeb3479d4f1b5f9"
@@ -3720,6 +3728,22 @@
     execa "5.1.1"
     http-errors "2.0.0"
     json-logic-js "2.0.5"
+    lodash "4.17.21"
+    node-machine-id "1.1.12"
+    p-map "4.0.0"
+    preferred-pm "3.1.2"
+    yup "0.32.9"
+    zod "^3.22.4"
+
+"@strapi/utils@5.5.0":
+  version "5.5.0"
+  resolved "https://registry.yarnpkg.com/@strapi/utils/-/utils-5.5.0.tgz#9a1b5fed03dff95d85c4ae5919cee01214d1ca08"
+  integrity sha512-qxfQwpTYDXij7XyMjMEVGyu4kugv1OMfbe7lM+WABUrIRHi4qwMpDE8rcPmctQsdBwaMNg5qf/6bJ9U3lYI4qQ==
+  dependencies:
+    "@sindresorhus/slugify" "1.1.0"
+    date-fns "2.30.0"
+    execa "5.1.1"
+    http-errors "2.0.0"
     lodash "4.17.21"
     node-machine-id "1.1.12"
     p-map "4.0.0"
@@ -5704,6 +5728,11 @@ define-properties@^1.2.1:
     define-data-property "^1.0.1"
     has-property-descriptors "^1.0.0"
     object-keys "^1.1.1"
+
+defu@^6.1.4:
+  version "6.1.4"
+  resolved "https://registry.yarnpkg.com/defu/-/defu-6.1.4.tgz#4e0c9cf9ff68fe5f3d7f2765cc1a012dfdcb0479"
+  integrity sha512-mEQCMmwJu317oSz8CwdIOdwf3xMif1ttiM8LTufzc3g6kR+9Pe236twL8j3IYT1F7GfRgGcW6MWxzZjLIkuHIg==
 
 del@^5.1.0:
   version "5.1.0"
@@ -8627,6 +8656,11 @@ nodemailer-shared@1.1.0:
   dependencies:
     nodemailer-fetch "1.6.0"
 
+nodemailer@6.10.1:
+  version "6.10.1"
+  resolved "https://registry.yarnpkg.com/nodemailer/-/nodemailer-6.10.1.tgz#cbc434c54238f83a51c07eabd04e2b3e832da623"
+  integrity sha512-Z+iLaBGVaSjbIzQ4pX6XV41HrooLsQ10ZWPUehGmuantvzWoDVBnmsdUcOIDM1t+yPor5pDhVlDESgOMEGxhHA==
+
 nodemon@3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/nodemon/-/nodemon-3.0.2.tgz#222dd0de79fc7b7b3eedba422d2b9e5fc678621e"
@@ -10507,6 +10541,15 @@ stdin-discarder@^0.2.2:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/stdin-discarder/-/stdin-discarder-0.2.2.tgz#390037f44c4ae1a1ae535c5fe38dc3aba8d997be"
   integrity sha512-UhDfHmA92YAlNnCfhmq0VeNL5bDbiZGg7sZ2IvPsXubGkiNa9EC+tUTsjBRsYUAz87btI6/1wf4XoVvQ3uRnmQ==
+
+strapi-provider-email-extra@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/strapi-provider-email-extra/-/strapi-provider-email-extra-0.6.0.tgz#110d073295b61bdea722afe8aa7692887e12a471"
+  integrity sha512-wL+u8/bq0GSVn24RbKwjvXE8K+7aw7Tn/Yj4HvY8p2WRowxi/DbN71c5IdtWTQ47XW5tZx7LqhBqou3bLA1SpA==
+  dependencies:
+    "@strapi/utils" "5.5.0"
+    defu "^6.1.4"
+    lodash "^4.17.21"
 
 stream-browserify@3.0.0:
   version "3.0.0"

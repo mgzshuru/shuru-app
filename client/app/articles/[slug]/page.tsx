@@ -321,32 +321,6 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
             {/* Article Meta */}
             <div className="flex flex-col md:flex-row md:flex-wrap md:items-center gap-4 md:gap-8 pb-6 md:pb-8 border-b border-gray-200 justify-end" dir="rtl">
-              {/* Author */}
-              {article.author && (
-                <div className="flex items-center gap-3 md:gap-4">
-                  {article.author.avatar && (
-                    <div className="relative">
-                      <Image
-                        src={getStrapiMedia(article.author.avatar.url) || ''}
-                        alt={article.author.name}
-                        width={40}
-                        height={40}
-                        className="md:w-12 md:h-12 rounded-full object-cover border-2 border-gray-100"
-                      />
-                      {/* <div className="absolute -bottom-0.5 -left-0.5 md:-bottom-1 md:-left-1 w-3 h-3 md:w-4 md:h-4 bg-green-500 rounded-full border-2 border-white"></div> */}
-                    </div>
-                  )}
-                  <div className="text-right">
-                    <p className="font-semibold text-gray-900 text-base md:text-lg">{article.author.name}</p>
-                    {(article.author.jobTitle || article.author.organization) && (
-                      <p className="text-xs md:text-sm text-gray-500">
-                        {[article.author.jobTitle, article.author.organization].filter(Boolean).join(' • ')}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
-
               {/* Publication Date */}
               <div className="flex items-center gap-2 text-gray-500">
                 <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

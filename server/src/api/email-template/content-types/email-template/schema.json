@@ -1,0 +1,34 @@
+{
+  "kind": "collectionType",
+  "collectionName": "email_templates",
+  "info": {
+    "singularName": "email-template",
+    "pluralName": "email-templates",
+    "displayName": "EmailTemplate",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "subjectMatcher": {
+      "type": "string",
+      "required": true
+    },
+    "subject": {
+      "type": "string",
+      "required": true
+    },
+    "from": {
+      "type": "string",
+      "required": false
+    },
+    "text": {
+      "type": "richtext"
+    },
+    "html": {
+      "type": "richtext"
+    }
+  }
+}

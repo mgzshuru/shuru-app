@@ -1,19 +1,19 @@
-export default () => ({
+export default ({ env }) => ({
   upload: {
     config: {
       provider: 'aws-s3',
       providerOptions: {
         // All S3-specific options should be inside s3Options
         s3Options: {
-          accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-          region: process.env.AWS_REGION,
+          accessKeyId: env('AWS_ACCESS_KEY_ID'),
+          secretAccessKey: env('AWS_SECRET_ACCESS_KEY'),
+          region: env('AWS_REGION'),
           params: {
-            Bucket: process.env.AWS_BUCKET_NAME,
+            Bucket: env('AWS_BUCKET_NAME'),
             ACL: 'public-read',
           },
           // Move baseUrl and rootPath inside s3Options
-          baseUrl: `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com`,
+          baseUrl: `https://${env('AWS_BUCKET_NAME')}.s3.${env('AWS_REGION')}.amazonaws.com`,
           rootPath: 'uploads/',
         },
       },
@@ -34,6 +34,65 @@ export default () => ({
       sizeLimit: 50 * 1024 * 1024, // 50MB
       // Disable responsive dimensions to prevent multiple versions
       responsiveDimensions: false,
+    },
+  },
+  email: {
+    config: {
+      provider: 'strapi-provider-email-extra',
+      providerOptions: {
+        defaultProvider: 'nodemailer',
+        providers: {
+          nodemailer: {
+            provider: 'nodemailer',
+            providerOptions: {
+              host: env('SMTP_HOST', 'smtp.hostinger.com'),
+              port: env('SMTP_PORT', 465),
+              secure: true,
+              auth: {
+                user: env('SMTP_USERNAME'),
+                pass: env('SMTP_PASSWORD'),
+              },
+              requireTLS: true,
+            },
+          },
+        },
+        // DYNAMIC TEMPLATES FOR AUTH EMAILS
+        dynamicTemplates: {
+          enabled: true,
+          collection: 'api::email-template.email-template',
+          subjectMatcherField: 'subjectMatcher',
+          testEmailSubjectToMatch: 'Strapi test mail',
+          // Authentication email configurations
+          forgotPasswordUrl: '/api/auth/forgot-password',
+          sendEmailConfirmationUrl: '/api/auth/send-email-confirmation',
+          registerUrl: '/api/auth/local/register',
+          vars: {
+            // Additional template variables
+            appName: env('APP_NAME', 'Shuru'),
+            appUrl: env('APP_URL', 'http://localhost:3000'),
+            supportEmail: env('SUPPORT_EMAIL', env('SMTP_USERNAME')),
+            companyName: env('COMPANY_NAME', 'Shuru'),
+          },
+        },
+      },
+      // Email settings
+      settings: {
+        defaultFrom: env('SMTP_FROM'),
+        defaultFromName: env('APP_NAME', 'Shuru'),
+        testAddress: env('SMTP_TEST_ADDRESS'),
+      },
+    },
+  },
+  'users-permissions': {
+    config: {
+      email: {
+        from: env('SMTP_FROM'),
+        replyTo: env('SMTP_REPLY_TO'),
+      },
+      // Enable email confirmation and password reset
+      register: {
+        allowedFields: ['username', 'email', 'password'],
+      },
     },
   },
 });
