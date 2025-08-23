@@ -438,7 +438,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
           </section>
 
           {/* Latest Articles Section */}
-          <LatestArticles 
+          <LatestArticles
             articles={articles}
             title={`أحدث مقالات ${category.name}`}
             categoryName={category.name}

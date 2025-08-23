@@ -13,12 +13,12 @@ interface LatestArticlesProps {
   onShowMore?: () => void;
 }
 
-export function LatestArticles({ 
-  articles, 
-  title = "أحدث المقالات", 
+export function LatestArticles({
+  articles,
+  title = "أحدث المقالات",
   categoryName = "عام",
   showMore = false,
-  onShowMore 
+  onShowMore
 }: LatestArticlesProps) {
   if (!articles || articles.length === 0) {
     return null;
@@ -29,12 +29,12 @@ export function LatestArticles({
       <h2 className="text-[37px] font-medium uppercase leading-[33px] tracking-[4.8px] md:mb-5 md:text-[60px] md:leading-[48px] md:tracking-[8px] lg:col-span-3 lg:mb-0 text-right">
         {title}
       </h2>
-      
+
       <section className="flex flex-col lg:col-span-2">
         <section className="mb-5 flex flex-col gap-5 lg:mb-10">
           {articles.map((article, index) => (
-            <article 
-              key={article.id} 
+            <article
+              key={article.id}
               className="flex flex-col gap-1 px-[20px] sm:px-0 border-t border-t-gray-200 pt-5"
             >
               <div className="flex items-center gap-1">
@@ -42,8 +42,8 @@ export function LatestArticles({
                   <span className="uppercase">{categoryName}</span>
                 </p>
               </div>
-              
-              <Link 
+
+              <Link
                 href={`/articles/${article.slug}`}
                 className="flex flex-col-reverse gap-3 md:flex-row md:gap-4 lg:gap-10"
               >
@@ -57,7 +57,7 @@ export function LatestArticles({
                     </p>
                   )}
                 </div>
-                
+
                 {article.cover_image && (
                   <div className="flex-shrink-0">
                     <Image
@@ -75,9 +75,9 @@ export function LatestArticles({
               </Link>
             </article>
           ))}
-          
+
           {showMore && onShowMore && (
-            <button 
+            <button
               onClick={onShowMore}
               className="mx-auto h-11 w-fit rounded-[3px] bg-black px-8 py-2 text-xs font-bold uppercase leading-[13px] tracking-[1.5px] text-white hover:bg-gray-800"
             >
@@ -86,7 +86,7 @@ export function LatestArticles({
           )}
         </section>
       </section>
-      
+
       {/* Sidebar space for ads or other content */}
       <aside className="sticky top-[45px] hidden h-fit px-6 lg:col-span-1 lg:flex lg:flex-col lg:gap-4 lg:px-0">
         <div className="flex flex-col items-center justify-center mx-auto mb-8 min-h-[298px] w-full overflow-hidden mt-0 bg-gray-100 border border-gray-200">
@@ -103,10 +103,10 @@ export function LatestArticles({
 }
 
 // Alternative compact version for smaller sections
-export function LatestArticlesCompact({ 
-  articles, 
+export function LatestArticlesCompact({
+  articles,
   title = "مقالات ذات صلة",
-  maxItems = 5 
+  maxItems = 5
 }: {
   articles: Article[];
   title?: string;
@@ -124,10 +124,10 @@ export function LatestArticlesCompact({
         <div className="w-1 h-8 bg-gray-600"></div>
         <h3 className="text-2xl font-bold text-gray-900">{title}</h3>
       </div>
-      
+
       <div className="space-y-6">
         {displayArticles.map((article) => (
-          <article 
+          <article
             key={article.id}
             className="flex gap-4 pb-6 border-b border-gray-100 last:border-b-0"
           >
@@ -142,14 +142,14 @@ export function LatestArticlesCompact({
                 />
               </div>
             )}
-            
+
             <div className="flex-1" dir="rtl">
               <Link href={`/articles/${article.slug}`}>
                 <h4 className="font-bold text-gray-900 text-sm leading-tight mb-2 hover:text-gray-700 transition-colors text-right">
                   {article.title}
                 </h4>
               </Link>
-              
+
               <div className="flex items-center gap-2 text-xs text-gray-500">
                 {article.categories && article.categories.length > 0 && (
                   <>
