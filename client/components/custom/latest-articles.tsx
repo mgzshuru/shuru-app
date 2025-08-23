@@ -25,12 +25,12 @@ export function LatestArticles({
   }
 
   return (
-    <div className="mt-8 grid grid-cols-1 px-5 sm:px-10 lg:grid-cols-3 lg:gap-10 lg:px-0">
-      <h2 className="text-[37px] font-medium uppercase leading-[33px] tracking-[4.8px] md:mb-5 md:text-[60px] md:leading-[48px] md:tracking-[8px] lg:col-span-3 lg:mb-0 text-right">
+    <div className="mt-8 grid grid-cols-1 px-5 sm:px-10 lg:grid-cols-1 lg:gap-10 lg:px-0">
+      <h2 className="text-[37px] font-medium uppercase leading-[33px] tracking-[4.8px] md:mb-5 md:text-[60px] md:leading-[48px] md:tracking-[8px] lg:mb-0 text-right">
         {title}
       </h2>
 
-      <section className="flex flex-col lg:col-span-2">
+      <section className="flex flex-col">
         <section className="mb-5 flex flex-col gap-5 lg:mb-10">
           {articles.map((article, index) => (
             <article
@@ -86,18 +86,6 @@ export function LatestArticles({
           )}
         </section>
       </section>
-
-      {/* Sidebar space for ads or other content */}
-      <aside className="sticky top-[45px] hidden h-fit px-6 lg:col-span-1 lg:flex lg:flex-col lg:gap-4 lg:px-0">
-        <div className="flex flex-col items-center justify-center mx-auto mb-8 min-h-[298px] w-full overflow-hidden mt-0 bg-gray-100 border border-gray-200">
-          <div className="text-center text-[10px] uppercase leading-[12px] tracking-[1px] text-gray-500">
-            إعلان
-          </div>
-          <div className="mt-4 text-gray-400 text-sm">
-            مساحة إعلانية
-          </div>
-        </div>
-      </aside>
     </div>
   );
 }
