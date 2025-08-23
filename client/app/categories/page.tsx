@@ -169,7 +169,7 @@ export default async function CategoriesPage() {
             if (!a.publish_date || !b.publish_date) return 0;
             return new Date(b.publish_date).getTime() - new Date(a.publish_date).getTime();
           })
-          .slice(0, 5); // Limit to 5 recent articles
+          .slice(0, 3); // Limit to 3 recent articles
 
         return {
           ...category,
@@ -246,11 +246,6 @@ export default async function CategoriesPage() {
                                   <span className="text-sm font-medium text-gray-800 text-right flex-1">
                                     {childCategory.name}
                                   </span>
-                                  {childCategory.articles && childCategory.articles.length > 0 && (
-                                    <span className="text-gray-700 font-medium text-xs uppercase tracking-wide border border-gray-300 px-2 py-1 mr-3">
-                                      {childCategory.articles.length}
-                                    </span>
-                                  )}
                                 </div>
                                 {childCategory.description && (
                                   <p className="text-xs text-gray-600 mt-2  text-right">

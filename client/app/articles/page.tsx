@@ -396,11 +396,6 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
                 <h2 className="text-2xl font-bold text-gray-900">
                   {search ? 'نتائج البحث' : categoryName ? 'المقالات' : 'جميع المقالات'}
                 </h2>
-                {pagination?.total && (
-                  <span className="text-base font-normal text-gray-500">
-                    ({pagination.total} مقال)
-                  </span>
-                )}
               </div>
             </div>
 
