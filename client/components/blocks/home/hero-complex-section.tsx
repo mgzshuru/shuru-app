@@ -51,12 +51,11 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
     const trendingArticles = mostReadArticles.length > 0
       ? mostReadArticles.slice(0, maxMostReadArticles)
       : articles.slice(0, maxMostReadArticles);
-    const bottomArticles = articles.slice(4, 7);
 
-    return { mainArticle, sideArticles, trendingArticles, bottomArticles };
+    return { mainArticle, sideArticles, trendingArticles };
   }, [featuredArticle, articles, selectedArticles, maxArticles, mostReadArticles, maxMostReadArticles]);
 
-  const { mainArticle, sideArticles, trendingArticles, bottomArticles } = processedArticles;  if (!mainArticle) {
+  const { mainArticle, sideArticles, trendingArticles } = processedArticles;  if (!mainArticle) {
     return (
       <div className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-[400px]">
         <div className="grid grid-cols-4 gap-5 max-w-screen-xl mx-auto lg:px-5 md:px-10 px-5 pt-8 pb-16">
@@ -77,18 +76,18 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
   }
 
   return (
-    <div className="grid grid-cols-4 gap-5 max-w-screen-xl mx-auto lg:px-5 md:px-10 px-5 mt-4">
-      <section aria-label="homepage-hero-section" className="col-span-4 grid grid-cols-subgrid gap-y-6 lg:gap-x-5 lg:gap-y-7">
+    <div className="grid grid-cols-4 gap-3 md:gap-4 lg:gap-5 max-w-screen-xl mx-auto px-4 md:px-6 lg:px-5 mt-4">
+      <section aria-label="homepage-hero-section" className="col-span-4 grid grid-cols-subgrid gap-y-4 md:gap-y-5 lg:gap-x-5 lg:gap-y-7">
 
         {/* Main Featured Article - Center */}
         <div
           data-parsely-slot="hero-article"
           className="col-span-4 col-start-1 row-start-1 lg:col-span-2 lg:col-start-2 lg:row-span-2 lg:row-start-1"
         >
-          <article className="grid grid-flow-row auto-rows-max gap-2" aria-label="Landing page card">
+          <article className="grid grid-flow-row auto-rows-max gap-2 md:gap-3" aria-label="Landing page card">
             {/* Category Label */}
             <div className="flex items-center gap-1">
-              <p className="flex items-center font-centra text-primary-dark text-left text-[13px] font-bold leading-[14px] tracking-[1.4px]">
+              <p className="flex items-center font-centra text-primary-dark text-left text-[11px] md:text-[13px] font-bold leading-[12px] md:leading-[14px] tracking-[1.2px] md:tracking-[1.4px]">
                 <Link
                   className=""
                   href={`/categories/${mainArticle.categories?.[0]?.slug || '#'}`}
@@ -104,7 +103,7 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
               aria-label={`card link`}
             >
               {/* Hero Image */}
-              <div className="relative mb-3 flex aspect-[16/9] h-auto w-full flex-col items-stretch">
+              <div className="relative mb-2 md:mb-3 flex aspect-[16/9] h-auto w-full flex-col items-stretch">
                 {mainArticle.cover_image && getStrapiMedia(mainArticle.cover_image.url) ? (
                   <Image
                     alt={mainArticle.cover_image.alternativeText || mainArticle.title}
@@ -118,23 +117,23 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
                     <div className="text-center">
-                      <svg className="w-16 h-16 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-12 h-12 md:w-16 md:h-16 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
-                      <span className="text-gray-500 text-sm">لا توجد صورة</span>
+                      <span className="text-gray-500 text-xs md:text-sm">لا توجد صورة</span>
                     </div>
                   </div>
                 )}
               </div>
 
               {/* Title */}
-              <div className="text-right font-centra font-bold text-black text-[20px] leading-[22px] md:text-[28px] md:leading-[30px]" aria-label="Card title">
+              <div className="text-right font-centra font-bold text-black text-[18px] leading-[20px] md:text-[24px] md:leading-[26px] lg:text-[28px] lg:leading-[30px] mb-1 md:mb-2" aria-label="Card title">
                 {mainArticle.title}
               </div>
 
               {/* Description */}
               {mainArticle.description && (
-                <p className="mt-1 text-right font-tiempos text-[14px] font-light leading-[17px] tracking-[0.2px] text-primary-dark" aria-label="Card description">
+                <p className="text-right font-tiempos text-[13px] md:text-[14px] lg:text-[15px] font-light leading-[15px] md:leading-[17px] lg:leading-[18px] tracking-[0.2px] text-primary-dark line-clamp-3" aria-label="Card description">
                   {mainArticle.description}
                 </p>
               )}
@@ -143,21 +142,21 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
         </div>
 
         {/* Left Sidebar Articles */}
-        <div className="col-span-4 col-start-1 row-start-4 flex flex-col gap-y-5 border-primary-light md:mt-[-1.5rem] lg:col-span-1 lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:mt-0 lg:border-r lg:pr-6">
+        <div className="col-span-4 col-start-1 row-start-4 flex flex-col gap-y-3 md:gap-y-4 border-primary-light md:mt-[-1.5rem] lg:col-span-1 lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:mt-0 lg:border-r lg:pr-4 xl:pr-6">
           {/* Section Title */}
-          <div className="mb-4">
-            <h3 className="text-right font-centra text-[16px] font-bold leading-[18px] text-black border-b border-primary-light pb-2">
+          <div className="mb-3 md:mb-4">
+            <h3 className="text-right font-centra text-[14px] md:text-[16px] font-bold leading-[16px] md:leading-[18px] text-black border-b border-primary-light pb-2">
               {selectedArticles.length > 0 ? 'مقالات مختارة' : 'أحدث المقالات'}
             </h3>
           </div>
 
           {/* Articles Container Box */}
-          <div className="bg-white border border-primary-light rounded-none p-4 shadow-sm pb-6">
+          <div className="bg-white border border-primary-light rounded-none p-3 md:p-4 shadow-sm">
             {sideArticles.length > 0 ? sideArticles.map((article, index) => (
             <div
               key={article.id}
               data-parsely-slot={`text-only-article-${index + 1}`}
-              className="border-b border-primary-light pt-2 pb-6 last-of-type:border-b-0 lg:pb-5"
+              className="border-b border-primary-light pt-2 pb-4 md:pb-5 last-of-type:border-b-0"
             >
               <article className="grid grid-flow-row auto-rows-max gap-2" aria-label="Landing page card">
                 {/* Category */}
@@ -165,7 +164,7 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
                   {article.is_featured && (
                     <div className="h-2 w-2 rounded-full bg-premium" aria-label="Premium dot"></div>
                   )}
-                  <p className="flex items-center font-centra text-primary-dark text-left text-[13px] font-bold leading-[14px] tracking-[1.4px]">
+                  <p className="flex items-center font-centra text-primary-dark text-left text-[11px] md:text-[13px] font-bold leading-[12px] md:leading-[14px] tracking-[1.2px] md:tracking-[1.4px]">
                     <Link
                       className=""
                       href={`/categories/${article.categories?.[0]?.slug || '#'}`}
@@ -180,11 +179,11 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
                   href={`/articles/${article.slug}`}
                   aria-label={`card link`}
                 >
-                  <div className="text-right font-centra font-bold text-black text-[14px] leading-[16px] md:text-[20px] md:leading-[22px]" aria-label="Card title">
+                  <div className="text-right font-centra font-bold text-black text-[13px] md:text-[14px] leading-[15px] md:leading-[16px] mb-1" aria-label="Card title">
                     {article.title}
                   </div>
                   {article.description && (
-                    <p className="mt-1 text-right font-tiempos text-[14px] font-light leading-[17px] tracking-[0.2px] text-primary-dark" aria-label="Card description">
+                    <p className="text-right font-tiempos text-[12px] md:text-[14px] font-light leading-[14px] md:leading-[17px] tracking-[0.2px] text-primary-dark line-clamp-2" aria-label="Card description">
                       {article.description}
                     </p>
                   )}
@@ -207,11 +206,11 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
         </div>
 
         {/* Right Sidebar - Most Read */}
-        <div className="col-span-4 col-start-1 row-start-2 grid gap-y-6 overflow-hidden pb-6 lg:col-start-4 lg:row-span-3 lg:row-start-1 lg:block">
+        <div className="col-span-4 col-start-1 row-start-2 grid gap-y-4 md:gap-y-5 overflow-hidden pb-4 md:pb-6 lg:col-start-4 lg:row-span-3 lg:row-start-1 lg:block">
           <div className="recommender__container lg:max-w-[295px]">
             {/* Tab Headers */}
-            <div className="flex cursor-pointer justify-between rounded-tl-[3px] font-centra text-[13px] font-bold leading-[15px] border-l border-l-primary-light">
-              <div className="relative flex h-[40px] flex-1 flex-grow items-center justify-center rounded-tl-[3px] rounded-tr-[3px] border-r border-t border-r-primary-light border-t-primary-light">
+            <div className="flex cursor-pointer justify-between rounded-tl-[3px] font-centra text-[12px] md:text-[13px] font-bold leading-[14px] md:leading-[15px] border-l border-l-primary-light">
+              <div className="relative flex h-[36px] md:h-[40px] flex-1 flex-grow items-center justify-center rounded-tl-[3px] rounded-tr-[3px] border-r border-t border-r-primary-light border-t-primary-light">
                 <h4 className="whitespace-nowrap px-2 pb-3 pt-3 text-black">
                   الأكثر قراءة
                   <span className=""> ↓ </span>
@@ -222,13 +221,15 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
             {/* Most Read Articles */}
             <div className="recommender-feed min-h-80 rounded-[3px] rounded-bl-[3px] rounded-br-[3px] rounded-tl-none rounded-tr-none border-b border-l border-r border-b-primary-light border-l-primary-light border-r-primary-light lg:min-h-max">
               {trendingArticles.length > 0 ? trendingArticles.map((article, index) => (
-                <div key={article.id} className="flex w-full border-b border-b-primary-light pb-4 pt-3">
-                  <p className="ml-[8px] mr-[8px] font-gt-america text-[32px] font-[275] leading-[24px] text-primary">
-                    {index + 1}
-                  </p>
-                  <article className="card--recommender w-full">
-                    <div className="flex items-center gap-[10px]">
-                      <p className="flex items-center font-centra text-subhead font-bold leading-[13px] tracking-[1.4px] text-primary-dark">
+                <div key={article.id} className="flex w-full border-b border-b-primary-light pb-3 pt-3 last:border-b-0">
+                  <div className="flex-shrink-0 ml-2 mr-2 md:ml-3 md:mr-3">
+                    <p className="font-gt-america text-[24px] md:text-[32px] font-[275] leading-[20px] md:leading-[24px] text-primary">
+                      {index + 1}
+                    </p>
+                  </div>
+                  <article className="card--recommender w-full min-w-0">
+                    <div className="flex items-center gap-2 mb-2">
+                      <p className="flex items-center font-centra text-[11px] md:text-[13px] font-bold leading-[12px] md:leading-[13px] tracking-[1.2px] md:tracking-[1.4px] text-primary-dark">
                         <Link
                           className=""
                           href={`/categories/${article.categories?.[0]?.slug || '#'}`}
@@ -239,31 +240,31 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
                       </p>
                     </div>
                     <Link href={`/articles/${article.slug}`}>
-                      <div className="mt-2 flex justify-between gap-4">
-                        <div className="flex-1">
-                          <h2 className="font-centra text-[14px] font-bold leading-[16px] md:text-[20px] md:leading-[22px] lg:text-[14px] lg:leading-[16px] text-right">
+                      <div className="flex justify-between gap-3 md:gap-4">
+                        <div className="flex-1 min-w-0">
+                          <h2 className="font-centra text-[13px] md:text-[14px] lg:text-[14px] font-bold leading-[15px] md:leading-[16px] lg:leading-[16px] text-right mb-1">
                             {article.title}
                           </h2>
                           {article.description && (
-                            <p className="mt-1 text-[12px] md:text-[14px] lg:text-[12px] text-gray-600 leading-tight text-right line-clamp-2">
+                            <p className="text-[11px] md:text-[12px] lg:text-[12px] text-gray-600 leading-[13px] md:leading-[14px] text-right line-clamp-2">
                               {article.description}
                             </p>
                           )}
                         </div>
-                        <div className="relative aspect-[16/9] flex-[0_0_120px] md:flex-[0_0_318px] lg:flex-[0_0_120px]">
-                          <div className="relative">
+                        <div className="relative aspect-[16/9] flex-shrink-0 w-[80px] md:w-[100px] lg:w-[120px]">
+                          <div className="relative w-full h-full">
                             {article.cover_image && getStrapiMedia(article.cover_image.url) ? (
                               <Image
                                 alt={article.cover_image.alternativeText || article.title}
                                 loading="lazy"
-                                width={120}
-                                height={70}
-                                className="aspect-[16/9] w-full lg:w-auto"
+                                fill
+                                className="object-cover rounded-sm"
+                                sizes="(max-width: 768px) 80px, (max-width: 1024px) 100px, 120px"
                                 src={getStrapiMedia(article.cover_image.url)!}
                               />
                             ) : (
-                              <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center aspect-[16/9]">
-                                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center rounded-sm">
+                                <svg className="w-6 h-6 md:w-8 md:h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
                               </div>
@@ -285,108 +286,8 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
                 </div>
               )}
             </div>
-
-            {/* Ad Space - Hidden */}
-            {/* <div className="spacer mb-6 hidden lg:block"></div>
-            <div className="ad-container ad-container--rail flex-col items-center justify-center mx-auto min-h-[298px] w-full overflow-hidden mb-0 mt-0 hidden lg:relative lg:-left-[2.5px] lg:inline-flex lg:flex-col lg:items-center lg:justify-start lg:overflow-visible">
-              <div className="text-center font-centra text-[10px] uppercase leading-[12px] tracking-[1px] text-primary-dark">
-                إعلان
-              </div>
-              <div className="w-full h-[250px] bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-dashed border-gray-200 rounded-xl flex items-center justify-center mt-2">
-                <div className="text-center">
-                  <svg className="w-10 h-10 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m-9 3v10a2 2 0 002 2h8a2 2 0 002-2V7M9 7h6M9 11h6m-3 4h3" />
-                  </svg>
-                  <span className="text-gray-400 text-sm font-medium">مساحة إعلانية</span>
-                  <p className="text-xs text-gray-300 mt-1">300 × 250</p>
-                </div>
-              </div>
-            </div> */}
           </div>
         </div>
-
-        {/* Bottom Articles Row */}
-        {/* <div className="col-span-4 col-start-1 row-start-5 grid gap-y-5 border-primary-light lg:col-span-3 lg:col-start-1 lg:row-start-3 lg:grid-cols-subgrid lg:border-t lg:pt-6">
-          {bottomArticles.length > 0 ? bottomArticles.map((article, index) => (
-            <div
-              key={article.id}
-              data-parsely-slot={`bottom-article-${index + 1}`}
-              className="border-b border-primary-light pb-5 lg:col-start-1 lg:border-b-0"
-            >
-              <article className="grid grid-flow-row auto-rows-max gap-3" aria-label="Mini landing page card">
-                <div className="flex items-center gap-1">
-                  <p className="flex items-center font-centra text-primary-dark text-left text-[13px] font-bold leading-[13px] tracking-[1.82px] sm:text-[13px] sm:leading-[14px] sm:tracking-[1.4px]">
-                    <Link
-                      className=""
-                      href={`/categories/${article.categories?.[0]?.slug || '#'}`}
-                      target="_blank"
-                    >
-                      {article.categories?.[0]?.name?.toUpperCase() || 'أخبار'}
-                    </Link>
-                  </p>
-                </div>
-                <Link
-                  href={`/articles/${article.slug}`}
-                  aria-label={`card link`}
-                  className="flex gap-5 lg:flex-col"
-                >
-                  <div className="relative min-w-[120px] max-w-[120px] md:max-w-none md:flex-[1]">
-                    {article.cover_image && getStrapiMedia(article.cover_image.url) ? (
-                      <Image
-                        alt={article.cover_image.alternativeText || article.title}
-                        loading="lazy"
-                        width={295}
-                        height={166}
-                        className="aspect-video w-full"
-                        sizes="(max-width: 639px) 120px, (max-width: 767px) 50vw, 295px"
-                        src={getStrapiMedia(article.cover_image.url)!}
-                      />
-                    ) : (
-                      <div className="aspect-video w-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                        <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex flex-col gap-[4px] md:flex-[1]">
-                    <div className="text-right font-centra text-[14px] font-bold leading-[16px] text-black md:text-[20px] md:leading-[22px]" aria-label="Card title">
-                      {article.title}
-                    </div>
-                    {article.description && (
-                      <p className="mt-1 text-right font-tiempos text-[14px] font-light leading-[17px] tracking-[0.2px] text-primary-dark" aria-label="Card description">
-                        {article.description}
-                      </p>
-                    )}
-                  </div>
-                </Link>
-              </article>
-            </div>
-          )) : (
-            <div className="col-span-3 text-center py-8">
-              // <h4 className="text-lg font-semibold text-gray-600 mb-2">لا توجد مقالات إضافية</h4>
-              // <p className="text-gray-400 text-sm">سيتم عرض المزيد من المقالات هنا عند توفرها</p>
-            </div>
-          )}
-        </div> */}
-
-        {/* Mobile Ad Space - Hidden */}
-        {/* <div className="col-span-4 row-start-6 text-center lg:hidden">
-          <div className="ad-container ad-container--rail flex flex-col items-center justify-center mx-auto min-h-[298px] w-full overflow-hidden mb-0 mt-0">
-            <div className="text-center font-centra text-[10px] uppercase leading-[12px] tracking-[1px] text-primary-dark">
-              إعلان
-            </div>
-            <div className="w-full h-[250px] bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-dashed border-gray-200 rounded-xl flex items-center justify-center mt-2">
-              <div className="text-center">
-                <svg className="w-10 h-10 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m-9 3v10a2 2 0 002 2h8a2 2 0 002-2V7M9 7h6M9 11h6m-3 4h3" />
-                </svg>
-                <span className="text-gray-400 text-sm font-medium">مساحة إعلانية</span>
-                <p className="text-xs text-gray-300 mt-1">300 × 250</p>
-              </div>
-            </div>
-          </div>
-        </div> */}
 
       </section>
     </div>
