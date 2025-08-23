@@ -201,11 +201,6 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
               <p className="text-gray-500 text-sm font-medium">
                 {selectedLoading ? 'جارٍ تحميل المقالات المختارة...' : 'لا توجد مقالات متاحة'}
               </p>
-              {process.env.NODE_ENV === 'development' && (
-                <p className="text-xs text-gray-400 mt-1">
-                  Selected: {selectedArticles.length}, Articles: {articles.length}
-                </p>
-              )}
             </div>
           )}
           </div>
@@ -304,7 +299,7 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
         </div>
 
         {/* Bottom Articles Row */}
-        <div className="col-span-4 col-start-1 row-start-5 grid gap-y-5 border-primary-light lg:col-span-3 lg:col-start-1 lg:row-start-3 lg:grid-cols-subgrid lg:border-t lg:pt-6">
+        {/* <div className="col-span-4 col-start-1 row-start-5 grid gap-y-5 border-primary-light lg:col-span-3 lg:col-start-1 lg:row-start-3 lg:grid-cols-subgrid lg:border-t lg:pt-6">
           {bottomArticles.length > 0 ? bottomArticles.map((article, index) => (
             <div
               key={article.id}
@@ -362,11 +357,11 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
             </div>
           )) : (
             <div className="col-span-3 text-center py-8">
-              {/* <h4 className="text-lg font-semibold text-gray-600 mb-2">لا توجد مقالات إضافية</h4>
-              <p className="text-gray-400 text-sm">سيتم عرض المزيد من المقالات هنا عند توفرها</p> */}
+              // <h4 className="text-lg font-semibold text-gray-600 mb-2">لا توجد مقالات إضافية</h4>
+              // <p className="text-gray-400 text-sm">سيتم عرض المزيد من المقالات هنا عند توفرها</p>
             </div>
           )}
-        </div>
+        </div> */}
 
         {/* Mobile Ad Space - Hidden */}
         {/* <div className="col-span-4 row-start-6 text-center lg:hidden">
