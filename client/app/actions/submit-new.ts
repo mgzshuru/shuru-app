@@ -44,7 +44,7 @@ export interface EmailCheckResult {
   } | null;
 }
 
-const STRAPI_URL = process.env.STRAPI_URL || 'http://localhost:1337';
+const STRAPI_URL = process.env.STRAPI_BASE_URL || 'http://localhost:1337';
 
 // Enhanced input sanitization with HTML entity protection (preserves trailing spaces for typing)
 const sanitizeInput = (input: string): string => {
