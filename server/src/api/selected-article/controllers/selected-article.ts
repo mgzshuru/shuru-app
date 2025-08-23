@@ -34,28 +34,33 @@ export default factories.createCoreController('api::selected-article.selected-ar
     // Get the basic populated data
     const { data, meta } = await super.find(ctx);
 
-    // If displayOrder is not manual, sort the articles accordingly
-    if (data?.attributes?.articles?.data && data.attributes.displayOrder !== 'manual') {
-      const articles = data.attributes.articles.data;
+    // Apply article limiting and sorting
+    if (data?.articles && Array.isArray(data.articles)) {
+      let articles = [...data.articles];
 
-      switch (data.attributes.displayOrder) {
-        case 'newest':
-          articles.sort((a: any, b: any) => new Date(b.attributes.publishedAt).getTime() - new Date(a.attributes.publishedAt).getTime());
-          break;
-        case 'oldest':
-          articles.sort((a: any, b: any) => new Date(a.attributes.publishedAt).getTime() - new Date(b.attributes.publishedAt).getTime());
-          break;
-        case 'mostRead':
-          articles.sort((a: any, b: any) => (b.attributes.views || 0) - (a.attributes.views || 0));
-          break;
-        default:
-          // manual order - keep as is
-          break;
+      // Sort articles if displayOrder is not manual
+      if (data.displayOrder !== 'manual') {
+        switch (data.displayOrder) {
+          case 'newest':
+            articles.sort((a: any, b: any) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+            break;
+          case 'oldest':
+            articles.sort((a: any, b: any) => new Date(a.publishedAt).getTime() - new Date(b.publishedAt).getTime());
+            break;
+          case 'mostRead':
+            articles.sort((a: any, b: any) => (b.views || 0) - (a.views || 0));
+            break;
+          default:
+            // manual order - keep as is
+            break;
+        }
       }
 
       // Limit articles based on maxArticles setting
-      const maxArticles = data.attributes.maxArticles || 3;
-      data.attributes.articles.data = articles.slice(0, maxArticles);
+      const maxArticles = data.maxArticles || 3;
+      data.articles = articles.slice(0, maxArticles);
+
+      strapi.log.info(`Selected articles: returning ${data.articles.length} of ${articles.length} articles (max: ${maxArticles})`);
     }
 
     return { data, meta };

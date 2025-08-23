@@ -30,7 +30,7 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
   } = data;
 
   // Fetch selected articles from the new endpoint
-  const { selectedArticles, loading: selectedLoading } = useSelectedArticles();
+  const { selectedArticles, maxArticles, loading: selectedLoading } = useSelectedArticles();
 
   // Memoize article calculations to prevent unnecessary re-renders
   const processedArticles = useMemo(() => {
@@ -38,11 +38,12 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
 
     // Use selected articles if available, otherwise fallback to regular articles
     const sideArticles = selectedArticles.length > 0
-      ? selectedArticles.slice(0, 3)
+      ? selectedArticles.slice(0, maxArticles)
       : articles.slice(1, 4);
 
     console.log('Processing articles:', {
       selectedArticlesCount: selectedArticles.length,
+      maxArticles,
       sideArticlesCount: sideArticles.length,
       usingSelectedArticles: selectedArticles.length > 0
     });
@@ -53,7 +54,7 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
     const bottomArticles = articles.slice(4, 7);
 
     return { mainArticle, sideArticles, trendingArticles, bottomArticles };
-  }, [featuredArticle, articles, selectedArticles, mostReadArticles, maxMostReadArticles]);
+  }, [featuredArticle, articles, selectedArticles, maxArticles, mostReadArticles, maxMostReadArticles]);
 
   const { mainArticle, sideArticles, trendingArticles, bottomArticles } = processedArticles;  if (!mainArticle) {
     return (

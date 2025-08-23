@@ -20,6 +20,7 @@ interface SelectedArticlesData {
 
 export function useSelectedArticles() {
   const [selectedArticles, setSelectedArticles] = useState<Article[]>([]);
+  const [maxArticles, setMaxArticles] = useState<number>(3);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -41,10 +42,13 @@ export function useSelectedArticles() {
 
         if (data.data?.articles && data.data.showInHero) {
           console.log('Fetched selected articles:', data.data.articles);
+          console.log('Max articles setting:', data.data.maxArticles);
           setSelectedArticles(data.data.articles);
+          setMaxArticles(data.data.maxArticles || 3);
         } else {
           console.log('No selected articles or showInHero is false');
           setSelectedArticles([]);
+          setMaxArticles(3);
         }
 
         setError(null);
@@ -60,5 +64,5 @@ export function useSelectedArticles() {
     fetchSelectedArticles();
   }, []);
 
-  return { selectedArticles, loading, error };
+  return { selectedArticles, maxArticles, loading, error };
 }
