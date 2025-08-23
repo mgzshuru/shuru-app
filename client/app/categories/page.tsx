@@ -63,11 +63,8 @@ function CategoryCard({ category }: { category: Category }) {
             <h3 className="text-xl font-bold text-gray-900 text-right flex-1">
               {category.name}
             </h3>
-            {articlesCount > 0 && (
-              <span className="text-gray-700 font-medium text-xs uppercase tracking-wide border border-gray-300 px-2 py-1 mr-3">
-                {articlesCount} مقال
-              </span>
-            )}
+            <span >
+            </span>
           </div>
 
           {category.description && (

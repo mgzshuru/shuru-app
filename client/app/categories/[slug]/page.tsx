@@ -287,11 +287,6 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
               <div className="flex items-center gap-3">
                 <div className="w-1 h-8 bg-gray-600"></div>
                 <h2 className="text-2xl font-bold text-gray-900">المقالات</h2>
-                {pagination?.total && (
-                  <span className="text-base font-normal text-gray-500">
-                    ({pagination.total} مقال)
-                  </span>
-                )}
               </div>
             </div>
 
