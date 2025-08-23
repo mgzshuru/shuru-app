@@ -78,8 +78,8 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
   }
 
   return (
-    <div className="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-5 mt-4">
-      <section aria-label="homepage-hero-section" className="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-5 lg:gap-6">
+    <div className="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-5 mt-4 mb-8 md:mb-6 lg:mb-8">
+      <section aria-label="homepage-hero-section" className="grid grid-cols-1 lg:grid-cols-4 gap-8 md:gap-5 lg:gap-6">
 
         {/* Left Sidebar Articles */}
         <div className="lg:col-span-1 order-3 lg:order-1">
