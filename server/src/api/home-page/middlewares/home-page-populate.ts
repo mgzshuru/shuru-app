@@ -19,16 +19,6 @@ const populateQuery = {
               }
             }
           },
-          sidebarArticles: {
-            populate: {
-              categories: {
-                fields: ['name', 'slug']
-              },
-              cover_image: {
-                fields: ['url', 'alternativeText', 'width', 'height']
-              }
-            }
-          },
           mostReadArticles: {
             populate: {
               categories: {
@@ -40,7 +30,7 @@ const populateQuery = {
             }
           }
         },
-        fields: ['title', 'subtitle', 'showMostRead', 'maxSidebarArticles', 'maxMostReadArticles']
+        fields: ['title', 'subtitle', 'showMostRead', 'maxMostReadArticles']
       },
       'home.article-grid-section': {
         populate: {

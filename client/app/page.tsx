@@ -15,7 +15,6 @@ export default async function Home() {
       getAllCategories().catch(() => ({ data: [] }))
     ]);
     console.log('Fetched home page data:', JSON.stringify(homePageData, null, 2));
-    // console.log('Sidebar articles count:', homePageData?.blocks[0]?.sidebarArticles?.length);
     const articles = Array.isArray(articlesResponse.data) ? articlesResponse.data : [];
     const categories = Array.isArray(categoriesResponse.data) ? categoriesResponse.data : [];
 

@@ -914,7 +914,7 @@ export interface HomeFeaturedCategoriesSection extends Struct.ComponentSchema {
 export interface HomeHeroComplexSection extends Struct.ComponentSchema {
   collectionName: 'components_home_hero_complex_sections';
   info: {
-    description: 'Complex hero section with featured article, sidebar articles, and most read widget';
+    description: 'Complex hero section with featured article and most read widget';
     displayName: 'Hero Complex Section';
   };
   attributes: {
@@ -931,24 +931,11 @@ export interface HomeHeroComplexSection extends Struct.ComponentSchema {
         number
       > &
       Schema.Attribute.DefaultTo<4>;
-    maxSidebarArticles: Schema.Attribute.Integer &
-      Schema.Attribute.SetMinMax<
-        {
-          max: 10;
-          min: 1;
-        },
-        number
-      > &
-      Schema.Attribute.DefaultTo<3>;
     mostReadArticles: Schema.Attribute.Relation<
       'oneToMany',
       'api::article.article'
     >;
     showMostRead: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    sidebarArticles: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::article.article'
-    >;
     subtitle: Schema.Attribute.Text;
     title: Schema.Attribute.String;
   };

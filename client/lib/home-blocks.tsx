@@ -31,10 +31,8 @@ export const renderHomePageBlock = (block: HomePageBlock, articles: Article[] = 
         title: block.title,
         subtitle: block.subtitle,
         featuredArticle: block.featuredArticle,
-        sidebarArticles: block.sidebarArticles || [],
         mostReadArticles: block.mostReadArticles || [],
         showMostRead: block.showMostRead ?? true,
-        maxSidebarArticles: block.maxSidebarArticles || 3,
         maxMostReadArticles: block.maxMostReadArticles || 4,
       };
       return <HeroComplexSection key={uniqueKey} data={heroComplexData} articles={articles} />;

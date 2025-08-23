@@ -5,15 +5,14 @@ import Link from 'next/link';
 import { Article } from '@/lib/types';
 import { getStrapiMedia } from '@/components/custom/strapi-image';
 import { formatDate } from '@/lib/utils';
+import { useSelectedArticles } from '@/hooks/use-selected-articles';
 
 interface HeroComplexSectionData {
   title?: string;
   subtitle?: string;
   featuredArticle?: Article;
-  sidebarArticles?: Article[];
   mostReadArticles?: Article[];
   showMostRead?: boolean;
-  maxSidebarArticles?: number;
   maxMostReadArticles?: number;
 }
 
@@ -25,26 +24,36 @@ interface HeroComplexSectionProps {
 export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionProps) {
   const {
     featuredArticle,
-    sidebarArticles = [],
     mostReadArticles = [],
     showMostRead = true,
-    maxSidebarArticles = 3,
     maxMostReadArticles = 4,
   } = data;
+
+  // Fetch selected articles from the new endpoint
+  const { selectedArticles, loading: selectedLoading } = useSelectedArticles();
 
   // Memoize article calculations to prevent unnecessary re-renders
   const processedArticles = useMemo(() => {
     const mainArticle = featuredArticle || articles[0];
-    const sideArticles = sidebarArticles.length > 0
-      ? sidebarArticles.slice(0, maxSidebarArticles)
-      : articles.slice(1, maxSidebarArticles + 1);
+
+    // Use selected articles if available, otherwise fallback to regular articles
+    const sideArticles = selectedArticles.length > 0
+      ? selectedArticles.slice(0, 3)
+      : articles.slice(1, 4);
+
+    console.log('Processing articles:', {
+      selectedArticlesCount: selectedArticles.length,
+      sideArticlesCount: sideArticles.length,
+      usingSelectedArticles: selectedArticles.length > 0
+    });
+
     const trendingArticles = mostReadArticles.length > 0
       ? mostReadArticles.slice(0, maxMostReadArticles)
       : articles.slice(0, maxMostReadArticles);
-    const bottomArticles = articles.slice(maxSidebarArticles + 1, maxSidebarArticles + 4);
+    const bottomArticles = articles.slice(4, 7);
 
     return { mainArticle, sideArticles, trendingArticles, bottomArticles };
-  }, [featuredArticle, articles, sidebarArticles, mostReadArticles, maxSidebarArticles, maxMostReadArticles]);
+  }, [featuredArticle, articles, selectedArticles, mostReadArticles, maxMostReadArticles]);
 
   const { mainArticle, sideArticles, trendingArticles, bottomArticles } = processedArticles;  if (!mainArticle) {
     return (
@@ -137,7 +146,7 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
           {/* Section Title */}
           <div className="mb-4">
             <h3 className="text-right font-centra text-[16px] font-bold leading-[18px] text-black border-b border-primary-light pb-2">
-              مقالات مختارة
+              {selectedArticles.length > 0 ? 'مقالات مختارة' : 'أحدث المقالات'}
             </h3>
           </div>
 
@@ -188,7 +197,14 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
                 </svg>
               </div>
-              <p className="text-gray-500 text-sm font-medium">لا توجد مقالات جانبية</p>
+              <p className="text-gray-500 text-sm font-medium">
+                {selectedLoading ? 'جارٍ تحميل المقالات المختارة...' : 'لا توجد مقالات متاحة'}
+              </p>
+              {process.env.NODE_ENV === 'development' && (
+                <p className="text-xs text-gray-400 mt-1">
+                  Selected: {selectedArticles.length}, Articles: {articles.length}
+                </p>
+              )}
             </div>
           )}
           </div>
