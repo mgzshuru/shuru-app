@@ -24,12 +24,36 @@ export default factories.createCoreController('api::contact-message.contact-mess
         }
       });
 
-      // You can add email notification logic here if needed
-      // await strapi.plugins['email'].services.email.send({
-      //   to: 'admin@shuru.sa',
-      //   subject: `New Contact Message: ${subject}`,
-      //   text: `New message from ${name} (${email}): ${message}`
-      // });
+      // Send email notification to info@shuru.sa
+      try {
+        const emailService = strapi.plugins.email.services.email;
+
+        await emailService.send({
+          to: 'info@shuru.sa',
+          subject: 'Contact Form Submission', // This matches the subjectMatcher in the template
+          contactData: {
+            name: name,
+            email: email,
+            phone: ctx.request.body.data.phone || null,
+            company: ctx.request.body.data.company || null,
+            subject: subject,
+            message: message,
+            submissionDate: new Date().toLocaleDateString('ar-EG'),
+            submissionTime: new Date().toLocaleTimeString('ar-EG')
+          }
+        });
+
+        strapi.log.info('Contact form notification email sent successfully', {
+          contactName: name,
+          contactEmail: email,
+          subject: subject,
+          timestamp: new Date().toISOString()
+        });
+
+      } catch (emailError) {
+        strapi.log.error('Failed to send contact form notification email:', emailError);
+        // Don't fail the contact form submission if email fails
+      }
 
       const sanitizedEntity = await this.sanitizeOutput(entity, ctx);
 
