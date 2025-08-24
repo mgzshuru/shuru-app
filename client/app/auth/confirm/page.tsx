@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,15 +15,7 @@ export default function ConfirmEmailPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const confirmation = searchParams.get('confirmation');
 
-  useEffect(() => {
-    if (confirmation) {
-      confirmEmail(confirmation);
-    } else {
-      setStatus('error');
-    }
-  }, [confirmation, router]);
-
-  const confirmEmail = async (confirmationCode: string) => {
+  const confirmEmail = useCallback(async (confirmationCode: string) => {
     if (isProcessing) return; // Prevent multiple calls
 
     setIsProcessing(true);
@@ -36,62 +28,67 @@ export default function ConfirmEmailPage() {
 
       const response = await fetch(fullUrl, {
         method: 'GET',
+        credentials: 'include', // Include credentials for CORS
         headers: {
-          'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
+        redirect: 'manual', // Handle redirects manually
       });
 
       console.log('Response status:', response.status);
-      console.log('Response ok:', response.ok);
+      console.log('Response type:', response.type);
 
-      // Check if response status is in the success range (200-299)
+      // Handle different response scenarios
       if (response.status >= 200 && response.status < 300) {
-        // Handle 204 No Content (successful email confirmation)
-        if (response.status === 204) {
-          console.log('Email confirmed successfully (204 No Content)');
-          setStatus('success');
-          // Redirect after showing success message
-          setTimeout(() => {
-            router.push('/auth/login?confirmed=true');
-          }, 3000);
-        } else {
-          // Handle other success responses that might have content
-          try {
-            const data = await response.json();
-            console.log('Success response:', data);
-            setStatus('success');
-            // Redirect after showing success message
-            setTimeout(() => {
-              router.push('/auth/login?confirmed=true');
-            }, 3000);
-          } catch (jsonError) {
-            console.error('Error parsing success response as JSON:', jsonError);
-            // Even if JSON parsing fails, if status is 2xx, consider it success
-            setStatus('success');
-            setTimeout(() => {
-              router.push('/auth/login?confirmed=true');
-            }, 3000);
-          }
-        }
+        // Success response
+        console.log('Email confirmed successfully');
+        setStatus('success');
+        setTimeout(() => {
+          router.push('/auth/login?confirmed=true');
+        }, 3000);
+      } else if (response.status === 302) {
+        // Redirect response - Strapi's default behavior for successful confirmation
+        console.log('Email confirmed successfully (redirect response)');
+        setStatus('success');
+        setTimeout(() => {
+          router.push('/auth/login?confirmed=true');
+        }, 3000);
       } else {
+        // Error response
         let errorMessage = 'Unknown error';
         try {
           const errorData = await response.json();
           errorMessage = errorData.error?.message || errorData.message || `HTTP ${response.status}`;
         } catch (jsonError) {
-          const errorText = await response.text();
-          errorMessage = errorText || `HTTP ${response.status}`;
+          try {
+            const errorText = await response.text();
+            errorMessage = errorText || `HTTP ${response.status}`;
+          } catch (textError) {
+            errorMessage = `HTTP ${response.status}`;
+          }
         }
         console.error('Error response:', response.status, errorMessage);
         setStatus('error');
       }
     } catch (error) {
       console.error('Network/Fetch error:', error);
+      // Check if it's a CORS error or network error
+      if (error instanceof Error && error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+        console.error('Possible CORS error or network issue');
+      }
       setStatus('error');
     } finally {
       setIsProcessing(false);
     }
-  };
+  }, [isProcessing, router]);
+
+  useEffect(() => {
+    if (confirmation) {
+      confirmEmail(confirmation);
+    } else {
+      setStatus('error');
+    }
+  }, [confirmation, confirmEmail]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8" dir="rtl">
