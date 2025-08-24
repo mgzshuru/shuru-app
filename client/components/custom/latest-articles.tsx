@@ -38,17 +38,27 @@ export function LatestArticles({
               className="flex flex-col gap-1 px-[20px] sm:px-0 border-t border-t-gray-200 pt-5"
               dir="rtl"
             >
-              <div className="flex items-center gap-1 justify-end">
-                <p className="flex items-center text-xs font-bold leading-[13px] tracking-[1.4px] text-gray-600">
-                  <span className="uppercase">{categoryName}</span>
-                </p>
-              </div>
-
               <Link
                 href={`/articles/${article.slug}`}
-                className="flex flex-col gap-2 md:flex-row-reverse md:gap-3 lg:gap-4"
+                className="flex flex-col gap-2 md:flex-row md:gap-6"
               >
-                <div className="w-full space-y-3 order-2 md:order-1">
+                {article.cover_image && (
+                  <div className="flex-shrink-0 order-1 w-full md:w-auto">
+                    <Image
+                      alt={article.cover_image?.alternativeText || article.title}
+                      loading="lazy"
+                      width={240}
+                      height={160}
+                      decoding="async"
+                      className="w-full h-auto md:w-[240px] md:h-[160px] object-cover"
+                      style={{ aspectRatio: '3/2' }}
+                      src={getStrapiMedia(article.cover_image.url) || ''}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 240px, 240px"
+                    />
+                  </div>
+                )}
+
+                <div className="w-full space-y-3 order-2">
                   <p className="text-base font-bold leading-[19px] text-black md:text-[25px] md:leading-[28px] text-right">
                     {article.title}
                   </p>
@@ -58,22 +68,6 @@ export function LatestArticles({
                     </p>
                   )}
                 </div>
-
-                {article.cover_image && (
-                  <div className="flex-shrink-0 order-1 md:order-2 w-full md:w-auto">
-                    <Image
-                      alt={article.cover_image?.alternativeText || article.title}
-                      loading="lazy"
-                      width={153}
-                      height={86}
-                      decoding="async"
-                      className="w-full h-auto md:w-[153px] md:h-[86px] object-cover rounded"
-                      style={{ aspectRatio: '16/9' }}
-                      src={getStrapiMedia(article.cover_image.url) || ''}
-                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 153px, 153px"
-                    />
-                  </div>
-                )}
               </Link>
             </article>
           ))}
@@ -122,7 +116,20 @@ export function LatestArticlesCompact({
             className="flex gap-4 pb-6 border-b border-gray-100 last:border-b-0"
             dir="rtl"
           >
-            <div className="flex-1 order-1">
+            {article.cover_image && (
+              <div className="flex-shrink-0 w-32 h-24 order-1">
+                <Image
+                  src={getStrapiMedia(article.cover_image.url) || ''}
+                  alt={article.cover_image?.alternativeText || article.title}
+                  width={128}
+                  height={96}
+                  className="w-full h-full object-cover"
+                  style={{ aspectRatio: '4/3' }}
+                />
+              </div>
+            )}
+
+            <div className="flex-1 order-2">
               <Link href={`/articles/${article.slug}`}>
                 <h4 className="font-bold text-gray-900 text-sm leading-tight mb-2 hover:text-gray-700 transition-colors text-right">
                   {article.title}
@@ -130,30 +137,11 @@ export function LatestArticlesCompact({
               </Link>
 
               <div className="flex items-center gap-2 text-xs text-gray-500 justify-end">
-                {article.categories && article.categories.length > 0 && (
-                  <>
-                    <span>{article.categories[0].name}</span>
-                    <span>•</span>
-                  </>
-                )}
                 <time dateTime={article.publish_date}>
                   {formatDate(article.publish_date)}
                 </time>
               </div>
             </div>
-
-            {article.cover_image && (
-              <div className="flex-shrink-0 w-24 h-16 order-2">
-                <Image
-                  src={getStrapiMedia(article.cover_image.url) || ''}
-                  alt={article.cover_image?.alternativeText || article.title}
-                  width={96}
-                  height={64}
-                  className="w-full h-full object-cover rounded"
-                  style={{ aspectRatio: '3/2' }}
-                />
-              </div>
-            )}
           </article>
         ))}
       </div>
