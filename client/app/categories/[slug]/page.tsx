@@ -284,13 +284,6 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
         <main className="max-w-7xl mx-auto px-6 py-12">
           {/* Articles Section */}
           <section>
-            <div className="flex items-center justify-between mb-8" dir="rtl">
-              <div className="flex items-center gap-3">
-                <div className="w-1 h-8 bg-gray-600"></div>
-                <h2 className="text-2xl font-bold text-gray-900">المقالات</h2>
-              </div>
-            </div>
-
             {articles.length > 0 ? (
               <>
                 {/* Articles Grid with Featured Layout */}
