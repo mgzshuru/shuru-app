@@ -24,9 +24,6 @@
       "type": "string",
       "required": false
     },
-    "text": {
-      "type": "richtext"
-    },
     "html": {
       "type": "richtext"
     }
