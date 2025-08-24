@@ -300,7 +300,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                     <div className="space-y-4 md:col-span-2 lg:col-span-1 lg:row-span-2">
                       <article className="flex flex-col gap-1 md:col-span-2 lg:col-span-1 lg:row-span-2">
                         <div className="flex flex-col-reverse">
-                          <div className="w-full space-y-1">
+                          <div className="w-full space-y-3">
                             <Link href={`/articles/${articles[0].slug}`}>
                               <p className="font-bold text-black text-[25px] leading-[28px] md:text-[36px] md:leading-10 text-right">
                                 {articles[0].title}
@@ -336,7 +336,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                   {articles.slice(1, 5).map((article) => (
                     <article key={article.id} className="flex flex-col gap-1">
                       <div className="flex flex-col-reverse">
-                        <div className="w-full space-y-1">
+                        <div className="w-full space-y-3">
                           <Link href={`/articles/${article.slug}`}>
                             <p className="font-bold text-black text-[25px] md:text-[16px] leading-[28px] md:leading-[19px] text-right">
                               {article.title}
