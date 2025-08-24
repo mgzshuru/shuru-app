@@ -12,17 +12,22 @@ export default function ConfirmEmailPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<'confirming' | 'success' | 'error'>('confirming');
+  const [isProcessing, setIsProcessing] = useState(false);
   const confirmation = searchParams.get('confirmation');
 
   useEffect(() => {
     if (confirmation) {
       confirmEmail(confirmation);
     } else {
-      router.push('/auth/login');
+      setStatus('error');
     }
-  }, [confirmation]);
+  }, [confirmation, router]);
 
   const confirmEmail = async (confirmationCode: string) => {
+    if (isProcessing) return; // Prevent multiple calls
+    
+    setIsProcessing(true);
+    
     try {
       const baseUrl = getStrapiURL();
       const fullUrl = `${baseUrl}/api/auth/email-confirmation?confirmation=${confirmationCode}`;
@@ -44,17 +49,28 @@ export default function ConfirmEmailPage() {
         // Handle 204 No Content (successful email confirmation)
         if (response.status === 204) {
           console.log('Email confirmed successfully (204 No Content)');
-          router.push('/auth/login?confirmed=true');
+          setStatus('success');
+          // Redirect after showing success message
+          setTimeout(() => {
+            router.push('/auth/login?confirmed=true');
+          }, 3000);
         } else {
           // Handle other success responses that might have content
           try {
             const data = await response.json();
             console.log('Success response:', data);
-            router.push('/auth/login?confirmed=true');
+            setStatus('success');
+            // Redirect after showing success message
+            setTimeout(() => {
+              router.push('/auth/login?confirmed=true');
+            }, 3000);
           } catch (jsonError) {
             console.error('Error parsing success response as JSON:', jsonError);
             // Even if JSON parsing fails, if status is 2xx, consider it success
-            router.push('/auth/login?confirmed=true');
+            setStatus('success');
+            setTimeout(() => {
+              router.push('/auth/login?confirmed=true');
+            }, 3000);
           }
         }
       } else {
@@ -67,11 +83,13 @@ export default function ConfirmEmailPage() {
           errorMessage = errorText || `HTTP ${response.status}`;
         }
         console.error('Error response:', response.status, errorMessage);
-        router.push('/auth/login');
+        setStatus('error');
       }
     } catch (error) {
       console.error('Network/Fetch error:', error);
-      router.push('/auth/login');
+      setStatus('error');
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -84,7 +102,12 @@ export default function ConfirmEmailPage() {
               تأكيد البريد الإلكتروني
             </CardTitle>
             <CardDescription className="text-gray-600">
-              يرجى الانتظار بينما نقوم بتأكيد بريدك الإلكتروني
+              {status === 'confirming' 
+                ? 'يرجى الانتظار بينما نقوم بتأكيد بريدك الإلكتروني'
+                : status === 'success'
+                ? 'تم تأكيد بريدك الإلكتروني بنجاح'
+                : 'فشل في تأكيد البريد الإلكتروني'
+              }
             </CardDescription>
           </CardHeader>
           <CardContent className="text-center space-y-4">
@@ -115,7 +138,12 @@ export default function ConfirmEmailPage() {
                 <XCircle className="h-12 w-12 text-red-600 mx-auto" />
                 <div className="space-y-2">
                   <p className="text-red-700 font-semibold">فشل في تأكيد البريد الإلكتروني</p>
-                  <p className="text-gray-600">الرابط غير صالح أو منتهي الصلاحية. يرجى المحاولة مرة أخرى.</p>
+                  <p className="text-gray-600">
+                    {!confirmation 
+                      ? 'رابط التأكيد غير صالح أو مفقود. يرجى التحقق من الرابط والمحاولة مرة أخرى.'
+                      : 'الرابط غير صالح أو منتهي الصلاحية. يرجى المحاولة مرة أخرى.'
+                    }
+                  </p>
                 </div>
                 <div className="space-y-2">
                   <Button asChild variant="outline" className="w-full">
