@@ -23,7 +23,7 @@ export default function ConfirmEmailPage() {
 
   const confirmEmail = async (confirmationCode: string) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/auth/email-confirmation?confirmation=${confirmationCode}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/auth/email-confirmation?confirmation=${confirmationCode}`, {
         method: 'GET',
       });
 
