@@ -438,12 +438,14 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
           </section>
 
           {/* Latest Articles Section */}
-          <LatestArticles
-            articles={articles}
-            title={`أحدث مقالات ${category.name}`}
-            categoryName={category.name}
-            showMore={false}
-          />
+          <div className="mt-24 pt-16 border-t border-gray-200">
+            <LatestArticles
+              articles={articles}
+              title={`أحدث مقالات ${category.name}`}
+              categoryName={category.name}
+              showMore={false}
+            />
+          </div>
 
           {/* Related Categories */}
           {category.children_categories && category.children_categories.length > 0 && (
