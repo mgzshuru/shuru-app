@@ -359,61 +359,6 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                     </article>
                   ))}
                 </div>
-
-                {/* Additional Articles if more than 5 */}
-                {articles.length > 5 && (
-                  <div className="mt-16 pt-16 border-t border-gray-200">
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                      {articles.slice(5).map((article) => (
-                        <ArticleCard key={article.id} article={article} />
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Pagination */}
-                {pagination && pagination.pageCount > 1 && (
-                  <div className="flex justify-center items-center gap-2 mt-16 pt-8 border-t border-gray-200">
-                    {pagination.page > 1 && (
-                      <Link href={`/categories/${slug}?page=${pagination.page - 1}`}>
-                        <button className="px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium">
-                          السابق
-                        </button>
-                      </Link>
-                    )}
-
-                    <div className="flex gap-1">
-                      {Array.from({ length: Math.min(5, pagination.pageCount) }, (_, i) => {
-                        const pageNum = Math.max(1, Math.min(pagination.pageCount - 4, pagination.page - 2)) + i;
-
-                        if (pageNum <= pagination.pageCount) {
-                          return (
-                            <Link key={pageNum} href={`/categories/${slug}?page=${pageNum}`}>
-                              <button
-                                className={`w-10 h-10 border font-medium ${
-                                  pageNum === pagination.page
-                                    ? 'bg-gray-900 text-white border-gray-900'
-                                    : 'border-gray-300 text-gray-700 hover:bg-gray-50'
-                                }`}
-                              >
-                                {pageNum}
-                              </button>
-                            </Link>
-                          );
-                        }
-                        return null;
-                      })}
-                    </div>
-
-                    {pagination.page < pagination.pageCount && (
-                      <Link href={`/categories/${slug}?page=${pagination.page + 1}`}>
-                        <button className="px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium">
-                          التالي
-                        </button>
-                      </Link>
-                    )}
-                  </div>
-                )}
               </>
             ) : (
               <div className="text-center py-24 border border-gray-200 bg-gray-50">
@@ -431,14 +376,16 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
           </section>
 
           {/* Latest Articles Section */}
-          <div className="mt-24 pt-16 border-t border-gray-200">
-            <LatestArticles
-              articles={articles}
-              title={`أحدث مقالات ${category.name}`}
-              categoryName={category.name}
-              showMore={false}
-            />
-          </div>
+          {articles.length > 5 && (
+            <div className="mt-24 pt-16 border-t border-gray-200">
+              <LatestArticles
+                articles={articles.slice(5)}
+                title={`المزيد من مقالات ${category.name}`}
+                categoryName={category.name}
+                showMore={false}
+              />
+            </div>
+          )}
 
           {/* Related Categories */}
           {category.children_categories && category.children_categories.length > 0 && (
