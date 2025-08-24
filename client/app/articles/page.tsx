@@ -226,15 +226,17 @@ function ArticleCard({ article }: { article: Article }) {
                   <p className="text-gray-500 text-xs">{article.author.jobTitle}</p>
                 )}
               </div>
-              <div className="flex-shrink-0">
-                <SaveButton
-                  articleId={article.documentId}
-                  articleTitle={article.title}
-                  size="sm"
-                />
-              </div>
             </div>
           )}
+
+          {/* Save Button - Always show */}
+          <div className={`flex ${article.author ? 'justify-end pt-2' : 'justify-end pt-4 border-t border-gray-100'}`}>
+            <SaveButton
+              articleId={article.documentId}
+              articleTitle={article.title}
+              size="sm"
+            />
+          </div>
         </div>
       </Link>
     </article>
