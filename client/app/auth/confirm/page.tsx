@@ -25,9 +25,9 @@ export default function ConfirmEmailPage() {
 
   const confirmEmail = async (confirmationCode: string) => {
     if (isProcessing) return; // Prevent multiple calls
-    
+
     setIsProcessing(true);
-    
+
     try {
       const baseUrl = getStrapiURL();
       const fullUrl = `${baseUrl}/api/auth/email-confirmation?confirmation=${confirmationCode}`;
@@ -102,7 +102,7 @@ export default function ConfirmEmailPage() {
               تأكيد البريد الإلكتروني
             </CardTitle>
             <CardDescription className="text-gray-600">
-              {status === 'confirming' 
+              {status === 'confirming'
                 ? 'يرجى الانتظار بينما نقوم بتأكيد بريدك الإلكتروني'
                 : status === 'success'
                 ? 'تم تأكيد بريدك الإلكتروني بنجاح'
@@ -139,7 +139,7 @@ export default function ConfirmEmailPage() {
                 <div className="space-y-2">
                   <p className="text-red-700 font-semibold">فشل في تأكيد البريد الإلكتروني</p>
                   <p className="text-gray-600">
-                    {!confirmation 
+                    {!confirmation
                       ? 'رابط التأكيد غير صالح أو مفقود. يرجى التحقق من الرابط والمحاولة مرة أخرى.'
                       : 'الرابط غير صالح أو منتهي الصلاحية. يرجى المحاولة مرة أخرى.'
                     }
