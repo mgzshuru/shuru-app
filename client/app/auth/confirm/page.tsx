@@ -41,21 +41,30 @@ export default function ConfirmEmailPage() {
 
       // Check if response status is in the success range (200-299)
       if (response.status >= 200 && response.status < 300) {
-        try {
-          const data = await response.json();
-          console.log('Success response:', data);
-          setStatus('success');
-          // Redirect to login after 3 seconds
-          setTimeout(() => {
-            router.push('/auth/login?confirmed=true');
-          }, 3000);
-        } catch (jsonError) {
-          console.error('Error parsing success response as JSON:', jsonError);
-          // Even if JSON parsing fails, if status is 2xx, consider it success
+        // Handle 204 No Content (successful email confirmation)
+        if (response.status === 204) {
+          console.log('Email confirmed successfully (204 No Content)');
           setStatus('success');
           setTimeout(() => {
             router.push('/auth/login?confirmed=true');
           }, 3000);
+        } else {
+          // Handle other success responses that might have content
+          try {
+            const data = await response.json();
+            console.log('Success response:', data);
+            setStatus('success');
+            setTimeout(() => {
+              router.push('/auth/login?confirmed=true');
+            }, 3000);
+          } catch (jsonError) {
+            console.error('Error parsing success response as JSON:', jsonError);
+            // Even if JSON parsing fails, if status is 2xx, consider it success
+            setStatus('success');
+            setTimeout(() => {
+              router.push('/auth/login?confirmed=true');
+            }, 3000);
+          }
         }
       } else {
         let errorMessage = 'Unknown error';
