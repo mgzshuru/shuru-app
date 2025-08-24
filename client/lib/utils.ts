@@ -15,7 +15,9 @@ export function cn(...classes: (string | boolean | undefined)[]) {
 export function getStrapiURL() {
   // Use NEXT_PUBLIC_STRAPI_API_URL for client-side consistency
   // Fall back to STRAPI_BASE_URL for server-side calls
-  return process.env.NEXT_PUBLIC_STRAPI_API_URL ?? process.env.STRAPI_BASE_URL ?? "http://localhost:1337";
+  const url = process.env.NEXT_PUBLIC_STRAPI_API_URL ?? process.env.STRAPI_BASE_URL ?? "http://localhost:1337";
+  console.log("Strapi URL:", url);
+  return url;
 }
 
 // Fetch wrapper for Strapi API calls
