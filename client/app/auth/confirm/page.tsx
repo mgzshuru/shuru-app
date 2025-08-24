@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { getStrapiURL } from '@/lib/utils';
 
 export default function ConfirmEmailPage() {
   const router = useRouter();
@@ -23,21 +24,53 @@ export default function ConfirmEmailPage() {
 
   const confirmEmail = async (confirmationCode: string) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/auth/email-confirmation?confirmation=${confirmationCode}`, {
+      const baseUrl = getStrapiURL();
+      const fullUrl = `${baseUrl}/api/auth/email-confirmation?confirmation=${confirmationCode}`;
+
+      console.log('Confirming email with URL:', fullUrl);
+
+      const response = await fetch(fullUrl, {
         method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
 
-      if (response.ok) {
-        setStatus('success');
-        // Redirect to login after 3 seconds
-        setTimeout(() => {
-          router.push('/auth/login?confirmed=true');
-        }, 3000);
+      console.log('Response status:', response.status);
+      console.log('Response ok:', response.ok);
+
+      // Check if response status is in the success range (200-299)
+      if (response.status >= 200 && response.status < 300) {
+        try {
+          const data = await response.json();
+          console.log('Success response:', data);
+          setStatus('success');
+          // Redirect to login after 3 seconds
+          setTimeout(() => {
+            router.push('/auth/login?confirmed=true');
+          }, 3000);
+        } catch (jsonError) {
+          console.error('Error parsing success response as JSON:', jsonError);
+          // Even if JSON parsing fails, if status is 2xx, consider it success
+          setStatus('success');
+          setTimeout(() => {
+            router.push('/auth/login?confirmed=true');
+          }, 3000);
+        }
       } else {
+        let errorMessage = 'Unknown error';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error?.message || errorData.message || `HTTP ${response.status}`;
+        } catch (jsonError) {
+          const errorText = await response.text();
+          errorMessage = errorText || `HTTP ${response.status}`;
+        }
+        console.error('Error response:', response.status, errorMessage);
         setStatus('error');
       }
     } catch (error) {
-      console.error('Confirmation error:', error);
+      console.error('Network/Fetch error:', error);
       setStatus('error');
     }
   };
