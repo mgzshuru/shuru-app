@@ -728,6 +728,7 @@ export interface ApiEmailTemplateEmailTemplate
     publishedAt: Schema.Attribute.DateTime;
     subject: Schema.Attribute.String & Schema.Attribute.Required;
     subjectMatcher: Schema.Attribute.String & Schema.Attribute.Required;
+    text: Schema.Attribute.RichText;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
