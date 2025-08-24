@@ -18,7 +18,7 @@ export default function ConfirmEmailPage() {
     if (confirmation) {
       confirmEmail(confirmation);
     } else {
-      setStatus('error');
+      router.push('/auth/login');
     }
   }, [confirmation]);
 
@@ -44,26 +44,17 @@ export default function ConfirmEmailPage() {
         // Handle 204 No Content (successful email confirmation)
         if (response.status === 204) {
           console.log('Email confirmed successfully (204 No Content)');
-          setStatus('success');
-          setTimeout(() => {
-            router.push('/auth/login?confirmed=true');
-          }, 3000);
+          router.push('/auth/login?confirmed=true');
         } else {
           // Handle other success responses that might have content
           try {
             const data = await response.json();
             console.log('Success response:', data);
-            setStatus('success');
-            setTimeout(() => {
-              router.push('/auth/login?confirmed=true');
-            }, 3000);
+            router.push('/auth/login?confirmed=true');
           } catch (jsonError) {
             console.error('Error parsing success response as JSON:', jsonError);
             // Even if JSON parsing fails, if status is 2xx, consider it success
-            setStatus('success');
-            setTimeout(() => {
-              router.push('/auth/login?confirmed=true');
-            }, 3000);
+            router.push('/auth/login?confirmed=true');
           }
         }
       } else {
@@ -76,11 +67,11 @@ export default function ConfirmEmailPage() {
           errorMessage = errorText || `HTTP ${response.status}`;
         }
         console.error('Error response:', response.status, errorMessage);
-        setStatus('error');
+        router.push('/auth/login');
       }
     } catch (error) {
       console.error('Network/Fetch error:', error);
-      setStatus('error');
+      router.push('/auth/login');
     }
   };
 
