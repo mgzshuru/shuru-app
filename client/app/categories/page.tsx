@@ -13,7 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shuru.sa';
     const categoriesUrl = `${baseUrl}/categories`;
 
-    const title = 'الفئات | شروع';
+    const title = 'الفئات';
     const description = 'تصفح جميع فئات المقالات في مجلة شروع للابتكار وريادة الأعمال والتقنيات الناشئة';
 
     const defaultImage = globalData?.defaultSeo?.og_image ?

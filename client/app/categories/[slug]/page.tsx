@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
       const seo = category.SEO;
       return {
         metadataBase: new URL(baseUrl),
-        title: seo.meta_title || `${category.name} | شروع`,
+        title: seo.meta_title || `${category.name}`,
         description: seo.meta_description || category.description || `تصفح مقالات فئة ${category.name} في مجلة شروع`,
         keywords: seo.meta_keywords?.split(',').map((k: string) => k.trim()) || undefined,
         openGraph: {
@@ -306,7 +306,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                                 {articles[0].title}
                               </p>
                               {articles[0].description && (
-                                <p className="text-sm font-normal leading-4 tracking-[0.2px] text-gray-600 text-right">
+                                <p className="text-base font-normal leading-5 tracking-[0.2px] text-gray-600 text-right">
                                   {articles[0].description}
                                 </p>
                               )}
@@ -342,7 +342,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                               {article.title}
                             </p>
                             {article.description && (
-                              <p className="text-sm font-normal leading-4 tracking-[0.2px] text-gray-600 text-right">
+                              <p className="text-base font-normal leading-5 tracking-[0.2px] text-gray-600 text-right">
                                 {article.description}
                               </p>
                             )}
