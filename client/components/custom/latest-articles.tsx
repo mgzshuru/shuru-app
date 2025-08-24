@@ -45,7 +45,7 @@ export function LatestArticles({
 
               <Link
                 href={`/articles/${article.slug}`}
-                className="flex flex-col-reverse gap-3 md:flex-row md:gap-4 lg:gap-10"
+                className="flex flex-col-reverse gap-2 md:flex-row md:gap-3 lg:gap-4"
               >
                 <div className="w-full space-y-3">
                   <p className="text-base font-bold leading-[19px] text-black md:text-[25px] md:leading-[28px] text-right">
