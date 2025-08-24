@@ -666,6 +666,58 @@ export default {
         data: articleData
       } as any); // Type assertion to bypass TypeScript check
 
+      // Send email notification to author
+      try {
+        const emailService = strapi.plugins.email.services.email;
+
+        // Calculate word count for the email
+        const wordCount = sanitizedData.blocks.reduce((total, block) => {
+          if (block.__component === 'content.rich-text' && block.content) {
+            return total + getWordCount(block.content);
+          } else if (block.__component === 'content.quote' && block.quote_text) {
+            return total + getWordCount(block.quote_text);
+          }
+          return total;
+        }, 0);
+
+        // Send confirmation email to author
+        await emailService.send({
+          to: sanitizedData.authorEmail,
+          subject: 'Article Submission Confirmation', // This matches the subjectMatcher
+          // Additional template variables
+          user: {
+            username: sanitizedData.authorName,
+            email: sanitizedData.authorEmail
+          },
+          article: {
+            title: sanitizedData.articleTitle,
+            description: sanitizedData.articleDescription,
+            slug: article.slug,
+            wordCount: wordCount,
+            submissionDate: new Date().toLocaleDateString('ar-EG'),
+            submissionTime: new Date().toLocaleTimeString('ar-EG'),
+            hasCoverImage: !!coverImageId
+          },
+          author: {
+            name: sanitizedData.authorName,
+            email: sanitizedData.authorEmail,
+            title: sanitizedData.authorTitle,
+            organization: sanitizedData.authorOrganization,
+            phone: sanitizedData.authorPhone
+          }
+        });
+
+        strapi.log.info('Article submission confirmation email sent successfully', {
+          articleId: article.documentId,
+          authorEmail: sanitizedData.authorEmail,
+          authorName: sanitizedData.authorName
+        });
+
+      } catch (emailError) {
+        strapi.log.error('Failed to send article submission confirmation email:', emailError);
+        // Don't fail the submission if email fails, just log it
+      }
+
       // Log successful submission for security monitoring
       strapi.log.info('Article submission completed successfully', {
         articleId: article.documentId,
