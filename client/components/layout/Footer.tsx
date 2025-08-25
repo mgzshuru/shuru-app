@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FooterData } from '@/lib/types';
-import { getStrapiURL } from '@/lib/utils';
+import { getStrapiMedia } from '@/components/custom/strapi-image';
 import { getAllCategories } from '@/lib/strapi-client';
 import CategoriesGrid from './CategoriesGrid';
 
@@ -21,10 +21,10 @@ export default function Footer({ footerData }: FooterProps) {
 
   useEffect(() => {
     if (footerData.logo.logoImage?.url) {
-      setLogoUrl(getStrapiURL() + footerData.logo.logoImage.url);
+      setLogoUrl(getStrapiMedia(footerData.logo.logoImage.url));
     }
     if (footerData.logo.mobileImage?.url) {
-      setMobileLogoUrl(getStrapiURL() + footerData.logo.mobileImage.url);
+      setMobileLogoUrl(getStrapiMedia(footerData.logo.mobileImage.url));
     }
   }, [footerData.logo]);
 
