@@ -32,7 +32,7 @@ export default factories.createCoreController('api::contact-message.contact-mess
         await emailService.send({
           to: 'info@shuru.sa',
           replyTo: email,
-          subject: 'Contact Form Submission', // This matches the subjectMatcher in the template
+          // subject: 'Contact Form Submission', // This matches the subjectMatcher in the template
           html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); padding: 20px;">
               <!-- Header -->
@@ -47,22 +47,22 @@ export default factories.createCoreController('api::contact-message.contact-mess
 
               <!-- Content Body -->
               <div style="background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1); margin-bottom: 20px;">
-                
+
                 <!-- Contact Information -->
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 25px;">
-                  
+
                   <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border-left: 4px solid #3b82f6;">
                     <h3 style="color: #374151; margin: 0 0 8px 0; font-size: 14px; font-weight: 600; text-transform: uppercase; opacity: 0.8;">👤 الاسم</h3>
                     <p style="margin: 0; font-size: 16px; font-weight: 600; color: #1f2937;">${name}</p>
                   </div>
-                  
+
                   <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border-left: 4px solid #10b981;">
                     <h3 style="color: #374151; margin: 0 0 8px 0; font-size: 14px; font-weight: 600; text-transform: uppercase; opacity: 0.8;">📧 البريد الإلكتروني</h3>
                     <p style="margin: 0; font-size: 16px; font-weight: 600; color: #1f2937;">
                       <a href="mailto:${email}" style="color: #10b981; text-decoration: none;">${email}</a>
                     </p>
                   </div>
-                  
+
                   ${ctx.request.body.data.phone ? `
                   <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border-left: 4px solid #f59e0b;">
                     <h3 style="color: #374151; margin: 0 0 8px 0; font-size: 14px; font-weight: 600; text-transform: uppercase; opacity: 0.8;">📱 رقم الهاتف</h3>
@@ -71,7 +71,7 @@ export default factories.createCoreController('api::contact-message.contact-mess
                     </p>
                   </div>
                   ` : ''}
-                  
+
                   ${ctx.request.body.data.company ? `
                   <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border-left: 4px solid #8b5cf6;">
                     <h3 style="color: #374151; margin: 0 0 8px 0; font-size: 14px; font-weight: 600; text-transform: uppercase; opacity: 0.8;">🏢 الشركة</h3>
@@ -102,12 +102,12 @@ export default factories.createCoreController('api::contact-message.contact-mess
 
                 <!-- Action Buttons -->
                 <div style="text-align: center; margin: 25px 0;">
-                  <a href="mailto:${email}?subject=رد على: ${subject}" 
+                  <a href="mailto:${email}?subject=رد على: ${subject}"
                      style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; padding: 12px 25px; text-decoration: none; border-radius: 25px; font-weight: 600; display: inline-block; margin: 0 10px; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);">
                     📧 رد مباشر
                   </a>
                   ${ctx.request.body.data.phone ? `
-                  <a href="tel:${ctx.request.body.data.phone}" 
+                  <a href="tel:${ctx.request.body.data.phone}"
                      style="background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; padding: 12px 25px; text-decoration: none; border-radius: 25px; font-weight: 600; display: inline-block; margin: 0 10px; box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);">
                     📞 اتصال مباشر
                   </a>
