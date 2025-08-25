@@ -683,109 +683,11 @@ export default {
 
       // Send email notification to author
       try {
-        // Calculate word count for the email
-        const wordCount = sanitizedData.blocks.reduce((total, block) => {
-          if (block.__component === 'content.rich-text' && block.content) {
-            return total + getWordCount(block.content);
-          } else if (block.__component === 'content.quote' && block.quote_text) {
-            return total + getWordCount(block.quote_text);
-          }
-          return total;
-        }, 0);
-
         // Use strapi-provider-email-extra with dynamic templates
         // The provider will look for a template with subjectMatcher: "Article Submission Confirmation"
         await strapi.plugin('email').service('email').send({
           to: sanitizedData.authorEmail,
-          from: process.env.SMTP_FROM || 'noreply@shuru.com',
           subject: 'Article Submission Confirmation', // This matches the subjectMatcher
-          // Fallback content in case template is not found
-          html: `
-            <div dir="rtl" style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
-              <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                <h1 style="color: #2c3e50; text-align: center; margin-bottom: 30px;">تم استلام مقالك بنجاح</h1>
-
-                <p style="font-size: 16px; line-height: 1.6; color: #34495e;">مرحباً ${sanitizedData.authorName}،</p>
-
-                <p style="font-size: 16px; line-height: 1.6; color: #34495e;">
-                  شكراً لك على إرسال مقالك "<strong>${sanitizedData.articleTitle}</strong>" إلى منصة شُرُوع.
-                </p>
-
-                <div style="background-color: #ecf0f1; padding: 20px; border-radius: 5px; margin: 20px 0;">
-                  <h3 style="color: #2c3e50; margin-top: 0;">تفاصيل المقال:</h3>
-                  <ul style="color: #34495e; line-height: 1.6;">
-                    <li><strong>العنوان:</strong> ${sanitizedData.articleTitle}</li>
-                    <li><strong>الوصف:</strong> ${sanitizedData.articleDescription}</li>
-                    <li><strong>عدد الكلمات:</strong> ${wordCount} كلمة</li>
-                    <li><strong>تاريخ الإرسال:</strong> ${new Date().toLocaleDateString('ar-EG')}</li>
-                    <li><strong>وقت الإرسال:</strong> ${new Date().toLocaleTimeString('ar-EG')}</li>
-                  </ul>
-                </div>
-
-                <p style="font-size: 16px; line-height: 1.6; color: #34495e;">
-                  سيقوم فريق التحرير بمراجعة مقالك وسنتواصل معك قريباً بخصوص حالة النشر.
-                </p>
-
-                <div style="text-align: center; margin: 30px 0;">
-                  <a href="${process.env.APP_URL || 'https://shuru.sa'}"
-                     style="background-color: #3498db; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">
-                    زيارة الموقع
-                  </a>
-                </div>
-
-                <div style="border-top: 1px solid #bdc3c7; padding-top: 20px; margin-top: 30px; font-size: 14px; color: #7f8c8d;">
-                  <p>مع تحيات فريق شُرُوع</p>
-                  <p>
-                    <a href="mailto:info@shuru.sa" style="color: #3498db;">info@shuru.sa</a> |
-                    <a href="${process.env.APP_URL || 'https://shuru.sa'}" style="color: #3498db;">shuru.sa</a>
-                  </p>
-                </div>
-              </div>
-            </div>
-          `,
-          text: `
-مرحباً ${sanitizedData.authorName},
-
-تم استلام مقالك "${sanitizedData.articleTitle}" بنجاح.
-
-تفاصيل المقال:
-- العنوان: ${sanitizedData.articleTitle}
-- الوصف: ${sanitizedData.articleDescription}
-- عدد الكلمات: ${wordCount} كلمة
-- تاريخ الإرسال: ${new Date().toLocaleDateString('ar-EG')}
-- وقت الإرسال: ${new Date().toLocaleTimeString('ar-EG')}
-
-سيقوم فريق التحرير بمراجعة مقالك وسنتواصل معك قريباً.
-
-مع تحيات فريق شُرُوع
-info@shuru.sa | ${process.env.APP_URL || 'https://shuru.sa'}
-          `,
-          // Template variables that can be used in email templates
-          user: {
-            username: sanitizedData.authorName,
-            email: sanitizedData.authorEmail
-          },
-          article: {
-            title: sanitizedData.articleTitle,
-            description: sanitizedData.articleDescription,
-            slug: article.slug,
-            wordCount: wordCount,
-            submissionDate: new Date().toLocaleDateString('ar-EG'),
-            submissionTime: new Date().toLocaleTimeString('ar-EG'),
-            hasCoverImage: !!coverImageId
-          },
-          author: {
-            name: sanitizedData.authorName,
-            email: sanitizedData.authorEmail,
-            title: sanitizedData.authorTitle,
-            organization: sanitizedData.authorOrganization,
-            phone: sanitizedData.authorPhone
-          },
-          // Additional template variables for the email template
-          appName: process.env.APP_NAME || 'شُرُوع',
-          appUrl: process.env.APP_URL || 'https://shuru.sa',
-          supportEmail: 'info@shuru.sa',
-          companyName: process.env.COMPANY_NAME || 'شُرُوع'
         });
 
         strapi.log.info('Article submission confirmation email sent successfully', {

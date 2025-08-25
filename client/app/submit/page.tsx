@@ -235,9 +235,11 @@ export default function SubmitPage() {
 
     try {
       const result = await checkEmail(emailToCheck);
+      console.log('Email check result:', result); // Debug log
       setEmailCheckResult(result);
 
       if (result.exists && result.authorData) {
+        console.log('Author data found, populating form:', result.authorData); // Debug log
         // Pre-fill form with existing author data (with sanitization)
         setFormData(prev => ({
           ...prev,
@@ -253,7 +255,9 @@ export default function SubmitPage() {
           socialMediaLinks: sanitizeInput(result.authorData?.socialMediaLinks || ''),
           additionalNotes: sanitizeInput(result.authorData?.additionalNotes || '')
         }));
+        console.log('Form data updated'); // Debug log
       } else {
+        console.log('No author data found, setting email only'); // Debug log
         // Set email for new user (with sanitization)
         setFormData(prev => ({
           ...prev,

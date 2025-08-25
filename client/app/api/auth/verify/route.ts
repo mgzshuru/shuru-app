@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
       try {
         const user = session.user as any; // Type assertion for now
         if (session.jwt && user?.email) {
-          const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+          const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337';
           const response = await fetch(`${strapiUrl}/api/authors?filters[email][$eq]=${user.email}`, {
             headers: {
               'Authorization': `Bearer ${session.jwt}`,
