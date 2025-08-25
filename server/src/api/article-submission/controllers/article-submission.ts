@@ -481,14 +481,10 @@ export default {
             bio: sanitizedData.authorBio || existingAuthor.bio
           };
 
-          // Use direct database query to bypass permission issues
-          await strapi.db.query('api::author.author').update({
-            where: { id: existingAuthor.id },
+          // Use entityService to update the author
+          author = await strapi.entityService.update('api::author.author', existingAuthor.documentId, {
             data: updateData
           });
-
-          // Fetch the updated author record
-          author = await strapi.entityService.findOne('api::author.author', existingAuthor.documentId);
 
           if (!author) {
             author = existingAuthor;
@@ -668,8 +664,6 @@ export default {
 
       // Send email notification to author
       try {
-        const emailService = strapi.plugins.email.services.email;
-
         // Calculate word count for the email
         const wordCount = sanitizedData.blocks.reduce((total, block) => {
           if (block.__component === 'content.rich-text' && block.content) {
@@ -680,11 +674,14 @@ export default {
           return total;
         }, 0);
 
-        // Send confirmation email to author
-        await emailService.send({
+        // Use strapi-provider-email-extra with specific subject matcher
+        // The provider will look for a template with subjectMatcher: "Article Submission Confirmation"
+        // If no template is found, it will fall back to the default provider with the content below
+        await strapi.plugins.email.services.email.send({
           to: sanitizedData.authorEmail,
+          from: process.env.SMTP_FROM || 'noreply@shuru.com',
           subject: 'Article Submission Confirmation', // This matches the subjectMatcher
-          // Additional template variables
+          // Template variables that can be used in email templates
           user: {
             username: sanitizedData.authorName,
             email: sanitizedData.authorEmail
@@ -704,7 +701,12 @@ export default {
             title: sanitizedData.authorTitle,
             organization: sanitizedData.authorOrganization,
             phone: sanitizedData.authorPhone
-          }
+          },
+          // Additional template variables for the email template
+          appName: process.env.APP_NAME || 'شُرُوع',
+          appUrl: process.env.APP_URL || 'https://shuru.sa',
+          supportEmail: 'info@shuru.sa',
+          companyName: process.env.COMPANY_NAME || 'شُرُوع'
         });
 
         strapi.log.info('Article submission confirmation email sent successfully', {
