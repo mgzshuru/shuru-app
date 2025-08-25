@@ -636,7 +636,11 @@ export default {
       const authorId = (author as any).documentId || (author as any).id;
 
       if (!authorId) {
-        strapi.log.error('Missing author', { authorId });
+        strapi.log.error('Missing author ID', {
+          authorId,
+          authorFields: Object.keys(author || {}),
+          author: author
+        });
         return ctx.internalServerError('Missing author');
       }
 
@@ -685,11 +689,36 @@ export default {
           strapi.log.info('Email template search result:', {
             found: emailTemplates && emailTemplates.length > 0,
             count: emailTemplates ? emailTemplates.length : 0,
-            subjectMatcher: 'Article Submission Confirmation'
+            subjectMatcher: 'Article Submission Confirmation',
+            templates: emailTemplates ? emailTemplates.map(t => ({
+              id: t.id,
+              subjectMatcher: t.subjectMatcher,
+              subject: t.subject,
+              from: t.from,
+              hasHtml: !!t.html,
+              hasText: !!t.text
+            })) : []
           });
 
           if (!emailTemplates || emailTemplates.length === 0) {
             strapi.log.warn('No published email template found with subjectMatcher "Article Submission Confirmation"');
+
+            // Let's also check without publication state filter
+            const allEmailTemplates = await strapi.entityService.findMany('api::email-template.email-template', {
+              filters: { subjectMatcher: 'Article Submission Confirmation' },
+              limit: 1
+            });
+
+            strapi.log.info('Email template search (including drafts):', {
+              found: allEmailTemplates && allEmailTemplates.length > 0,
+              count: allEmailTemplates ? allEmailTemplates.length : 0,
+              templates: allEmailTemplates ? allEmailTemplates.map(t => ({
+                id: t.id,
+                subjectMatcher: t.subjectMatcher,
+                subject: t.subject,
+                publishedAt: t.publishedAt
+              })) : []
+            });
           }
         } catch (templateCheckError) {
           strapi.log.error('Error checking email template:', templateCheckError);

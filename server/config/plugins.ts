@@ -66,10 +66,6 @@ export default ({ env }) => ({
           forgotPasswordUrl: '/api/auth/forgot-password',
           sendEmailConfirmationUrl: '/api/auth/send-email-confirmation',
           registerUrl: '/api/auth/local/register',
-          // Make sure to include published content
-          populateOptions: {
-            publicationState: 'live', // Only get published content
-          },
           vars: {
             // Additional template variables
             appName: env('APP_NAME', 'شُرُوع'),
