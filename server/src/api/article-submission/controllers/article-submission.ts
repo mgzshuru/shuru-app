@@ -160,13 +160,17 @@ export default {
           exists: true,
           requiresLogin: false, // Since we're checking authors directly, no login required
           authorData: {
-            name: sanitizeInput(author.name || ''),
-            email: sanitizeInput(author.email || ''),
-            phone_number: sanitizeInput(author.phone_number || ''),
-            jobTitle: sanitizeInput(author.jobTitle || ''),
-            organization: sanitizeInput(author.organization || ''),
-            linkedin_url: sanitizeInput(author.linkedin_url || ''),
-            bio: sanitizeInput(author.bio || ''),
+            name: sanitizeInput((author as any).name || ''),
+            email: sanitizeInput((author as any).email || ''),
+            phone_number: sanitizeInput((author as any).phone_number || ''),
+            jobTitle: sanitizeInput((author as any).jobTitle || ''),
+            organization: sanitizeInput((author as any).organization || ''),
+            linkedin_url: sanitizeInput((author as any).linkedin_url || ''),
+            bio: sanitizeInput((author as any).bio || ''),
+            previousPublications: sanitizeInput((author as any).previousPublications || ''),
+            websiteUrl: sanitizeInput((author as any).websiteUrl || ''),
+            socialMediaLinks: sanitizeInput((author as any).socialMediaLinks || ''),
+            additionalNotes: sanitizeInput((author as any).additionalNotes || ''),
           }
         };
       }
@@ -460,7 +464,11 @@ export default {
               jobTitle: sanitizedData.authorTitle,
               organization: sanitizedData.authorOrganization,
               linkedin_url: sanitizedData.authorLinkedIn,
-              bio: sanitizedData.authorBio
+              bio: sanitizedData.authorBio,
+              previousPublications: sanitizedData.previousPublications,
+              websiteUrl: sanitizedData.websiteUrl,
+              socialMediaLinks: sanitizedData.socialMediaLinks,
+              additionalNotes: sanitizedData.additionalNotes
             }
           });
           strapi.log.info('Created author result:', author);
@@ -474,11 +482,15 @@ export default {
         try {
           const updateData = {
             name: sanitizedData.authorName,
-            phone_number: sanitizedData.authorPhone || existingAuthor.phone_number,
+            phone_number: sanitizedData.authorPhone || (existingAuthor as any).phone_number,
             jobTitle: sanitizedData.authorTitle,
             organization: sanitizedData.authorOrganization,
-            linkedin_url: sanitizedData.authorLinkedIn || existingAuthor.linkedin_url,
-            bio: sanitizedData.authorBio || existingAuthor.bio
+            linkedin_url: sanitizedData.authorLinkedIn || (existingAuthor as any).linkedin_url,
+            bio: sanitizedData.authorBio || (existingAuthor as any).bio,
+            previousPublications: sanitizedData.previousPublications || (existingAuthor as any).previousPublications,
+            websiteUrl: sanitizedData.websiteUrl || (existingAuthor as any).websiteUrl,
+            socialMediaLinks: sanitizedData.socialMediaLinks || (existingAuthor as any).socialMediaLinks,
+            additionalNotes: sanitizedData.additionalNotes || (existingAuthor as any).additionalNotes
           };
 
           // Use entityService to update the author

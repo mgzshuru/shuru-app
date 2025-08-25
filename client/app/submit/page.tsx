@@ -247,7 +247,11 @@ export default function SubmitPage() {
           authorTitle: sanitizeInput(result.authorData?.jobTitle || ''),
           authorOrganization: sanitizeInput(result.authorData?.organization || ''),
           authorLinkedIn: sanitizeInput(result.authorData?.linkedin_url || ''),
-          authorBio: sanitizeInput(result.authorData?.bio || '')
+          authorBio: sanitizeInput(result.authorData?.bio || ''),
+          previousPublications: sanitizeInput(result.authorData?.previousPublications || ''),
+          websiteUrl: sanitizeInput(result.authorData?.websiteUrl || ''),
+          socialMediaLinks: sanitizeInput(result.authorData?.socialMediaLinks || ''),
+          additionalNotes: sanitizeInput(result.authorData?.additionalNotes || '')
         }));
       } else {
         // Set email for new user (with sanitization)

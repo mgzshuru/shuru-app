@@ -52,6 +52,25 @@
       "type": "text",
       "required": false
     },
+    "previousPublications": {
+      "type": "text",
+      "required": false,
+      "maxLength": 1000
+    },
+    "websiteUrl": {
+      "type": "string",
+      "required": false
+    },
+    "socialMediaLinks": {
+      "type": "text",
+      "required": false,
+      "maxLength": 500
+    },
+    "additionalNotes": {
+      "type": "text",
+      "required": false,
+      "maxLength": 1000
+    },
     "articles": {
       "type": "relation",
       "relation": "oneToMany",

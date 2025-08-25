@@ -39,6 +39,10 @@ export interface EmailCheckResult {
     organization: string;
     linkedin_url: string;
     bio: string;
+    previousPublications: string;
+    websiteUrl: string;
+    socialMediaLinks: string;
+    additionalNotes: string;
   } | null;
 }
 
