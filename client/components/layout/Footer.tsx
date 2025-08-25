@@ -102,7 +102,7 @@ export default function Footer({ footerData }: FooterProps) {
                 backgroundImage: `url(${logoUrl})`,
                 backgroundSize: 'contain',
                 backgroundPosition: 'center',
-                opacity: 0.3,
+                opacity: 1,
                 backgroundRepeat: 'no-repeat'
               }}
             />
@@ -113,7 +113,7 @@ export default function Footer({ footerData }: FooterProps) {
                   backgroundImage: `url(${mobileLogoUrl})`,
                   backgroundSize: 'contain',
                   backgroundPosition: 'center',
-                  opacity: 0.3,
+                  opacity: 1,
                   backgroundRepeat: 'no-repeat'
                 }}
               />
