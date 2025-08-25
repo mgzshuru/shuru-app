@@ -693,15 +693,14 @@ export default {
         // First, let's check if the email template exists
         try {
           const emailTemplates = await strapi.entityService.findMany('api::email-template.email-template', {
-            filters: { subjectMatcher: 'Article Submission Confirmation' },
-            publicationState: 'live', // Only published templates
+            filters: { subjectMatcher: 'submission' },
             limit: 1
           });
 
           strapi.log.info('Email template search result:', {
             found: emailTemplates && emailTemplates.length > 0,
             count: emailTemplates ? emailTemplates.length : 0,
-            subjectMatcher: 'Article Submission Confirmation',
+            subjectMatcher: 'submission',
             templates: emailTemplates ? emailTemplates.map(t => ({
               id: t.id,
               subjectMatcher: t.subjectMatcher,
@@ -741,7 +740,7 @@ export default {
         await strapi.plugins.email.services.email.send({
           to: sanitizedData.authorEmail,
           from: process.env.SMTP_FROM || 'noreply@shuru.com',
-          subject: 'Article Submission Confirmation', // This matches the subjectMatcher
+          subject: 'submission', // This matches the subjectMatcher
           // Template variables that can be used in email templates
           user: {
             username: sanitizedData.authorName,
