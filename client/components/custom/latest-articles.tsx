@@ -26,7 +26,7 @@ export function LatestArticles({
 
   return (
     <div className="mt-8 px-5 sm:px-10 lg:px-0" dir="rtl">
-      <h2 className="text-[37px] font-medium uppercase leading-[33px] tracking-[4.8px] mb-12 md:mb-16 md:text-[60px] md:leading-[48px] md:tracking-[8px] text-right">
+      <h2 className="text-[37px] font-medium uppercase leading-[42px] tracking-[4.8px] mb-12 md:mb-16 md:text-[60px] md:leading-[64px] md:tracking-[8px] text-right">
         {title}
       </h2>
 

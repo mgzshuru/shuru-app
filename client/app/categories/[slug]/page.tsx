@@ -293,13 +293,13 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                     <div className="space-y-4 md:col-span-2 lg:col-span-1 lg:row-span-2">
                       <article className="flex flex-col gap-1 md:col-span-2 lg:col-span-1 lg:row-span-2">
                         <div className="flex flex-col-reverse">
-                          <div className="w-full space-y-3">
+                          <div className="w-full space-y-6">
                             <Link href={`/articles/${articles[0].slug}`}>
-                              <p className="font-bold text-black text-[25px] leading-[28px] md:text-[36px] md:leading-10 text-right">
+                              <p className="font-bold text-black text-[25px] leading-[32px] md:text-[36px] md:leading-[44px] text-right mb-4">
                                 {articles[0].title}
                               </p>
                               {articles[0].description && (
-                                <p className="text-base font-normal leading-5 tracking-[0.2px] text-gray-600 text-right">
+                                <p className="text-base font-normal leading-6 tracking-[0.2px] text-gray-600 text-right">
                                   {articles[0].description}
                                 </p>
                               )}
