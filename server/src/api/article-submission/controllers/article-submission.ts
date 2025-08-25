@@ -674,9 +674,29 @@ export default {
           return total;
         }, 0);
 
+        // First, let's check if the email template exists
+        try {
+          const emailTemplates = await strapi.entityService.findMany('api::email-template.email-template', {
+            filters: { subjectMatcher: 'Article Submission Confirmation' },
+            publicationState: 'live', // Only published templates
+            limit: 1
+          });
+
+          strapi.log.info('Email template search result:', {
+            found: emailTemplates && emailTemplates.length > 0,
+            count: emailTemplates ? emailTemplates.length : 0,
+            subjectMatcher: 'Article Submission Confirmation'
+          });
+
+          if (!emailTemplates || emailTemplates.length === 0) {
+            strapi.log.warn('No published email template found with subjectMatcher "Article Submission Confirmation"');
+          }
+        } catch (templateCheckError) {
+          strapi.log.error('Error checking email template:', templateCheckError);
+        }
+
         // Use strapi-provider-email-extra with specific subject matcher
         // The provider will look for a template with subjectMatcher: "Article Submission Confirmation"
-        // If no template is found, it will fall back to the default provider with the content below
         await strapi.plugins.email.services.email.send({
           to: sanitizedData.authorEmail,
           from: process.env.SMTP_FROM || 'noreply@shuru.com',

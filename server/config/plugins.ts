@@ -66,12 +66,16 @@ export default ({ env }) => ({
           forgotPasswordUrl: '/api/auth/forgot-password',
           sendEmailConfirmationUrl: '/api/auth/send-email-confirmation',
           registerUrl: '/api/auth/local/register',
+          // Make sure to include published content
+          populateOptions: {
+            publicationState: 'live', // Only get published content
+          },
           vars: {
             // Additional template variables
-            appName: env('APP_NAME', 'Shuru'),
-            appUrl: env('APP_URL', 'http://localhost:3000'),
-            supportEmail: env('SUPPORT_EMAIL', env('SMTP_USERNAME')),
-            companyName: env('COMPANY_NAME', 'Shuru'),
+            appName: env('APP_NAME', 'شُرُوع'),
+            appUrl: env('APP_URL', 'https://shuru.sa'),
+            supportEmail: env('SUPPORT_EMAIL', 'info@shuru.sa'),
+            companyName: env('COMPANY_NAME', 'شُرُوع'),
           },
         },
       },
