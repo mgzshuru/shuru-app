@@ -149,7 +149,7 @@ export default {
       }
 
       // Check if author exists with this email
-      const authors = await strapi.entityService.findMany('api::author.author', {
+      const authors = await strapi.documents('api::author.author').findMany({
         filters: { email: sanitizedEmail },
         limit: 1
       });
@@ -442,7 +442,7 @@ export default {
 
       // Find or create author
       let author;
-      const existingAuthors = await strapi.entityService.findMany('api::author.author', {
+      const existingAuthors = await strapi.documents('api::author.author').findMany({
         filters: { email: sanitizedData.authorEmail },
         limit: 1
       });
@@ -456,7 +456,7 @@ export default {
           organization: sanitizedData.authorOrganization
         });
         try {
-          author = await strapi.entityService.create('api::author.author', {
+          author = await strapi.documents('api::author.author').create({
             data: {
               name: sanitizedData.authorName,
               email: sanitizedData.authorEmail,
@@ -493,8 +493,10 @@ export default {
             additionalNotes: sanitizedData.additionalNotes || (existingAuthor as any).additionalNotes
           };
 
-          // Use entityService to update the author
-          author = await strapi.entityService.update('api::author.author', existingAuthor.documentId, {
+          // Use Document Service to update the author (Strapi v5)
+          const authorDocumentId = existingAuthor.documentId;
+          author = await strapi.documents('api::author.author').update({
+            documentId: authorDocumentId,
             data: updateData
           });
 
@@ -631,7 +633,7 @@ export default {
 
       // Check if slug exists and generate unique one
       while (true) {
-        const existingArticle = await strapi.entityService.findMany('api::article.article', {
+        const existingArticle = await strapi.documents('api::article.article').findMany({
           filters: { slug },
           limit: 1
         });
@@ -644,12 +646,12 @@ export default {
         counter++;
       }
 
-      // Create article as draft
-      const authorId = (author as any).documentId || (author as any).id;
+      // Create article as draft using Document Service (Strapi v5)
+      const authorDocumentId = (author as any).documentId;
 
-      if (!authorId) {
-        strapi.log.error('Missing author ID', {
-          authorId,
+      if (!authorDocumentId) {
+        strapi.log.error('Missing author documentId', {
+          authorDocumentId,
           authorFields: Object.keys(author || {}),
           author: author
         });
@@ -662,11 +664,11 @@ export default {
         slug,
         description: sanitizedData.articleDescription,
         blocks: processedBlocks,
-        author: authorId,
+        author: authorDocumentId,
         publish_date: sanitizedData.publishDate ? new Date(sanitizedData.publishDate) : null,
         is_featured: false,
         enable_cover_image: !!coverImageId, // Enable cover image if uploaded
-        publishedAt: null // This makes it a draft
+        status: 'draft' // Strapi v5 uses status instead of publishedAt for draft/published
       };
 
       // Add cover image if uploaded
@@ -674,9 +676,10 @@ export default {
         articleData.cover_image = coverImageId;
       }
 
-      const article = await strapi.entityService.create('api::article.article', {
-        data: articleData
-      } as any); // Type assertion to bypass TypeScript check
+      const article = await strapi.documents('api::article.article').create({
+        data: articleData,
+        status: 'draft' // Explicitly set as draft
+      });
 
       // Send email notification to author
       try {
@@ -692,17 +695,18 @@ export default {
 
         // First, let's check if the email template exists
         try {
-          const emailTemplates = await strapi.entityService.findMany('api::email-template.email-template', {
-            filters: { subjectMatcher: 'submission' },
+          const emailTemplates = await strapi.documents('api::email-template.email-template').findMany({
+            filters: { subjectMatcher: 'Article Submission Confirmation' },
             limit: 1
           });
 
           strapi.log.info('Email template search result:', {
             found: emailTemplates && emailTemplates.length > 0,
             count: emailTemplates ? emailTemplates.length : 0,
-            subjectMatcher: 'submission',
+            subjectMatcher: 'Article Submission Confirmation',
             templates: emailTemplates ? emailTemplates.map(t => ({
               id: t.id,
+              documentId: t.documentId,
               subjectMatcher: t.subjectMatcher,
               subject: t.subject,
               from: t.from,
@@ -712,10 +716,10 @@ export default {
           });
 
           if (!emailTemplates || emailTemplates.length === 0) {
-            strapi.log.warn('No published email template found with subjectMatcher "Article Submission Confirmation"');
+            strapi.log.warn('No email template found with subjectMatcher "Article Submission Confirmation"');
 
             // Let's also check without publication state filter
-            const allEmailTemplates = await strapi.entityService.findMany('api::email-template.email-template', {
+            const allEmailTemplates = await strapi.documents('api::email-template.email-template').findMany({
               filters: { subjectMatcher: 'Article Submission Confirmation' },
               limit: 1
             });
@@ -725,6 +729,7 @@ export default {
               count: allEmailTemplates ? allEmailTemplates.length : 0,
               templates: allEmailTemplates ? allEmailTemplates.map(t => ({
                 id: t.id,
+                documentId: t.documentId,
                 subjectMatcher: t.subjectMatcher,
                 subject: t.subject,
                 publishedAt: t.publishedAt
@@ -735,12 +740,12 @@ export default {
           strapi.log.error('Error checking email template:', templateCheckError);
         }
 
-        // Use strapi-provider-email-extra with specific subject matcher
+        // Use strapi email service with specific subject matcher
         // The provider will look for a template with subjectMatcher: "Article Submission Confirmation"
-        await strapi.plugins.email.services.email.send({
+        await strapi.plugin('email').service('email').send({
           to: sanitizedData.authorEmail,
           from: process.env.SMTP_FROM || 'noreply@shuru.com',
-          subject: 'submission', // This matches the subjectMatcher
+          subject: 'Article Submission Confirmation', // This matches the subjectMatcher
           // Template variables that can be used in email templates
           user: {
             username: sanitizedData.authorName,
