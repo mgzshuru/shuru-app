@@ -20,13 +20,25 @@ export default function Footer({ footerData }: FooterProps) {
   const [categoriesData, setCategoriesData] = useState<any[]>([]);
 
   useEffect(() => {
-    if (footerData.logo.logoImage?.url) {
-      setLogoUrl(getStrapiMedia(footerData.logo.logoImage.url));
+    console.log('Footer data:', footerData);
+    console.log('Footer logo data:', footerData?.logo);
+
+    if (footerData?.logo?.logoImage?.url) {
+      const url = getStrapiMedia(footerData.logo.logoImage.url);
+      console.log('Desktop logo URL:', url);
+      setLogoUrl(url);
+    } else {
+      console.log('No desktop logo image found');
     }
-    if (footerData.logo.mobileImage?.url) {
-      setMobileLogoUrl(getStrapiMedia(footerData.logo.mobileImage.url));
+
+    if (footerData?.logo?.mobileImage?.url) {
+      const url = getStrapiMedia(footerData.logo.mobileImage.url);
+      console.log('Mobile logo URL:', url);
+      setMobileLogoUrl(url);
+    } else {
+      console.log('No mobile logo image found');
     }
-  }, [footerData.logo]);
+  }, [footerData?.logo]);
 
   // Check if categories exist and store the data
   useEffect(() => {
@@ -79,29 +91,29 @@ export default function Footer({ footerData }: FooterProps) {
 
       {/* Bottom Section with Logo Background */}
       <div
-        className="footer-server grid w-full gap-12 bg-bottom bg-no-repeat px-5 pt-8 md:pt-16 pb-6 md:pb-12 relative"
+        className="footer-server grid w-full gap-12 bg-bottom bg-no-repeat px-5 pt-8 md:pt-16 pb-6 md:pb-12 relative min-h-[200px]"
       >
         {/* Logo background with transparency */}
         {logoUrl && (
           <>
             <div
-              className="absolute inset-0 z-0 bg-bottom bg-no-repeat hidden md:block"
+              className="absolute inset-0 z-0 bg-center bg-no-repeat hidden md:block"
               style={{
                 backgroundImage: `url(${logoUrl})`,
                 backgroundSize: 'contain',
                 backgroundPosition: 'center',
-                opacity: 0.15,
+                opacity: 0.3,
                 backgroundRepeat: 'no-repeat'
               }}
             />
             {mobileLogoUrl && (
               <div
-                className="absolute inset-0 z-0 bg-bottom bg-no-repeat md:hidden"
+                className="absolute inset-0 z-0 bg-center bg-no-repeat md:hidden"
                 style={{
                   backgroundImage: `url(${mobileLogoUrl})`,
                   backgroundSize: 'contain',
                   backgroundPosition: 'center',
-                  opacity: 0.15,
+                  opacity: 0.3,
                   backgroundRepeat: 'no-repeat'
                 }}
               />
