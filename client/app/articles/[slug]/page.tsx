@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     const richTextBlock = article.blocks?.find((block: Block) => block.__component === 'content.rich-text');
     const extractedDescription = article.description ||
       (richTextBlock?.content ? extractTextFromRichContent(richTextBlock.content, 160) : '') ||
-      'مقال في مجلة شروع للابتكار وريادة الأعمال';
+      'مقال في مجلة شروع';
 
     // Get SEO data from article or fallback
     const seoTitle = article.SEO?.meta_title ||

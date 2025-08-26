@@ -103,12 +103,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const seoDescription = page.SEO?.meta_description ||
     extractedDescription.substring(0, 160);
 
-  const seoKeywords = page.SEO?.meta_keywords?.split(',').map(k => k.trim()).filter(Boolean) || [
-    'شروع',
-    'ريادة الأعمال',
-    'الابتكار',
-    'القيادة',
-  ].filter(Boolean) as string[];
+  const seoKeywords = page.SEO?.meta_keywords?.split(',').map(k => k.trim()).filter(Boolean);
 
   // Page image for social sharing
   const defaultImage = globalData?.defaultSeo?.og_image ?

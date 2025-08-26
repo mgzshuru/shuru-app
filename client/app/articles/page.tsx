@@ -46,7 +46,7 @@ export async function generateMetadata({ searchParams }: ArticlesPageProps): Pro
 
     // Dynamic title based on search parameters
     let title = 'المقالات';
-    let description = 'تصفح جميع المقالات في مجلة شروع للابتكار وريادة الأعمال';
+    let description = 'تصفح جميع المقالات في مجلة شروع';
     const defaultImage = globalData?.defaultSeo?.og_image ?
           (getStrapiMedia(globalData.defaultSeo.og_image.url) || `${baseUrl}/og-image.jpg`) :
           `${baseUrl}/og-image.jpg`;
@@ -67,15 +67,7 @@ export async function generateMetadata({ searchParams }: ArticlesPageProps): Pro
       metadataBase: new URL(baseUrl),
       title: fullTitle,
       description: description,
-      keywords: [
-        'شروع',
-        'مقالات',
-        'ريادة الأعمال',
-        'الابتكار',
-        'التقنية',
-        'الاستثمار',
-        'القيادة'
-      ],
+      keywords: globalData?.defaultSeo?.meta_keywords?.split(',').map((k: string) => k.trim()),
       openGraph: {
         title: fullTitle,
         description: description,
@@ -98,7 +90,7 @@ export async function generateMetadata({ searchParams }: ArticlesPageProps): Pro
     console.error('Error generating metadata for articles page:', error);
     return {
       title: 'المقالات | شروع',
-      description: 'تصفح جميع المقالات في مجلة شروع للابتكار وريادة الأعمال',
+      description: 'تصفح جميع المقالات في مجلة شروع',
     };
   }
 }

@@ -37,7 +37,7 @@ export async function generateMetadata({ searchParams }: MagazinePageProps): Pro
 
     // Dynamic title based on page
     let title = 'المجلة';
-    let description = 'تصفح جميع أعداد مجلة شروع للابتكار وريادة الأعمال والقيادة';
+    let description = 'تصفح جميع أعداد مجلة شروع';
 
     if (page && parseInt(page) > 1) {
       title = `المجلة - الصفحة ${page}`;
@@ -55,18 +55,7 @@ export async function generateMetadata({ searchParams }: MagazinePageProps): Pro
       metadataBase: new URL(baseUrl),
       title: fullTitle,
       description,
-      keywords: [
-        'مجلة شروع',
-        'مجلة ريادة الأعمال',
-        'مجلة الابتكار',
-        'مجلة القيادة',
-        'مجلة التقنية',
-        'مجلة عربية',
-        'مجلة إدارية',
-        'إصدارات شروع',
-        'أعداد مجلة شروع',
-        'مجلة متخصصة'
-      ],
+      keywords: globalData?.defaultSeo?.meta_keywords?.split(',').map((k: string) => k.trim()),
       openGraph: {
         title: fullTitle,
         description,
@@ -97,7 +86,7 @@ export async function generateMetadata({ searchParams }: MagazinePageProps): Pro
     console.error('Error generating metadata:', error);
     return {
       title: 'المجلة | شروع',
-      description: 'تصفح جميع أعداد مجلة شروع للابتكار وريادة الأعمال والقيادة',
+      description: 'تصفح جميع أعداد مجلة شروع',
     };
   }
 }

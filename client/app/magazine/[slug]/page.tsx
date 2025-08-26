@@ -73,15 +73,7 @@ export async function generateMetadata({ params }: MagazineIssuePageProps): Prom
       metadataBase: new URL(baseUrl),
       title: fullTitle,
       description,
-      keywords: issue.SEO?.meta_keywords?.split(',').map((k: string) => k.trim()) || [
-        'مجلة شروع',
-        `العدد ${issue.issue_number}`,
-        'ريادة الأعمال',
-        'الابتكار',
-        'القيادة',
-        'مجلة عربية',
-        'مجلة متخصصة'
-      ],
+      keywords: issue.SEO?.meta_keywords?.split(',').map((k: string) => k.trim()),
       openGraph: {
         title: fullTitle,
         description,
@@ -122,7 +114,7 @@ export async function generateMetadata({ params }: MagazineIssuePageProps): Prom
     console.error('Error generating metadata:', error);
     return {
       title: 'مجلة شروع',
-      description: 'مجلة شروع للابتكار وريادة الأعمال والقيادة',
+      description: 'مجلة شروع',
     };
   }
 }

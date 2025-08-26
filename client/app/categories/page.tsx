@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
     const categoriesUrl = `${baseUrl}/categories`;
 
     const title = 'الفئات';
-    const description = 'تصفح جميع فئات المقالات في مجلة شروع للابتكار وريادة الأعمال والتقنيات الناشئة';
+    const description = 'تصفح جميع فئات المقالات في مجلة شروع';
 
     const defaultImage = globalData?.defaultSeo?.og_image ?
       (getStrapiMedia(globalData.defaultSeo.og_image.url) || `${baseUrl}/og-image.jpg`) :
@@ -46,7 +46,7 @@ export async function generateMetadata(): Promise<Metadata> {
     console.error('Error generating metadata for categories:', error);
     return {
       title: 'الفئات | شروع',
-      description: 'تصفح جميع فئات المقالات في مجلة شروع للابتكار وريادة الأعمال',
+      description: 'تصفح جميع فئات المقالات في مجلة شروع',
     };
   }
 }
