@@ -14,6 +14,27 @@ import {
 } from "@/lib/requests";
 import { createSession, deleteSession } from "@/lib/session";
 
+// Function to submit to Listmonk newsletter service
+const submitToListmonk = async (email: string, name: string) => {
+  const formData = new FormData();
+  formData.append('email', email);
+  formData.append('name', name);
+  formData.append('l', '0cf26f9c-5527-4c4d-b2de-99c85ecaf706'); // Shuru list ID
+
+  try {
+    const response = await fetch('https://newsletter.shuru.sa/subscription/form', {
+      method: 'POST',
+      body: formData,
+      mode: 'no-cors' // Required for cross-origin requests to external domains
+    });
+    // Note: With no-cors mode, we can't read the response, so we assume success if no error is thrown
+    return response;
+  } catch (error) {
+    // Silently ignore errors
+    return null;
+  }
+};
+
 export async function signupAction(
   initialState: FormState,
   formData: FormData
@@ -60,6 +81,12 @@ export async function signupAction(
       message: res?.statusText || res,
       success: false,
     };
+  }
+
+  // Automatically subscribe user to newsletter
+  if (email && username) {
+    // Fire and forget
+    submitToListmonk(email.toString(), username.toString());
   }
 
   // redirect to confirm email
