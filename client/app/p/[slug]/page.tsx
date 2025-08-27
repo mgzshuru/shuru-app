@@ -63,18 +63,25 @@ async function getPageData(slug: string): Promise<PageData | null> {
             height: page.featured_image.height,
           }
         : undefined,
-      blocks: page.blocks || [], // Changed from 'content' to 'blocks'
+      blocks: Array.isArray(page.blocks) ? page.blocks :
+              (page.blocks && typeof page.blocks === 'object' && !Array.isArray(page.blocks)) ?
+              [page.blocks] : [], // Handle non-array blocks data
       SEO: page.SEO, // Changed from 'seo' to 'SEO'
     };
 
-    // Log the first few blocks for debugging
-    if (mappedData.blocks && mappedData.blocks.length > 0) {
-      console.log(`Page has ${mappedData.blocks.length} blocks. First block type: ${mappedData.blocks[0].__component}`);
-    } else {
-      console.log(`Page has no blocks.`);
+    // Log the blocks data for debugging
+    console.log(`Page blocks data type:`, typeof page.blocks);
+    if (page.blocks) {
+      console.log(`Is blocks an array:`, Array.isArray(page.blocks));
     }
 
-    return mappedData;
+    // Log the first few blocks for debugging
+    if (mappedData.blocks && mappedData.blocks.length > 0) {
+      console.log(`Page has ${mappedData.blocks.length} blocks. First block type:`,
+                 mappedData.blocks[0].__component || 'unknown component type');
+    } else {
+      console.log(`Page has no blocks.`);
+    }    return mappedData;
   } catch (error) {
     console.error(`Error fetching or processing page data for slug ${slug}:`, error);
     return null;
@@ -288,7 +295,7 @@ export default async function PageComponent({ params }: PageProps) {
             {/* Page Content */}
             <main dir="rtl">
               <div id="page-content" className={styles.articleContent}>
-                {page.blocks && page.blocks.length > 0 ? (
+                {page.blocks && (Array.isArray(page.blocks) ? page.blocks.length > 0 : true) ? (
                   <ContentRenderer blocks={page.blocks} />
                 ) : (
                   <div className="text-center py-16 sm:py-24 bg-gray-50 rounded-lg">

@@ -566,13 +566,7 @@ export async function getPageBySlug(slug: string) {
         fields: ["url", "alternativeText", "width", "height"]
       },
       description: true,
-      blocks: {
-        populate: {
-          "*": {
-            populate: "*"
-          }
-        }
-      }
+      blocks: true
     },
   };
 

@@ -1,3 +1,4 @@
+import React from 'react';
 import { CallToAction } from './call-to-action';
 import { CodeBlock } from './code-block';
 import { Gallery } from './gallery';
@@ -17,11 +18,26 @@ import {
 } from '@/lib/types';
 
 interface ContentRendererProps {
-  blocks: Block[];
+  blocks?: Block[] | null;
 }
 
 export function ContentRenderer({ blocks }: ContentRendererProps) {
+  // Safety check for null or undefined blocks
+  if (!blocks || blocks.length === 0) {
+    console.log('No blocks to render');
+    return null;
+  }
+
+  // Ensure blocks is an array
+  const blocksArray = Array.isArray(blocks) ? blocks : [blocks];
+
   const renderBlock = (block: Block) => {
+    // Safety check for malformed block
+    if (!block || !block.__component) {
+      console.warn('Invalid block structure:', block);
+      return null;
+    }
+
     switch (block.__component) {
       case 'content.call-to-action':
         return (
@@ -124,7 +140,11 @@ export function ContentRenderer({ blocks }: ContentRendererProps) {
 
   return (
     <div className="content-renderer">
-      {blocks.map(renderBlock)}
+      {blocksArray.map((block, index) => (
+        <React.Fragment key={block.id || `block-${index}`}>
+          {renderBlock(block)}
+        </React.Fragment>
+      ))}
     </div>
   );
 }
