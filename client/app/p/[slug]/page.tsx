@@ -98,7 +98,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   // Get SEO data from page or fallback
   const seoTitle = page.SEO?.meta_title ||
-    `${page.title} | ${globalData?.siteName || 'شروع'}`;
+    `${page.title} | 'شروع'`;
 
   const seoDescription = page.SEO?.meta_description ||
     extractedDescription.substring(0, 160);
@@ -110,11 +110,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     (getStrapiMedia(globalData.defaultSeo.og_image.url) || `${baseUrl}/og-image.jpg`) :
     `${baseUrl}/og-image.jpg`;
 
-  const pageImage = page.SEO?.og_image ?
-    (getStrapiMedia(page.SEO.og_image.url) || defaultImage) :
-    page.featured_image ?
-    (getStrapiMedia(page.featured_image.url) || defaultImage) :
-    defaultImage;
+
+  const pageImage = page.SEO?.og_image
+    ? getStrapiMedia(page.SEO.og_image.url) || page.SEO.og_image.url
+    : page.featured_image
+    ? getStrapiMedia(page.featured_image.url) || page.featured_image.url
+    : defaultImage;
+
+  // Debug: print the pageImage value
+  console.log('DEBUG pageImage:', pageImage);
 
   return {
     metadataBase: new URL(baseUrl),
