@@ -29,6 +29,8 @@ interface PageProps {
 // Fetch page data from Strapi using the service
 async function getPageData(slug: string): Promise<PageData | null> {
   try {
+    console.log(`Starting to fetch page data for slug: ${slug}`);
+
     // Add timeout for runtime page data fetching as well
     const page = await safeBuildTimeApiCall(
       () => getPageBySlug(slug),
@@ -36,10 +38,15 @@ async function getPageData(slug: string): Promise<PageData | null> {
       15000 // 15 second timeout for runtime
     );
 
-    if (!page) return null;
+    if (!page) {
+      console.error(`No page found with slug: ${slug}`);
+      return null;
+    }
+
+    console.log(`Successfully fetched page data for slug: ${slug}, title: ${page.title}`);
 
     // Map the Strapi response to PageData
-    return {
+    const mappedData = {
       id: page.id,
       documentId: page.documentId,
       title: page.title,
@@ -59,8 +66,17 @@ async function getPageData(slug: string): Promise<PageData | null> {
       blocks: page.blocks || [], // Changed from 'content' to 'blocks'
       SEO: page.SEO, // Changed from 'seo' to 'SEO'
     };
+
+    // Log the first few blocks for debugging
+    if (mappedData.blocks && mappedData.blocks.length > 0) {
+      console.log(`Page has ${mappedData.blocks.length} blocks. First block type: ${mappedData.blocks[0].__component}`);
+    } else {
+      console.log(`Page has no blocks.`);
+    }
+
+    return mappedData;
   } catch (error) {
-    console.error('Error fetching page data:', error);
+    console.error(`Error fetching or processing page data for slug ${slug}:`, error);
     return null;
   }
 }

@@ -548,6 +548,7 @@ export async function getAllPages() {
 }
 
 export async function getPageBySlug(slug: string) {
+  console.log(`Fetching page with slug: ${slug}`);
   const query = {
     filters: {
       slug: { $eq: slug },
@@ -561,21 +562,34 @@ export async function getPageBySlug(slug: string) {
           }
         }
       },
+      featured_image: {
+        fields: ["url", "alternativeText", "width", "height"]
+      },
+      description: true,
       blocks: {
-        populate: true
+        populate: {
+          "*": {
+            populate: "*"
+          }
+        }
       }
     },
   };
 
   try {
     const response = await client.collection("pages").find(query);
+    console.log(`Page response for ${slug}:`, JSON.stringify(response, null, 2));
 
     if (response && Array.isArray(response.data) && response.data.length > 0) {
-      return response.data[0];
+      const pageData = response.data[0];
+      console.log(`Found page with title: ${pageData.title}`);
+      return pageData;
     }
+
+    console.log(`No page found with slug: ${slug}`);
     return null;
   } catch (error) {
-    console.error("Error fetching page:", error);
+    console.error(`Error fetching page with slug ${slug}:`, error);
     return null;
   }
 }
