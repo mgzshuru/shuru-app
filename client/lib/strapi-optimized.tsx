@@ -516,7 +516,12 @@ export async function getCategoryBySlug(slug: string) {
         fields: ['name', 'slug', 'description']
       },
       SEO: {
-        fields: ["meta_title", "meta_description", "meta_keywords"]
+        fields: ["meta_title", "meta_description", "meta_keywords"],
+        populate: {
+          og_image: {
+            fields: ["url", "alternativeText", "width", "height"]
+          }
+        }
       }
     }
   };
@@ -547,7 +552,19 @@ export async function getPageBySlug(slug: string) {
     filters: {
       slug: { $eq: slug },
     },
-    populate: ["SEO", "blocks"],
+    populate: {
+      SEO: {
+        fields: ["meta_title", "meta_description", "meta_keywords"],
+        populate: {
+          og_image: {
+            fields: ["url", "alternativeText", "width", "height"]
+          }
+        }
+      },
+      blocks: {
+        populate: true
+      }
+    },
   };
 
   try {
