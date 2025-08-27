@@ -69,7 +69,7 @@ async function getPageData(slug: string): Promise<PageData | null> {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const page = await getPageData(slug);
-
+  console.log('DEBUG page:', page);
   // Try to get global data, but don't fail if it's not available
   let globalData;
   try {
