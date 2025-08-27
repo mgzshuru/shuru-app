@@ -1,7 +1,6 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { ContentRenderer } from '@/components/blocks/content/ContentRenderer';
 import { getPageBySlug, getAllPages, getGlobalCached } from '@/lib/strapi-optimized';
@@ -13,12 +12,6 @@ import { PageStructuredData } from '@/components/seo/StructuredData';
 // Use the Page type from types.ts with additional fields
 interface PageData extends Omit<Page, 'blocks'> {
   description?: string;
-  featured_image?: {
-    url: string;
-    alternativeText?: string;
-    width: number;
-    height: number;
-  };
   blocks?: Block[];
 }
 
@@ -45,7 +38,7 @@ async function getPageData(slug: string): Promise<PageData | null> {
 
     console.log(`Successfully fetched page data for slug: ${slug}, title: ${page.title}`);
 
-    // Map the Strapi response to PageData
+    // Map the Strapi response to PageData with better null handling
     const mappedData = {
       id: page.id,
       documentId: page.documentId,
@@ -54,31 +47,24 @@ async function getPageData(slug: string): Promise<PageData | null> {
       createdAt: page.createdAt,
       updatedAt: page.updatedAt,
       publishedAt: page.publishedAt,
-      description: page.description,
-      featured_image: page.featured_image
-        ? {
-            url: page.featured_image.url,
-            alternativeText: page.featured_image.alternativeText,
-            width: page.featured_image.width,
-            height: page.featured_image.height,
-          }
-        : undefined,
+      description: page.description || null,
       blocks: Array.isArray(page.blocks) ? page.blocks :
               (page.blocks && typeof page.blocks === 'object' && !Array.isArray(page.blocks)) ?
               [page.blocks] : [], // Handle non-array blocks data
-      SEO: page.SEO, // Changed from 'seo' to 'SEO'
+      SEO: page.SEO && typeof page.SEO === 'object' ? page.SEO : null,
     };
 
     // Log the blocks data for debugging
     console.log(`Page blocks data type:`, typeof page.blocks);
+    console.log(`Page blocks raw data:`, page.blocks);
     if (page.blocks) {
       console.log(`Is blocks an array:`, Array.isArray(page.blocks));
     }
 
     // Log the first few blocks for debugging
     if (mappedData.blocks && mappedData.blocks.length > 0) {
-      console.log(`Page has ${mappedData.blocks.length} blocks. First block type:`,
-                 mappedData.blocks[0].__component || 'unknown component type');
+      console.log(`Page has ${mappedData.blocks.length} blocks. First block:`,
+                 JSON.stringify(mappedData.blocks[0], null, 2));
     } else {
       console.log(`Page has no blocks.`);
     }    return mappedData;
@@ -136,8 +122,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const pageImage = page.SEO?.og_image
     ? getStrapiMedia(page.SEO.og_image.url) || page.SEO.og_image.url
-    : page.featured_image
-    ? getStrapiMedia(page.featured_image.url) || page.featured_image.url
     : defaultImage;
 
   // Debug: print the pageImage value
@@ -161,9 +145,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       images: [
         {
           url: pageImage,
-          width: page.featured_image?.width || 1200,
-          height: page.featured_image?.height || 630,
-          alt: page.featured_image?.alternativeText || page.title,
+          width: 1200,
+          height: 630,
+          alt: page.title,
         },
       ],
     },
@@ -266,29 +250,6 @@ export default async function PageComponent({ params }: PageProps) {
           </div>
         </header>
 
-        {/* Featured Image */}
-        {page.featured_image && (
-          <div className="px-4 sm:px-6 mb-8 sm:mb-16">
-            <div className="max-w-6xl mx-auto">
-              <div className="relative aspect-[16/9] bg-gray-100 overflow-hidden rounded-lg">
-                <Image
-                  src={getStrapiMedia(page.featured_image.url) || page.featured_image.url}
-                  alt={page.featured_image.alternativeText || page.title}
-                  width={page.featured_image.width || 1200}
-                  height={page.featured_image.height || 675}
-                  className="w-full h-full object-cover"
-                  priority
-                />
-              </div>
-              {page.featured_image.alternativeText && (
-                <p className="text-sm text-gray-500 mt-3 text-center italic px-2">
-                  {page.featured_image.alternativeText}
-                </p>
-              )}
-            </div>
-          </div>
-        )}
-
         {/* Main Content */}
         <div className="px-4 sm:px-6">
           <div className="max-w-4xl mx-auto">
@@ -325,7 +286,7 @@ export default async function PageComponent({ params }: PageProps) {
             "@type": "WebPage",
             "name": page.title,
             "description": page.description,
-            "image": page.featured_image ? getStrapiMedia(page.featured_image.url) : undefined,
+            "image": undefined,
             "datePublished": page.publishedAt,
             "dateModified": page.updatedAt,
             "url": `https://www.shuru.sa/p/${page.slug}`,

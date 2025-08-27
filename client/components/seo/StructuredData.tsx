@@ -30,7 +30,7 @@ export function ArticleStructuredData({ article, globalData }: ArticleStructured
     "@context": "https://schema.org",
     "@type": "Article",
     "headline": article.title,
-    "description": article.description || "مقال في مجلة شروع للابتكار وريادة الأعمال",
+    "description": article.description || article.SEO?.meta_description || "",
     "url": articleUrl,
     "datePublished": article.publish_date,
     "dateModified": article.updatedAt,
@@ -126,7 +126,7 @@ export function PageStructuredData({ page, globalData }: PageStructuredDataProps
     "@context": "https://schema.org",
     "@type": "WebPage",
     "name": page.title,
-    "description": page.description || "صفحة في موقع شروع للابتكار وريادة الأعمال",
+    "description": page.description,
     "url": pageUrl,
     "dateModified": page.updatedAt,
     "publisher": {
@@ -188,8 +188,8 @@ export function MagazineStructuredData({ issue, globalData }: MagazineStructured
     "issueNumber": issue.issue_number.toString(),
     "isPartOf": {
       "@type": "Periodical",
-      "name": "مجلة شروع",
-      "description": "مجلة متخصصة في الابتكار وريادة الأعمال والقيادة",
+      "name": issue.SEO?.meta_title || issue.title,
+      "description": issue.SEO?.meta_description || issue.description || `العدد ${issue.issue_number} من مجلة شروع`,
       "publisher": {
         "@type": "Organization",
         "name": globalData?.siteName || "شروع للنشر الرقمي",

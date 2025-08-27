@@ -549,46 +549,128 @@ export async function getAllPages() {
 
 export async function getPageBySlug(slug: string) {
   console.log(`Fetching page with slug: ${slug}`);
-  const query = {
+
+  // Try query with deep populate for SEO
+  const deepQuery = {
     filters: {
       slug: { $eq: slug },
     },
     populate: {
       SEO: {
-        fields: ["meta_title", "meta_description", "meta_keywords"],
         populate: {
-          og_image: {
-            fields: ["url", "alternativeText", "width", "height"]
-          }
+          og_image: true
         }
       },
-      featured_image: {
-        fields: ["url", "alternativeText", "width", "height"]
-      },
-      description: true,
       blocks: true
-    },
+    }
   };
 
   try {
-    const response = await client.collection("pages").find(query);
+    console.log(`Attempting deep query for ${slug}`);
+    const response = await client.collection("pages").find(deepQuery);
     console.log(`Page response for ${slug}:`, JSON.stringify(response, null, 2));
 
     if (response && Array.isArray(response.data) && response.data.length > 0) {
       const pageData = response.data[0];
       console.log(`Found page with title: ${pageData.title}`);
+      console.log(`SEO og_image data:`, pageData.SEO?.og_image);
       return pageData;
     }
 
     console.log(`No page found with slug: ${slug}`);
     return null;
   } catch (error) {
-    console.error(`Error fetching page with slug ${slug}:`, error);
-    return null;
-  }
-}
+    console.error(`Error fetching page with deep query ${slug}:`, error);
 
-// =====================
+    // Fallback to specific populate with fields
+    try {
+      console.log(`Attempting specific query for ${slug}`);
+      const specificQuery = {
+        filters: {
+          slug: { $eq: slug },
+        },
+        populate: {
+          SEO: {
+            fields: ["meta_title", "meta_description", "meta_keywords"],
+            populate: {
+              og_image: {
+                fields: ["url", "alternativeText", "width", "height"]
+              }
+            }
+          },
+          blocks: {
+            populate: true
+          }
+        }
+      };
+
+      const specificResponse = await client.collection("pages").find(specificQuery);
+      console.log(`Specific response for ${slug}:`, JSON.stringify(specificResponse, null, 2));
+
+      if (specificResponse && Array.isArray(specificResponse.data) && specificResponse.data.length > 0) {
+        const pageData = specificResponse.data[0];
+        console.log(`Found page with specific query - title: ${pageData.title}`);
+        console.log(`SEO og_image data:`, pageData.SEO?.og_image);
+        return pageData;
+      }
+
+      console.log(`No page found with specific query for slug: ${slug}`);
+      return null;
+    } catch (specificError) {
+      console.error(`Specific query failed for slug ${slug}:`, specificError);
+
+      // Fallback to minimal populate
+      try {
+        console.log(`Attempting minimal query for ${slug}`);
+        const minimalQuery = {
+          filters: {
+            slug: { $eq: slug },
+          },
+          populate: "*"
+        };
+
+        const minimalResponse = await client.collection("pages").find(minimalQuery);
+        console.log(`Minimal response for ${slug}:`, JSON.stringify(minimalResponse, null, 2));
+
+        if (minimalResponse && Array.isArray(minimalResponse.data) && minimalResponse.data.length > 0) {
+          const pageData = minimalResponse.data[0];
+          console.log(`Found page with minimal query - title: ${pageData.title}`);
+          return pageData;
+        }
+
+        console.log(`No page found with minimal query for slug: ${slug}`);
+        return null;
+      } catch (fallbackError) {
+        console.error(`Minimal query also failed for slug ${slug}:`, fallbackError);
+        
+        // Final fallback without populate
+        try {
+          console.log(`Attempting fallback query without populate for ${slug}`);
+          const fallbackQuery = {
+            filters: {
+              slug: { $eq: slug },
+            }
+          };
+
+          const fallbackResponse = await client.collection("pages").find(fallbackQuery);
+          console.log(`Fallback response for ${slug}:`, JSON.stringify(fallbackResponse, null, 2));
+
+          if (fallbackResponse && Array.isArray(fallbackResponse.data) && fallbackResponse.data.length > 0) {
+            const pageData = fallbackResponse.data[0];
+            console.log(`Found page with fallback query - title: ${pageData.title}`);
+            return pageData;
+          }
+
+          console.log(`No page found with fallback query for slug: ${slug}`);
+          return null;
+        } catch (finalError) {
+          console.error(`All queries failed for slug ${slug}:`, finalError);
+          return null;
+        }
+      }
+    }
+  }
+}// =====================
 // MAGAZINE ISSUE FUNCTIONS (OPTIMIZED)
 // =====================
 
