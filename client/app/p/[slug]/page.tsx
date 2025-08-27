@@ -118,7 +118,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     : defaultImage;
 
   // Debug: print the pageImage value
-  console.log('DEBUG pageImage:', pageImage);
+  console.log('DEBUG pageImage:', page.SEO?.og_image?.url);
 
   return {
     metadataBase: new URL(baseUrl),
