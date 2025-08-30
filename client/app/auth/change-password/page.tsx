@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = 'force-dynamic';
+
 import React, { useActionState, useEffect, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { changePasswordAction } from "@/app/actions/auth";
@@ -7,9 +9,6 @@ import { FormState } from "@/lib/types";
 import { toast } from "react-toastify";
 import { Lock, Eye, EyeOff, AlertCircle, CheckCircle } from "lucide-react";
 import Link from "next/link";
-
-// Disable static generation for this page
-export const dynamic = 'force-dynamic';
 
 function ChangePasswordForm() {
   const router = useRouter();
