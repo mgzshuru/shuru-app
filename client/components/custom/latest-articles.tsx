@@ -59,6 +59,20 @@ export function LatestArticles({
                 )}
 
                 <div className="w-full space-y-3 order-2">
+                  {/* Categories */}
+                  {article.categories && article.categories.length > 0 && (
+                    <div className="flex items-center gap-2 flex-wrap mb-2" dir="rtl">
+                      {article.categories.map((category) => (
+                        <Link
+                          key={category.id}
+                          href={`/categories/${category.slug}`}
+                          className="text-orange-600 hover:text-orange-700 font-medium text-xs uppercase tracking-wide border border-orange-200 hover:border-orange-300 px-2 py-1 rounded transition-colors"
+                        >
+                          {category.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
                   <p className="text-base font-bold leading-[19px] text-black md:text-[25px] md:leading-[28px] text-right">
                     {article.title}
                   </p>
@@ -130,6 +144,20 @@ export function LatestArticlesCompact({
             )}
 
             <div className="flex-1 order-2">
+              {/* Categories */}
+              {article.categories && article.categories.length > 0 && (
+                <div className="flex items-center gap-1 flex-wrap mb-2" dir="rtl">
+                  {article.categories.map((category) => (
+                    <Link
+                      key={category.id}
+                      href={`/categories/${category.slug}`}
+                      className="text-orange-600 hover:text-orange-700 font-medium text-xs uppercase tracking-wide border border-orange-200 hover:border-orange-300 px-1.5 py-0.5 rounded transition-colors"
+                    >
+                      {category.name}
+                    </Link>
+                  ))}
+                </div>
+              )}
               <Link href={`/articles/${article.slug}`}>
                 <h4 className="font-bold text-gray-900 text-sm leading-tight mb-2 hover:text-gray-700 transition-colors text-right">
                   {article.title}

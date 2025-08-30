@@ -55,8 +55,24 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 // Category Card Component
-function CategoryCard({ category }: { category: Category }) {
-  const articlesCount = category.articles?.length || 0;
+function CategoryCard({ category, childCategories = [] }: { category: Category, childCategories?: Category[] }) {
+  const hasOwnArticles = category.articles && category.articles.length > 0;
+
+  // Collect articles from children if parent has no articles
+  let articlesToDisplay = hasOwnArticles ? category.articles : [];
+
+  if (!hasOwnArticles && childCategories.length > 0) {
+    // Collect all articles from child categories
+    const childArticles = childCategories
+      .flatMap(child => child.articles || [])
+      .sort((a, b) => {
+        if (!a.publish_date || !b.publish_date) return 0;
+        return new Date(b.publish_date).getTime() - new Date(a.publish_date).getTime();
+      })
+      .slice(0, 3); // Limit to 3 most recent articles
+
+    articlesToDisplay = childArticles;
+  }
 
   return (
     <article className="bg-white border border-gray-200 overflow-hidden">
@@ -76,14 +92,14 @@ function CategoryCard({ category }: { category: Category }) {
             </p>
           )}
 
-          {/* Show recent articles if available */}
-          {category.articles && category.articles.length > 0 && (
+          {/* Show recent articles - either own articles or from children */}
+          {articlesToDisplay && articlesToDisplay.length > 0 && (
             <div className="pt-4 border-t border-gray-100">
               <h4 className="text-sm font-semibold text-gray-700 mb-3 text-right">
                 أحدث المقالات:
               </h4>
               <div className="space-y-3">
-                {category.articles.slice(0, 3).map((article: any) => (
+                {articlesToDisplay.slice(0, 3).map((article: any) => (
                   <div key={article.id} className="flex items-center gap-3">
                     {article.cover_image && (
                       <div className="relative w-12 h-8 overflow-hidden flex-shrink-0 bg-gray-100">
@@ -180,18 +196,41 @@ export default async function CategoriesPage() {
     });
 
     // Filter to only include categories that have articles
-    const categories = processedCategories.filter((category) =>
+    const categoriesWithArticles = processedCategories.filter((category) =>
       category.articles && category.articles.length > 0
     );
 
-    // Separate root categories from child categories
-    const rootCategories = categories.filter((category) =>
+    // Separate all categories (not just those with articles)
+    const allRootCategories = allCategories.filter((category) =>
       !category.parent_category
     );
 
-    const childCategories = categories.filter((category) =>
+    const allChildCategories = categoriesWithArticles.filter((category) =>
       category.parent_category
     );
+
+    // Check which parent categories should be displayed:
+    // 1. Parent categories that have articles themselves
+    // 2. Parent categories that don't have articles but have children with articles
+    const rootCategoriesToDisplay = allRootCategories.filter((rootCategory) => {
+      // Include if the root category itself has articles
+      const hasOwnArticles = categoriesWithArticles.some(cat => cat.id === rootCategory.id);
+
+      // Include if any of its children have articles
+      const hasChildrenWithArticles = allChildCategories.some(child =>
+        child.parent_category?.id === rootCategory.id
+      );
+
+      return hasOwnArticles || hasChildrenWithArticles;
+    });
+
+    // Map root categories to include their article data if they have any
+    const rootCategories = rootCategoriesToDisplay.map(rootCategory => {
+      const categoryWithArticles = categoriesWithArticles.find(cat => cat.id === rootCategory.id);
+      return categoryWithArticles || rootCategory; // Use the version with articles if available, otherwise the original
+    });
+
+    const childCategories = allChildCategories;
 
     // Group child categories by parent (only include parents that also have articles)
     const categoriesByParent = childCategories.reduce((acc: any, category) => {
@@ -224,41 +263,18 @@ export default async function CategoriesPage() {
                   <h2 className="text-2xl font-bold text-gray-900">الفئات الرئيسية</h2>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {rootCategories.map((category) => (
-                    <div key={category.id}>
-                      <CategoryCard category={category} />
+                  {rootCategories.map((category) => {
+                    const childCategoriesForThisParent = categoriesByParent[category.id] || [];
 
-                      {/* Show child categories if any */}
-                      {categoriesByParent[category.id] && (
-                        <div className="mt-6">
-                          <div className="flex items-center gap-2 mb-4" dir="rtl">
-                            <div className="w-1 h-4 bg-gray-400"></div>
-                            <h4 className="text-sm font-semibold text-gray-700">فئات فرعية:</h4>
-                          </div>
-                          <div className="space-y-3">
-                            {categoriesByParent[category.id].map((childCategory: Category) => (
-                              <Link
-                                key={childCategory.id}
-                                href={`/categories/${childCategory.slug}`}
-                                className="block p-4 border border-gray-200 hover:bg-gray-50"
-                              >
-                                <div className="flex items-center justify-between" dir="rtl">
-                                  <span className="text-sm font-medium text-gray-800 text-right flex-1">
-                                    {childCategory.name}
-                                  </span>
-                                </div>
-                                {childCategory.description && (
-                                  <p className="text-xs text-gray-600 mt-2  text-right">
-                                    {childCategory.description}
-                                  </p>
-                                )}
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                    return (
+                      <div key={category.id}>
+                        <CategoryCard
+                          category={category}
+                          childCategories={childCategoriesForThisParent}
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
               </section>
 
@@ -273,7 +289,11 @@ export default async function CategoriesPage() {
                     {childCategories
                       .filter((cat) => !rootCategories.find(root => root.id === cat.parent_category?.id))
                       .map((category) => (
-                        <CategoryCard key={category.id} category={category} />
+                        <CategoryCard
+                          key={category.id}
+                          category={category}
+                          childCategories={[]}
+                        />
                       ))}
                   </div>
                 </section>

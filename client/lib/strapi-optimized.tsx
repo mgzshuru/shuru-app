@@ -115,7 +115,26 @@ export async function getArticlesOptimized(options: {
   };
 
   if (categorySlug) {
-    filters.categories = { slug: { $eq: categorySlug } };
+    // Get the category and its children to include articles from child categories
+    const category = await getCategoryBySlug(categorySlug);
+
+    if (category) {
+      const categorySlugs = [categorySlug];
+
+      // Add child category slugs if they exist
+      if (category.children_categories && category.children_categories.length > 0) {
+        const childSlugs = category.children_categories.map((child: any) => child.slug);
+        categorySlugs.push(...childSlugs);
+      }
+
+      // Use $or to match articles from parent category or any child category
+      filters.categories = {
+        slug: { $in: categorySlugs }
+      };
+    } else {
+      // Fallback to original behavior if category not found
+      filters.categories = { slug: { $eq: categorySlug } };
+    }
   }
 
   if (featured) {

@@ -1,5 +1,6 @@
-import React from 'react';
-import { Metadata } from 'next';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -20,7 +21,9 @@ interface CategoryPageProps {
   };
 }
 
+// TODO: Move metadata generation to a server component or use dynamic metadata
 // Generate metadata for category page
+/*
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   const { slug } = await params;
 
@@ -113,6 +116,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
     };
   }
 }
+*/
 
 // Article Card Component
 function ArticleCard({ article }: { article: Article }) {
@@ -222,6 +226,55 @@ function CategoryHeader({ category }: { category: Category }) {
   );
 }
 
+// Subcategory Filter Component
+function SubcategoryFilter({
+  childCategories,
+  selectedCategory,
+  onCategoryChange
+}: {
+  childCategories: any[],
+  selectedCategory: string | null,
+  onCategoryChange: (categorySlug: string | null) => void
+}) {
+  if (!childCategories || childCategories.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="bg-white border-b border-gray-200">
+      <div className="max-w-7xl mx-auto px-6 py-6">
+        <nav className="flex flex-wrap items-center justify-center gap-[10px] py-[4px]">
+          <button
+            onClick={() => onCategoryChange(null)}
+            className={`border rounded-[18px] p-[11px] text-xs font-bold uppercase leading-3 tracking-wider transition-colors duration-200 ${
+              selectedCategory === null
+                ? 'bg-primary text-white border-primary'
+                : 'text-gray-700 border-gray-300 hover:bg-primary hover:text-white hover:border-primary'
+            }`}
+            aria-label="عرض جميع المقالات"
+          >
+            الكل
+          </button>
+          {childCategories.map((category) => (
+            <button
+              key={category.id}
+              onClick={() => onCategoryChange(category.slug)}
+              className={`border rounded-[18px] p-[11px] text-xs font-bold uppercase leading-3 tracking-wider transition-colors duration-200 ${
+                selectedCategory === category.slug
+                  ? 'bg-primary text-white border-primary'
+                  : 'text-gray-700 border-gray-300 hover:bg-primary hover:text-white hover:border-primary'
+              }`}
+              aria-label={`عرض المقالات المتعلقة بـ ${category.name}`}
+            >
+              {category.name}
+            </button>
+          ))}
+        </nav>
+      </div>
+    </div>
+  );
+}
+
 // Breadcrumbs Component
 function Breadcrumbs({ category }: { category: Category }) {
   return (
@@ -247,181 +300,88 @@ function Breadcrumbs({ category }: { category: Category }) {
   );
 }
 
-export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
-  const { slug } = await params;
-  const { page = '1' } = await searchParams;
+export default function CategoryPage({ params, searchParams }: CategoryPageProps) {
+  const [category, setCategory] = useState<Category | null>(null);
+  const [allArticles, setAllArticles] = useState<Article[]>([]);
+  const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
+  const [globalData, setGlobalData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  try {
-    // Fetch category data and global data in parallel
-    const [categoryResponse, globalData] = await Promise.all([
-      getCategoryBySlug(slug),
-      getGlobalCached().catch(() => null)
-    ]);
-    const category = categoryResponse as Category;
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const { slug } = await params;
+        const { page = '1' } = await searchParams;
 
-    if (!category) {
-      notFound();
+        // Fetch category data and global data in parallel
+        const [categoryResponse, globalResponse] = await Promise.all([
+          getCategoryBySlug(slug),
+          getGlobalCached().catch(() => null)
+        ]);
+
+        const categoryData = categoryResponse as Category;
+
+        if (!categoryData) {
+          setError(true);
+          return;
+        }
+
+        setCategory(categoryData);
+        setGlobalData(globalResponse);
+
+        // Fetch articles for this category with pagination
+        const currentPage = parseInt(page, 10);
+        const pageSize = 50; // Increased to get more articles for filtering
+
+        const articlesResponse = await getArticlesOptimized({
+          categorySlug: slug,
+          pageSize,
+          page: currentPage
+        });
+
+        const articles = (articlesResponse?.data || []) as Article[];
+        setAllArticles(articles);
+        setFilteredArticles(articles);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error loading category page:', err);
+        setError(true);
+        setLoading(false);
+      }
     }
 
-    // Fetch articles for this category with pagination
-    const currentPage = parseInt(page, 10);
-    const pageSize = 12;
+    loadData();
+  }, [params, searchParams]);
 
-    const articlesResponse = await getArticlesOptimized({
-      categorySlug: slug,
-      pageSize,
-      page: currentPage
-    });
-    const articles = (articlesResponse?.data || []) as Article[];
-    const pagination = articlesResponse?.meta?.pagination;
+  useEffect(() => {
+    if (selectedSubcategory === null) {
+      setFilteredArticles(allArticles);
+    } else {
+      const filtered = allArticles.filter(article =>
+        article.categories?.some(cat => cat.slug === selectedSubcategory)
+      );
+      setFilteredArticles(filtered);
+    }
+  }, [selectedSubcategory, allArticles]);
 
+  const handleSubcategoryChange = (categorySlug: string | null) => {
+    setSelectedSubcategory(categorySlug);
+  };
+
+  if (loading) {
     return (
-      <div className="min-h-screen bg-white">
-        <CategoryStructuredData category={category} globalData={globalData} />
-        <Breadcrumbs category={category} />
-        <CategoryHeader category={category} />
-
-        <main className="max-w-7xl mx-auto px-6 py-12">
-          {/* Articles Section */}
-          <section>
-            {articles.length > 0 ? (
-              <>
-                {/* Articles Grid with Featured Layout */}
-                <div className="grid grid-cols-1 gap-10 px-5 md:grid-cols-2 md:px-10 lg:grid-cols-3 xl:grid-cols-[minmax(42%,532px)_repeat(2,1fr)] xl:px-0">
-                  {/* Featured Article - Large */}
-                  {articles.length > 0 && (
-                    <div className="space-y-4 md:col-span-2 lg:col-span-1 lg:row-span-2">
-                      <article className="flex flex-col gap-1 md:col-span-2 lg:col-span-1 lg:row-span-2">
-                        <div className="flex flex-col-reverse">
-                          <div className="w-full space-y-6">
-                            <Link href={`/articles/${articles[0].slug}`}>
-                              <p className="font-bold text-black text-[25px] leading-[32px] md:text-[36px] md:leading-[44px] text-right mb-4">
-                                {articles[0].title}
-                              </p>
-                              {articles[0].description && (
-                                <p className="text-base font-normal leading-6 tracking-[0.2px] text-gray-600 text-right">
-                                  {articles[0].description}
-                                </p>
-                              )}
-                            </Link>
-                          </div>
-                          <Link className="pb-5" href={`/articles/${articles[0].slug}`}>
-                            {articles[0].cover_image && (
-                              <Image
-                                alt={articles[0].cover_image?.alternativeText || articles[0].title}
-                                loading="lazy"
-                                width={825}
-                                height={541}
-                                decoding="async"
-                                className="aspect-video w-full object-cover"
-                                src={getStrapiMedia(articles[0].cover_image.url) || ''}
-                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 42vw"
-                                priority
-                              />
-                            )}
-                          </Link>
-                        </div>
-                      </article>
-                    </div>
-                  )}
-
-                  {/* Regular Articles - Smaller Grid Items */}
-                  {articles.slice(1, 5).map((article) => (
-                    <article key={article.id} className="flex flex-col gap-1">
-                      <div className="flex flex-col-reverse">
-                        <div className="w-full space-y-3">
-                          <Link href={`/articles/${article.slug}`}>
-                            <p className="font-bold text-black text-[25px] md:text-[16px] leading-[28px] md:leading-[19px] text-right">
-                              {article.title}
-                            </p>
-                            {article.description && (
-                              <p className="text-base font-normal leading-5 tracking-[0.2px] text-gray-600 text-right">
-                                {article.description}
-                              </p>
-                            )}
-                          </Link>
-                        </div>
-                        <Link className="pb-5" href={`/articles/${article.slug}`}>
-                          {article.cover_image && (
-                            <Image
-                              alt={article.cover_image?.alternativeText || article.title}
-                              loading="lazy"
-                              width={825}
-                              height={541}
-                              decoding="async"
-                              className="aspect-video w-full object-cover"
-                              src={getStrapiMedia(article.cover_image.url) || ''}
-                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            />
-                          )}
-                        </Link>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              </>
-            ) : (
-              <div className="text-center py-24 border border-gray-200 bg-gray-50">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">لا توجد مقالات</h3>
-                <p className="text-gray-600 mb-8 max-w-md mx-auto">
-                  لم يتم نشر أي مقالات في هذه الفئة حتى الآن
-                </p>
-                <Link href="/articles">
-                  <button className="px-6 py-3 bg-gray-900 text-white hover:bg-gray-800 font-medium">
-                    تصفح جميع المقالات
-                  </button>
-                </Link>
-              </div>
-            )}
-          </section>
-
-          {/* Latest Articles Section */}
-          {articles.length > 5 && (
-            <div className="mt-24 pt-16 border-t border-gray-200">
-              <LatestArticles
-                articles={articles.slice(5)}
-                title={`المزيد من مقالات ${category.name}`}
-                categoryName={category.name}
-                showMore={false}
-              />
-            </div>
-          )}
-
-          {/* Related Categories */}
-          {category.children_categories && category.children_categories.length > 0 && (
-            <div className="mt-24 pt-16 border-t border-gray-200">
-              <div className="flex items-center gap-3 mb-8" dir="rtl">
-                <div className="w-1 h-8 bg-gray-600"></div>
-                <h3 className="text-2xl font-bold text-gray-900">فئات فرعية</h3>
-              </div>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {category.children_categories.map((childCategory: any) => (
-                  <Link
-                    key={childCategory.id}
-                    href={`/categories/${childCategory.slug}`}
-                    className="block p-8 border border-gray-200 hover:bg-gray-50"
-                  >
-                    <div dir="rtl">
-                      <h4 className="font-bold text-gray-900 mb-4 text-lg text-right">
-                        {childCategory.name}
-                      </h4>
-                      {childCategory.description && (
-                        <p className="text-gray-600 leading-relaxed line-clamp-3 text-right">
-                          {childCategory.description}
-                        </p>
-                      )}
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
-        </main>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <p className="text-gray-600">جاري التحميل...</p>
+        </div>
       </div>
     );
-  } catch (error) {
-    console.error('Error loading category page:', error);
+  }
 
+  if (error || !category) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center py-24 border border-gray-200 bg-gray-50 max-w-md mx-auto px-8">
@@ -440,4 +400,158 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
       </div>
     );
   }
+
+  return (
+    <div className="min-h-screen bg-white">
+      <CategoryStructuredData category={category} globalData={globalData} />
+      <Breadcrumbs category={category} />
+      <CategoryHeader category={category} />
+
+      {/* Subcategory Filter */}
+      <SubcategoryFilter
+        childCategories={category.children_categories || []}
+        selectedCategory={selectedSubcategory}
+        onCategoryChange={handleSubcategoryChange}
+      />
+
+      <main className="max-w-7xl mx-auto px-6 py-12">
+        {/* Articles Section */}
+        <section>
+          {filteredArticles.length > 0 ? (
+            <>
+              {/* Articles Grid with Featured Layout */}
+              <div className="grid grid-cols-1 gap-10 px-5 md:grid-cols-2 md:px-10 lg:grid-cols-3 xl:grid-cols-[minmax(42%,532px)_repeat(2,1fr)] xl:px-0">
+                {/* Featured Article - Large */}
+                {filteredArticles.length > 0 && (
+                  <div className="space-y-4 md:col-span-2 lg:col-span-1 lg:row-span-2">
+                    <article className="flex flex-col gap-1 md:col-span-2 lg:col-span-1 lg:row-span-2">
+                      <div className="flex flex-col-reverse">
+                        <div className="w-full space-y-6">
+                          {/* Categories */}
+                          {filteredArticles[0].categories && filteredArticles[0].categories.length > 0 && (
+                            <div className="flex items-center gap-2 flex-wrap mb-3" dir="rtl">
+                              {filteredArticles[0].categories.map((category) => (
+                                <Link
+                                  key={category.id}
+                                  href={`/categories/${category.slug}`}
+                                  className="text-orange-600 hover:text-orange-700 font-medium text-xs uppercase tracking-wide border border-orange-200 hover:border-orange-300 px-2 py-1 rounded transition-colors"
+                                >
+                                  {category.name}
+                                </Link>
+                              ))}
+                            </div>
+                          )}
+                          <Link href={`/articles/${filteredArticles[0].slug}`}>
+                            <p className="font-bold text-black text-[25px] leading-[32px] md:text-[36px] md:leading-[44px] text-right mb-4">
+                              {filteredArticles[0].title}
+                            </p>
+                            {filteredArticles[0].description && (
+                              <p className="text-base font-normal leading-6 tracking-[0.2px] text-gray-600 text-right">
+                                {filteredArticles[0].description}
+                              </p>
+                            )}
+                          </Link>
+                        </div>
+                        <Link className="pb-5" href={`/articles/${filteredArticles[0].slug}`}>
+                          {filteredArticles[0].cover_image && (
+                            <Image
+                              alt={filteredArticles[0].cover_image?.alternativeText || filteredArticles[0].title}
+                              width={825}
+                              height={541}
+                              decoding="async"
+                              className="aspect-video w-full object-cover"
+                              src={getStrapiMedia(filteredArticles[0].cover_image.url) || ''}
+                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 42vw"
+                              priority
+                            />
+                          )}
+                        </Link>
+                      </div>
+                    </article>
+                  </div>
+                )}
+
+                {/* Regular Articles - Smaller Grid Items */}
+                {filteredArticles.slice(1, 5).map((article: Article) => (
+                  <article key={article.id} className="flex flex-col gap-1">
+                    <div className="flex flex-col-reverse">
+                      <div className="w-full space-y-3">
+                        {/* Categories */}
+                        {article.categories && article.categories.length > 0 && (
+                          <div className="flex items-center gap-2 flex-wrap mb-2" dir="rtl">
+                            {article.categories.map((category) => (
+                              <Link
+                                key={category.id}
+                                href={`/categories/${category.slug}`}
+                                className="text-orange-600 hover:text-orange-700 font-medium text-xs uppercase tracking-wide border border-orange-200 hover:border-orange-300 px-2 py-1 rounded transition-colors"
+                              >
+                                {category.name}
+                              </Link>
+                            ))}
+                          </div>
+                        )}
+                        <Link href={`/articles/${article.slug}`}>
+                          <p className="font-bold text-black text-[25px] md:text-[16px] leading-[28px] md:leading-[19px] text-right">
+                            {article.title}
+                          </p>
+                          {article.description && (
+                            <p className="text-base font-normal leading-5 tracking-[0.2px] text-gray-600 text-right">
+                              {article.description}
+                            </p>
+                          )}
+                        </Link>
+                      </div>
+                      <Link className="pb-5" href={`/articles/${article.slug}`}>
+                        {article.cover_image && (
+                          <Image
+                            alt={article.cover_image?.alternativeText || article.title}
+                            loading="lazy"
+                            width={825}
+                            height={541}
+                            decoding="async"
+                            className="aspect-video w-full object-cover"
+                            src={getStrapiMedia(article.cover_image.url) || ''}
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          />
+                        )}
+                      </Link>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="text-center py-24 border border-gray-200 bg-gray-50">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">
+                {selectedSubcategory ? 'لا توجد مقالات في هذه الفئة الفرعية' : 'لا توجد مقالات'}
+              </h3>
+              <p className="text-gray-600 mb-8 max-w-md mx-auto">
+                {selectedSubcategory
+                  ? 'لم يتم نشر أي مقالات في هذه الفئة الفرعية حتى الآن'
+                  : 'لم يتم نشر أي مقالات في هذه الفئة حتى الآن'
+                }
+              </p>
+              <Link href="/articles">
+                <button className="px-6 py-3 bg-gray-900 text-white hover:bg-gray-800 font-medium">
+                  تصفح جميع المقالات
+                </button>
+              </Link>
+            </div>
+          )}
+        </section>
+
+        {/* Latest Articles Section */}
+        {filteredArticles.length > 5 && (
+          <div className="mt-24 pt-16 border-t border-gray-200">
+            <LatestArticles
+              articles={filteredArticles.slice(5)}
+              title={`المزيد من مقالات ${category.name}`}
+              categoryName={category.name}
+              showMore={false}
+            />
+          </div>
+        )}
+      </main>
+    </div>
+  );
 }
