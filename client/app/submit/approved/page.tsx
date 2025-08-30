@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { CheckCircle, ArrowRight, Star } from 'lucide-react';
 import Link from 'next/link';
 
