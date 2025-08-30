@@ -1,6 +1,6 @@
-export const dynamic = 'force-dynamic';
-
 "use client";
+
+export const dynamic = 'force-dynamic';
 
 import React, { useState, useEffect } from 'react';
 import { submitArticle, checkEmail, type SubmissionData, type EmailCheckResult } from '@/app/actions/submit-new';
