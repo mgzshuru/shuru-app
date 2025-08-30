@@ -6,6 +6,9 @@ import { getAllCategories, getGlobalCached } from '@/lib/strapi-optimized';
 import { getStrapiMedia } from '@/components/custom/strapi-image';
 import { Category } from '@/lib/types';
 
+// Disable static generation for this page
+export const dynamic = 'force-dynamic';
+
 // Generate metadata for categories page
 export async function generateMetadata(): Promise<Metadata> {
   try {
