@@ -34,19 +34,19 @@ function ConfirmEmailForm() {
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
       </div>
     }>
-      <ConfirmEmailFormContent 
-        state={state} 
-        formAction={formAction} 
+      <ConfirmEmailFormContent
+        state={state}
+        formAction={formAction}
         isPending={isPending}
       />
     </Suspense>
   );
 }
 
-function ConfirmEmailFormContent({ 
-  state, 
-  formAction, 
-  isPending 
+function ConfirmEmailFormContent({
+  state,
+  formAction,
+  isPending
 }: {
   state: FormState;
   formAction: any;
