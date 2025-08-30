@@ -7,7 +7,6 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { getMagazineIssuesOptimized } from '@/lib/strapi-optimized';
 import { getStrapiMedia } from '@/components/custom/strapi-image';
-import Link from 'next/link';
 import { useAuth } from '@/hooks/use-auth';
 import { logoutAction } from '@/app/actions/auth';
 import { LogOut } from 'lucide-react';
