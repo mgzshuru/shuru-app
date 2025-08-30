@@ -8,6 +8,9 @@ import { toast } from "react-toastify";
 import { Lock, Eye, EyeOff, AlertCircle, CheckCircle } from "lucide-react";
 import Link from "next/link";
 
+// Disable static generation for this page
+export const dynamic = 'force-dynamic';
+
 function ChangePasswordForm() {
   const router = useRouter();
   const [showCurrentPassword, setShowCurrentPassword] = React.useState(false);

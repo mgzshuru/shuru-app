@@ -9,6 +9,9 @@ import { Lock, Eye, EyeOff, AlertCircle, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
+// Disable static generation for this page
+export const dynamic = 'force-dynamic';
+
 function ResetPasswordForm() {
   const router = useRouter();
   const [showPassword, setShowPassword] = React.useState(false);

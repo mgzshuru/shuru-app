@@ -10,6 +10,9 @@ import { toast } from "react-toastify";
 import { MailCheck, Mail, AlertCircle, CheckCircle } from "lucide-react";
 import Link from "next/link";
 
+// Disable static generation for this page
+export const dynamic = 'force-dynamic';
+
 function ConfirmEmailForm() {
   // create initial state
   const initialState: FormState = {
