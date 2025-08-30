@@ -9,12 +9,16 @@ import { toast } from "react-toastify";
 import { Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+import OAuthButtons from "@/components/auth/OAuthButtons";
+import { useSearchParams } from "next/navigation";
 
 // Disable static generation for this page
 export const dynamic = 'force-dynamic';
 
 export default function SignIn() {
   const [showPassword, setShowPassword] = React.useState(false);
+  const searchParams = useSearchParams();
+  const oauthError = searchParams.get('error');
 
   const initialState: FormState = {
     errors: {},
@@ -47,10 +51,18 @@ export default function SignIn() {
           </div>
 
           {/* Error Messages */}
-          {!state?.success && state?.message && (
+          {(!state?.success && state?.message) && (
             <div className="mb-6 p-4 bg-red-50 border border-red-300 flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
               <span className="text-red-700 text-sm leading-relaxed">{state.message}</span>
+            </div>
+          )}
+
+          {/* OAuth Error Messages */}
+          {oauthError && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-300 flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+              <span className="text-red-700 text-sm leading-relaxed">{decodeURIComponent(oauthError)}</span>
             </div>
           )}
 
@@ -69,6 +81,21 @@ export default function SignIn() {
                 <span className="text-red-700 text-sm leading-relaxed">{state.message}</span>
               </div>
             )}
+
+            {/* OAuth Buttons */}
+            <div className="mb-6">
+              <OAuthButtons />
+            </div>
+
+            {/* Divider */}
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">أو</span>
+              </div>
+            </div>
 
             {/* Email Field */}
             <div>

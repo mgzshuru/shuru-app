@@ -6,6 +6,7 @@ import { FormState } from "@/lib/types";
 import { UserPlus, User, Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+import OAuthButtons from "@/components/auth/OAuthButtons";
 
 // Disable static generation for this page
 export const dynamic = 'force-dynamic';
@@ -59,6 +60,20 @@ export default function SignUp() {
           )}
           {/* Signup Form */}
           <form action={formAction} className="space-y-6">
+            {/* OAuth Buttons */}
+            <div className="mb-6">
+              <OAuthButtons />
+            </div>
+
+            {/* Divider */}
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">أو</span>
+              </div>
+            </div>
             {/* Username Field */}
             <div>
               <div className="relative">
