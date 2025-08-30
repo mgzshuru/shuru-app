@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { CheckCircle, ArrowRight } from "lucide-react";
 
+// Disable static generation for this page
+export const dynamic = 'force-dynamic';
+
 export default function SignupSuccess() {
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-4" dir="rtl">

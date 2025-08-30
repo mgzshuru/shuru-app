@@ -7,6 +7,9 @@ import { UserPlus, User, Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle } fro
 import Link from "next/link";
 import React from "react";
 
+// Disable static generation for this page
+export const dynamic = 'force-dynamic';
+
 export default function SignUp() {
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);

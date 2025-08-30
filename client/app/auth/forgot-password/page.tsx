@@ -7,6 +7,9 @@ import { toast } from "react-toastify";
 import { Mail, ArrowLeft, AlertCircle, CheckCircle } from "lucide-react";
 import Link from "next/link";
 
+// Disable static generation for this page
+export const dynamic = 'force-dynamic';
+
 export default function ForgotPassword() {
   const initialState: FormState = {
     errors: {},

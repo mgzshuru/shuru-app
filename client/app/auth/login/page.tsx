@@ -10,6 +10,9 @@ import { Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle } from "lucide-react"
 import Link from "next/link";
 import React from "react";
 
+// Disable static generation for this page
+export const dynamic = 'force-dynamic';
+
 export default function SignIn() {
   const [showPassword, setShowPassword] = React.useState(false);
 
