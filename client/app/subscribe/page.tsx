@@ -1,4 +1,7 @@
 'use client'
+
+export const dynamic = 'force-dynamic'
+
 import React, { useState, useEffect } from 'react';
 import { Mail, User, TrendingUp, CheckCircle } from 'lucide-react';
 import { subscribe } from '@/lib/strapi-client';
