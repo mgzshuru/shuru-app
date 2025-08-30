@@ -33,9 +33,9 @@ function ChangePasswordForm() {
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
       </div>
     }>
-      <ChangePasswordFormContent 
-        state={state} 
-        formAction={formAction} 
+      <ChangePasswordFormContent
+        state={state}
+        formAction={formAction}
         IsPending={IsPending}
         showCurrentPassword={showCurrentPassword}
         setShowCurrentPassword={setShowCurrentPassword}
@@ -48,16 +48,16 @@ function ChangePasswordForm() {
   );
 }
 
-function ChangePasswordFormContent({ 
-  state, 
-  formAction, 
-  IsPending, 
-  showCurrentPassword, 
-  setShowCurrentPassword, 
-  showNewPassword, 
-  setShowNewPassword, 
-  showConfirmPassword, 
-  setShowConfirmPassword 
+function ChangePasswordFormContent({
+  state,
+  formAction,
+  IsPending,
+  showCurrentPassword,
+  setShowCurrentPassword,
+  showNewPassword,
+  setShowNewPassword,
+  showConfirmPassword,
+  setShowConfirmPassword
 }: any) {
   const router = useRouter();
 
