@@ -17,7 +17,7 @@ export default function ApprovedPage() {
           <h1 className="text-3xl font-bold text-green-800 mb-6">مبروك! تم قبول مقالك</h1>
 
           <p className="text-gray-600 text-lg leading-relaxed mb-4">
-            يسعدنا إعلامك أن مقالك قد تم قبوله للنشر في مجلة شروع!
+            يسعدنا إعلامك أن مقالك قد تم قبوله للنشر في شروع!
           </p>
 
           <p className="text-gray-600 text-base leading-relaxed mb-8">

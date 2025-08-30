@@ -255,7 +255,7 @@ export function CategoryStructuredData({ category, globalData }: CategoryStructu
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     "name": category.name,
-    "description": category.description || `مقالات فئة ${category.name} في مجلة شروع`,
+    "description": category.description || `مقالات فئة ${category.name} في شروع`,
     "url": categoryUrl,
     "publisher": {
       "@type": "Organization",

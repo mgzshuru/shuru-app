@@ -642,7 +642,7 @@ export async function getPageBySlug(slug: string) {
         return null;
       } catch (fallbackError) {
         console.error(`Minimal query also failed for slug ${slug}:`, fallbackError);
-        
+
         // Final fallback without populate
         try {
           console.log(`Attempting fallback query without populate for ${slug}`);

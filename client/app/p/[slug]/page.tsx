@@ -103,7 +103,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const richTextBlock = page.blocks?.find(block => block.__component === 'content.rich-text');
   const extractedDescription = page.description ||
     (richTextBlock?.content ? extractTextFromRichContent(richTextBlock.content, 160) : '') ||
-    'صفحة في موقع شروع للابتكار وريادة الأعمال';
+    'صفحة في موقع شروع';
 
   // Get SEO data from page or fallback
   const seoTitle = page.SEO?.meta_title ||

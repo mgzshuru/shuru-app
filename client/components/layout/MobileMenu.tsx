@@ -16,10 +16,9 @@ interface MobileMenuProps {
   isOpen: boolean;
   onClose: () => void;
   headerData: HeaderData;
-  isUserSubscribed?: boolean;
 }
 
-export default function MobileMenu({ isOpen, onClose, headerData, isUserSubscribed = false }: MobileMenuProps) {
+export default function MobileMenu({ isOpen, onClose, headerData }: MobileMenuProps) {
   const router = useRouter();
   const [latestIssue, setLatestIssue] = useState<any>(null);
   const { isAuthenticated, user, loading } = useAuth();
@@ -124,7 +123,6 @@ export default function MobileMenu({ isOpen, onClose, headerData, isUserSubscrib
             </>
           )}
 
-          {!isUserSubscribed && (
             <Button
               variant="default"
               size="default"
@@ -133,7 +131,6 @@ export default function MobileMenu({ isOpen, onClose, headerData, isUserSubscrib
             >
               {'اشترك الآن'}
             </Button>
-          )}
         </div>
 
         {/* Current Issue Section */}

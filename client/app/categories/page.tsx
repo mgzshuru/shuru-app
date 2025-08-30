@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
     const categoriesUrl = `${baseUrl}/categories`;
 
     const title = 'الفئات';
-    const description = 'تصفح جميع فئات المقالات في مجلة شروع';
+    const description = 'تصفح جميع فئات المقالات في شروع';
 
     const defaultImage = globalData?.defaultSeo?.og_image ?
       (getStrapiMedia(globalData.defaultSeo.og_image.url) || `${baseUrl}/og-image.jpg`) :
@@ -46,7 +46,7 @@ export async function generateMetadata(): Promise<Metadata> {
     console.error('Error generating metadata for categories:', error);
     return {
       title: 'الفئات | شروع',
-      description: 'تصفح جميع فئات المقالات في مجلة شروع',
+      description: 'تصفح جميع فئات المقالات في شروع',
     };
   }
 }
@@ -138,7 +138,7 @@ function PageHeader() {
             فئات المقالات
           </h1>
           <p className="text-lg text-gray-600 leading-relaxed max-w-2xl mx-auto">
-            تصفح مقالاتنا المصنفة حسب المواضيع المختلفة في عالم الابتكار وريادة الأعمال والتقنيات الناشئة
+            تصفح مقالاتنا المصنفة حسب المواضيع المختلفة
           </p>
         </div>
       </div>

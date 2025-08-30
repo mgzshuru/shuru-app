@@ -49,11 +49,11 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
       return {
         metadataBase: new URL(baseUrl),
         title: seo.meta_title || `${category.name}`,
-        description: seo.meta_description || category.description || `تصفح مقالات فئة ${category.name} في مجلة شروع`,
+        description: seo.meta_description || category.description || `تصفح مقالات فئة ${category.name} في شروع`,
         keywords: seo.meta_keywords?.split(',').map((k: string) => k.trim()) || undefined,
         openGraph: {
           title: seo.meta_title || `${category.name} | شروع`,
-          description: seo.meta_description || category.description || `تصفح مقالات فئة ${category.name} في مجلة شروع`,
+          description: seo.meta_description || category.description || `تصفح مقالات فئة ${category.name} في شروع`,
           url: categoryUrl,
           type: 'website',
           locale: 'ar_SA',
@@ -70,7 +70,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
         twitter: {
           card: 'summary_large_image',
           title: seo.meta_title || `${category.name} | شروع`,
-          description: seo.meta_description || category.description || `تصفح مقالات فئة ${category.name} في مجلة شروع`,
+          description: seo.meta_description || category.description || `تصفح مقالات فئة ${category.name} في شروع`,
           ...(seo.og_image && {
             images: [getStrapiMedia(seo.og_image.url) || defaultImage],
           }),
@@ -85,10 +85,10 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
     return {
       metadataBase: new URL(baseUrl),
       title: `${category.name} | شروع`,
-      description: category.description || `تصفح مقالات فئة ${category.name} في مجلة شروع للابتكار وريادة الأعمال`,
+      description: category.description || `تصفح مقالات فئة ${category.name} في شروع`,
       openGraph: {
         title: `${category.name} | شروع`,
-        description: category.description || `تصفح مقالات فئة ${category.name} في مجلة شروع للابتكار وريادة الأعمال`,
+        description: category.description || `تصفح مقالات فئة ${category.name} في شروع`,
         url: categoryUrl,
         type: 'website',
         locale: 'ar_SA',
@@ -98,7 +98,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
       twitter: {
         card: 'summary_large_image',
         title: `${category.name} | شروع`,
-        description: category.description || `تصفح مقالات فئة ${category.name} في مجلة شروع للابتكار وريادة الأعمال`,
+        description: category.description || `تصفح مقالات فئة ${category.name} في شروع للابتكار`,
         images: [defaultImage],
       },
       alternates: {

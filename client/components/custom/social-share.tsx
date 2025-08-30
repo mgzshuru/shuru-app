@@ -17,7 +17,7 @@ export function SocialShare({ title, url, description, slug }: SocialShareProps)
     `${window.location.origin}/articles/${slug}` :
     'https://www.shuru.sa');
 
-  const shareText = `${title} - مجلة شروع`;
+  const shareText = `${title} - شروع`;
 
   const shareLinks = {
     linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,

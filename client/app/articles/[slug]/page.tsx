@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     const richTextBlock = article.blocks?.find((block: Block) => block.__component === 'content.rich-text');
     const extractedDescription = article.description ||
       (richTextBlock?.content ? extractTextFromRichContent(richTextBlock.content, 160) : '') ||
-      'مقال في مجلة شروع';
+      'مقال في شروع';
 
     // Get SEO data from article or fallback
     const seoTitle = article.SEO?.meta_title ||
@@ -58,7 +58,6 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     const seoKeywords = article.SEO?.meta_keywords?.split(',').map((k: string) => k.trim()).filter(Boolean) || [
       ...(article.categories?.map((cat: any) => cat.name) || []),
       'شروع',
-      'ريادة الأعمال',
       'الابتكار',
       'القيادة',
     ].filter(Boolean) as string[];
@@ -186,7 +185,7 @@ function MagazineIssues({ issues }: { issues: Article['magazine_issues'] }) {
           </svg>
         </div>
         <h3 className="text-base md:text-lg font-semibold text-gray-900">
-          نُشر هذا المقال ضمن إصدارات مجلة شروع
+          نُشر هذا المقال ضمن إصدارات شروع
         </h3>
       </div>
       <div className="space-y-3">
@@ -621,7 +620,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               "@id": `https://www.shuru.sa/articles/${article.slug}`
             },
             "articleSection": article.categories?.[0]?.name,
-            "keywords": article.SEO?.meta_keywords || [...(article.categories?.map((cat: any) => cat.name) || []), 'شروع', 'ريادة الأعمال'].filter(Boolean).join(','),
+            "keywords": article.SEO?.meta_keywords || [...(article.categories?.map((cat: any) => cat.name) || []), 'شروع',].filter(Boolean).join(','),
             "wordCount": article.blocks?.reduce((count, block) => {
               if (block.__component === 'content.rich-text') {
                 return count + (block.content?.split(' ').length || 0);

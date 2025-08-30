@@ -34,7 +34,7 @@ export default async function Home() {
     return (
       <main className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center max-w-2xl mx-auto px-4">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">مرحباً بك في مجلة شروع</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">مرحباً بك في شروع</h1>
           <p className="text-lg text-gray-600 mb-8">
             المنصة الرقمية المتخصصة في مجالات إدارة المشاريع، القيادة، التحول الرقمي، والابتكار
           </p>

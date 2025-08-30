@@ -46,16 +46,16 @@ export async function generateMetadata({ searchParams }: ArticlesPageProps): Pro
 
     // Dynamic title based on search parameters
     let title = 'المقالات';
-    let description = 'تصفح جميع المقالات في مجلة شروع';
+    let description = 'تصفح جميع المقالات في شروع';
     const defaultImage = globalData?.defaultSeo?.og_image ?
           (getStrapiMedia(globalData.defaultSeo.og_image.url) || `${baseUrl}/og-image.jpg`) :
           `${baseUrl}/og-image.jpg`;
     if (search) {
       title = `البحث: ${search} - المقالات`;
-      description = `نتائج البحث عن "${search}" في مقالات مجلة شروع`;
+      description = `نتائج البحث عن "${search}" في مقالات شروع`;
     } else if (categoryName) {
       title = `${categoryName} - المقالات`;
-      description = `مقالات فئة ${categoryName} في مجلة شروع`;
+      description = `مقالات فئة ${categoryName} في شروع`;
     } else if (page && parseInt(page) > 1) {
       title = `المقالات - الصفحة ${page}`;
     }
@@ -90,7 +90,7 @@ export async function generateMetadata({ searchParams }: ArticlesPageProps): Pro
     console.error('Error generating metadata for articles page:', error);
     return {
       title: 'المقالات | شروع',
-      description: 'تصفح جميع المقالات في مجلة شروع',
+      description: 'تصفح جميع المقالات في شروع',
     };
   }
 }
@@ -119,14 +119,14 @@ function Breadcrumbs({ search, category }: { search?: string; category?: string 
 // Page Header Component
 function PageHeader({ search, category }: { search?: string; category?: string }) {
   let title = 'المقالات';
-  let description = 'اكتشف أحدث المقالات والأفكار في عالم الابتكار وريادة الأعمال والتقنيات الناشئة';
+  let description = 'اكتشف أحدث المقالات والأفكار في عالم الابتكار والتقنيات الناشئة';
 
   if (search) {
     title = `نتائج البحث: ${search}`;
-    description = `نتائج البحث عن "${search}" في مقالات مجلة شروع`;
+    description = `نتائج البحث عن "${search}" في مقالات شروع`;
   } else if (category) {
     title = `مقالات فئة: ${category}`;
-    description = `تصفح مقالات فئة ${category} في مجلة شروع`;
+    description = `تصفح مقالات فئة ${category} في شروع`;
   }
 
   return (

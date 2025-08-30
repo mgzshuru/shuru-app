@@ -872,7 +872,7 @@ export default function SubmitPage() {
                 className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed"
                 dangerouslySetInnerHTML={{
                   __html: submitPageContent.pageSubtitle ||
-                    'انضم إلى مجتمع الكتّاب والخبراء في شروع وشارك معرفتك مع آلاف القراء المهتمين بريادة الأعمال والابتكار'
+                    'انضم إلى مجتمع الكتّاب والخبراء في شروع وشارك معرفتك مع آلاف القراء المهتمين'
                 }}
               />
             </div>

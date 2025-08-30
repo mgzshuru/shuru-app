@@ -618,31 +618,31 @@ export async function subscribe(email: string, name: string) {
   }
 }
 
-export async function checkSubscriptionStatus(email: string) {
-  try {
-    const response = await fetch(`${STRAPI_BASE_URL}/api/subscribers?filters[email][$eq]=${encodeURIComponent(email)}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+// export async function checkSubscriptionStatus(email: string) {
+//   try {
+//     const response = await fetch(`${STRAPI_BASE_URL}/api/subscribers?filters[email][$eq]=${encodeURIComponent(email)}`, {
+//       method: 'GET',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//     });
 
-    if (!response.ok) {
-      return { success: false, isSubscribed: false, error: `HTTP ${response.status}` };
-    }
+//     if (!response.ok) {
+//       return { success: false, isSubscribed: false, error: `HTTP ${response.status}` };
+//     }
 
-    const result = await response.json();
-    const isSubscribed = result.data && result.data.length > 0;
+//     const result = await response.json();
+//     const isSubscribed = result.data && result.data.length > 0;
 
-    return {
-      success: true,
-      isSubscribed: isSubscribed,
-      subscriber: isSubscribed ? result.data[0] : null
-    };
-  } catch (error: any) {
-    return { success: false, isSubscribed: false, error: error.message };
-  }
-}
+//     return {
+//       success: true,
+//       isSubscribed: isSubscribed,
+//       subscriber: isSubscribed ? result.data[0] : null
+//     };
+//   } catch (error: any) {
+//     return { success: false, isSubscribed: false, error: error.message };
+//   }
+// }
 
 // =====================
 // PAGE FUNCTIONS

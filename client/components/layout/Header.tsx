@@ -19,7 +19,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { logoutAction } from '@/app/actions/auth';
 import { useAuth } from '@/hooks/use-auth';
-import { checkSubscriptionStatus } from '@/lib/strapi-client';
 
 interface HeaderProps {
   headerData: HeaderData;
@@ -30,8 +29,6 @@ export default function Header({ headerData }: HeaderProps) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const [isSubscribed, setIsSubscribed] = useState(false);
-  const [checkingSubscription, setCheckingSubscription] = useState(false);
   const [isSafari, setIsSafari] = useState(false);
   const router = useRouter();
   const { isAuthenticated, user, loading } = useAuth();
@@ -51,28 +48,6 @@ export default function Header({ headerData }: HeaderProps) {
       console.error('Logout failed:', error);
     }
   };
-
-  // Check subscription status when user is authenticated
-  useEffect(() => {
-    const checkUserSubscription = async () => {
-      if (isAuthenticated && user?.email && !loading) {
-        setCheckingSubscription(true);
-        try {
-          const result = await checkSubscriptionStatus(user.email);
-          setIsSubscribed(result.isSubscribed);
-        } catch (error) {
-          console.error('Error checking subscription status:', error);
-          setIsSubscribed(false);
-        } finally {
-          setCheckingSubscription(false);
-        }
-      } else {
-        setIsSubscribed(false);
-      }
-    };
-
-    checkUserSubscription();
-  }, [isAuthenticated, user?.email, loading]);
 
   // Handle scroll events
   useEffect(() => {
@@ -221,8 +196,7 @@ export default function Header({ headerData }: HeaderProps) {
 
         {/* Right Section */}
         <div className="flex justify-end items-stretch gap-1 sm:gap-2 lg:gap-6 h-full safari-flex-fix">
-          {/* Show subscribe button only if user is not authenticated OR not subscribed */}
-          {(!isAuthenticated || !isSubscribed) && (
+          {/* Show subscribe button only if user is not authenticated */}
             <Link href="/subscribe" className="flex items-stretch">
               <Button
                 variant="default"
@@ -232,7 +206,6 @@ export default function Header({ headerData }: HeaderProps) {
                 {'اشترك الآن'}
               </Button>
             </Link>
-          )}
 
           {/* Desktop Search Icon */}
           <Button
@@ -278,7 +251,6 @@ export default function Header({ headerData }: HeaderProps) {
         isOpen={isMenuOpen}
         onClose={() => setIsMenuOpen(false)}
         headerData={headerData}
-        isUserSubscribed={isSubscribed}
       />
 
       {/* Search Overlay */}
