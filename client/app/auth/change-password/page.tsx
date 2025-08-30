@@ -1,7 +1,5 @@
 "use client";
 
-export const dynamic = 'force-dynamic';
-
 import React, { useActionState, useEffect, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { changePasswordAction } from "@/app/actions/auth";
@@ -10,8 +8,9 @@ import { toast } from "react-toastify";
 import { Lock, Eye, EyeOff, AlertCircle, CheckCircle } from "lucide-react";
 import Link from "next/link";
 
+export const dynamic = 'force-dynamic';
+
 function ChangePasswordForm() {
-  const router = useRouter();
   const [showCurrentPassword, setShowCurrentPassword] = React.useState(false);
   const [showNewPassword, setShowNewPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
@@ -27,6 +26,40 @@ function ChangePasswordForm() {
     changePasswordAction,
     initialState
   );
+
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
+      </div>
+    }>
+      <ChangePasswordFormContent 
+        state={state} 
+        formAction={formAction} 
+        IsPending={IsPending}
+        showCurrentPassword={showCurrentPassword}
+        setShowCurrentPassword={setShowCurrentPassword}
+        showNewPassword={showNewPassword}
+        setShowNewPassword={setShowNewPassword}
+        showConfirmPassword={showConfirmPassword}
+        setShowConfirmPassword={setShowConfirmPassword}
+      />
+    </Suspense>
+  );
+}
+
+function ChangePasswordFormContent({ 
+  state, 
+  formAction, 
+  IsPending, 
+  showCurrentPassword, 
+  setShowCurrentPassword, 
+  showNewPassword, 
+  setShowNewPassword, 
+  showConfirmPassword, 
+  setShowConfirmPassword 
+}: any) {
+  const router = useRouter();
 
   useEffect(() => {
     if (state.success) {
@@ -196,10 +229,18 @@ function ChangePasswordForm() {
 
 export default function ChangePassword() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
-    </div>}>
-      <ChangePasswordForm />
+    <Suspense fallback={
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
+      </div>
+    }>
+      <Suspense fallback={
+        <div className="min-h-screen bg-white flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
+        </div>
+      }>
+        <ChangePasswordForm />
+      </Suspense>
     </Suspense>
   );
 }
