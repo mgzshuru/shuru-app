@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -371,11 +371,29 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
 
         <main className="max-w-7xl mx-auto px-6 py-12">
           {/* Search and Filter */}
-          <SearchAndFilterClient
-            categories={categories}
-            currentSearch={search}
-            currentCategory={category}
-          />
+          <Suspense fallback={
+            <div className="bg-white border border-gray-200 p-8 mb-12">
+              <div className="animate-pulse">
+                <div className="h-6 bg-gray-200 rounded w-32 mb-6"></div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="md:col-span-2">
+                    <div className="h-4 bg-gray-200 rounded w-24 mb-3"></div>
+                    <div className="h-12 bg-gray-200 rounded"></div>
+                  </div>
+                  <div>
+                    <div className="h-4 bg-gray-200 rounded w-24 mb-3"></div>
+                    <div className="h-12 bg-gray-200 rounded"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }>
+            <SearchAndFilterClient
+              categories={categories}
+              currentSearch={search}
+              currentCategory={category}
+            />
+          </Suspense>
 
           {/* Featured Articles (only on first page without filters) */}
           {showFeatured && (

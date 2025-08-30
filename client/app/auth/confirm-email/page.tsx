@@ -52,6 +52,26 @@ function ConfirmEmailFormContent({
   formAction: any;
   isPending: boolean;
 }) {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
+      </div>
+    }>
+      <ConfirmEmailFormInner state={state} formAction={formAction} isPending={isPending} />
+    </Suspense>
+  );
+}
+
+function ConfirmEmailFormInner({
+  state,
+  formAction,
+  isPending
+}: {
+  state: FormState;
+  formAction: any;
+  isPending: boolean;
+}) {
   // useSearchParams to get the email from the URL
   const searchParams = useSearchParams();
   const userEmail = searchParams.get("email") || "";

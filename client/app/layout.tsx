@@ -10,6 +10,7 @@ import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics'
 import Script from 'next/script'
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Suspense } from "react";
 
 const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
   subsets: ["arabic"],
@@ -281,7 +282,11 @@ export default async function RootLayout({
         />
       </head>
       <body className="font-sans" suppressHydrationWarning>
-        {GA_MEASUREMENT_ID && <GoogleAnalytics GA_MEASUREMENT_ID={GA_MEASUREMENT_ID} />}
+        {GA_MEASUREMENT_ID &&
+          <Suspense fallback={null}>
+            <GoogleAnalytics GA_MEASUREMENT_ID={GA_MEASUREMENT_ID} />
+          </Suspense>
+        }
 
         <MainLayout globalData={globalData as GlobalData}>
           <ToastContainer

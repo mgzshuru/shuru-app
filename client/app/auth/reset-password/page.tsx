@@ -13,12 +13,6 @@ import React from "react";
 export const dynamic = 'force-dynamic';
 
 function ResetPasswordForm() {
-  const router = useRouter();
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
-  const searchParams = useSearchParams();
-  const code = searchParams.get("code");
-
   const initialState: FormState = {
     errors: {},
     values: {},
@@ -30,6 +24,76 @@ function ResetPasswordForm() {
     resetPasswordAction,
     initialState
   );
+
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
+      </div>
+    }>
+      <ResetPasswordFormContent
+        state={state}
+        formAction={formAction}
+        IsPending={IsPending}
+      />
+    </Suspense>
+  );
+}
+
+function ResetPasswordFormContent({
+  state,
+  formAction,
+  IsPending
+}: {
+  state: FormState;
+  formAction: any;
+  IsPending: boolean;
+}) {
+  const router = useRouter();
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
+      </div>
+    }>
+      <ResetPasswordFormInner
+        state={state}
+        formAction={formAction}
+        IsPending={IsPending}
+        router={router}
+        showPassword={showPassword}
+        setShowPassword={setShowPassword}
+        showConfirmPassword={showConfirmPassword}
+        setShowConfirmPassword={setShowConfirmPassword}
+      />
+    </Suspense>
+  );
+}
+
+function ResetPasswordFormInner({
+  state,
+  formAction,
+  IsPending,
+  router,
+  showPassword,
+  setShowPassword,
+  showConfirmPassword,
+  setShowConfirmPassword
+}: {
+  state: FormState;
+  formAction: any;
+  IsPending: boolean;
+  router: any;
+  showPassword: boolean;
+  setShowPassword: React.Dispatch<React.SetStateAction<boolean>>;
+  showConfirmPassword: boolean;
+  setShowConfirmPassword: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+  const searchParams = useSearchParams();
+  const code = searchParams.get("code");
 
   useEffect(() => {
     if (state.success) {
