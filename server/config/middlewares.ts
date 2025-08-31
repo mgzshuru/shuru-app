@@ -72,7 +72,17 @@ export default [
   'strapi::poweredBy',
   'strapi::query',
   'strapi::body',
-  'strapi::session',
+  {
+    name: 'strapi::session',
+    config: {
+      cookie: {
+        secure: process.env.NODE_ENV === 'production',
+        httpOnly: true,
+        maxAge: 86400000, // 24 hours
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      },
+    },
+  },
   'strapi::favicon',
   'strapi::public',
 ];
