@@ -75,12 +75,16 @@ export default ({ env }) => [
   {
     name: 'strapi::session',
     config: {
-      cookie: {
-        secure: env('NODE_ENV') === 'production',
-        httpOnly: true,
-        maxAge: 86400000, // 24 hours
-        sameSite: env('NODE_ENV') === 'production' ? 'none' : 'lax',
-      },
+      key: 'koa.sess', // session cookie name
+      maxAge: 86400000, // 24 hours in ms
+      autoCommit: true,
+      overwrite: true,
+      httpOnly: true,
+      signed: true,
+      rolling: false,
+      renew: false,
+      secure: false, // Explicitly disable secure cookies for all environments initially
+      sameSite: 'lax', // More permissive for development
     },
   },
   'strapi::favicon',
