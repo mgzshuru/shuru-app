@@ -8,6 +8,52 @@ You're getting a **500 Internal Server Error** when accessing:
 
 This indicates a server-side configuration issue in your Strapi instance.
 
+## LinkedIn Scope Error Fix
+
+### Problem: `unauthorized_scope_error` for `r_emailaddress`
+
+LinkedIn has deprecated the `r_emailaddress` scope. The error you're seeing:
+```
+/api/connect/linkedin/callback?error=unauthorized_scope_error&error_description=Scope+%26quot%3Br_emailaddress%26quot%3B+is+not+authorized+for+your+application
+```
+
+### Solution:
+
+1. **Update LinkedIn API Scopes**: LinkedIn v2 API uses different scopes:
+   - **Old (deprecated)**: `r_emailaddress`, `r_basicprofile`
+   - **New**: `email`, `openid`, `profile`
+
+2. **Configure Strapi**: Update your `server/config/plugins.ts` to include LinkedIn OAuth with correct scopes:
+   ```typescript
+   'users-permissions': {
+     config: {
+       providers: {
+         linkedin: {
+           enabled: true,
+           icon: 'linkedin',
+           key: env('LINKEDIN_CLIENT_ID'),
+           secret: env('LINKEDIN_CLIENT_SECRET'),
+           callback: `${env('STRAPI_URL')}/api/auth/linkedin/callback`,
+           scope: ['email', 'openid', 'profile'], // Updated scopes
+         },
+       },
+     },
+   },
+   ```
+
+3. **Update LinkedIn App**: In LinkedIn Developer Portal, ensure your app has access to:
+   - OpenID Connect product
+   - Profile API product
+
+4. **Environment Variables**: Add these to your server environment:
+   ```env
+   LINKEDIN_CLIENT_ID=your-linkedin-client-id
+   LINKEDIN_CLIENT_SECRET=your-linkedin-client-secret
+   GOOGLE_CLIENT_ID=your-google-client-id
+   GOOGLE_CLIENT_SECRET=your-google-client-secret
+   STRAPI_URL=https://cms.shuru.sa
+   ```
+
 ## Step-by-Step Solution
 
 ### 1. **Check Strapi Admin Panel Configuration**
