@@ -93,6 +93,25 @@ export default ({ env }) => ({
       register: {
         allowedFields: ['username', 'email', 'password'],
       },
+      // OAuth providers configuration
+      providers: {
+        google: {
+          enabled: true,
+          icon: 'google',
+          key: env('GOOGLE_CLIENT_ID'),
+          secret: env('GOOGLE_CLIENT_SECRET'),
+          callback: '/api/auth/google/callback',
+          scope: ['email', 'profile'],
+        },
+        linkedin: {
+          enabled: true,
+          icon: 'linkedin',
+          key: env('LINKEDIN_CLIENT_ID'),
+          secret: env('LINKEDIN_CLIENT_SECRET'),
+          callback: '/api/connect/linkedin/callback',
+          scope: ['r_liteprofile', 'r_emailaddress'],
+        },
+      },
     },
   },
 });
