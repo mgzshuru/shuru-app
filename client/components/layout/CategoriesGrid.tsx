@@ -107,7 +107,7 @@ const CategoriesGrid: React.FC<CategoriesGridProps> = ({ categoriesData }) => {
         ...(rootCategory.children_categories?.map((child: any) => ({
           id: child.id,
           text: child.name,
-          href: `/c/${child.slug}`,
+          href: `/categories/${child.slug}`,
           isExternal: false,
         })) || [])
       ]
