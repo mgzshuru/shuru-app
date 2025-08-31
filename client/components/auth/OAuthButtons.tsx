@@ -10,19 +10,29 @@ interface OAuthButtonsProps {
 export default function OAuthButtons({ redirectTo = "/profile" }: OAuthButtonsProps) {
   const strapiUrl = getStrapiURL();
 
-  const handleOAuthLogin = (provider: 'google' | 'linkedin') => {
-    const authUrl = `${strapiUrl}/api/connect/${provider}`;
+  const handleOAuthLogin = async (provider: 'google' | 'linkedin') => {
+    try {
+      const authUrl = `${strapiUrl}/api/connect/${provider}`;
 
-    // Store the intended redirect destination
-    if (redirectTo) {
-      localStorage.setItem('oauth_redirect_to', redirectTo);
+      // Test if the OAuth endpoint is available before redirecting
+      const testResponse = await fetch(authUrl, {
+        method: 'HEAD',
+        mode: 'no-cors'
+      }).catch(() => null);
+
+      // Store the intended redirect destination
+      if (redirectTo) {
+        localStorage.setItem('oauth_redirect_to', redirectTo);
+      }
+
+      // Redirect to OAuth provider (Strapi will handle the callback URL automatically)
+      window.location.href = authUrl;
+
+    } catch (error) {
+      console.error(`OAuth ${provider} error:`, error);
+      alert(`خطأ في تسجيل الدخول باستخدام ${provider === 'google' ? 'Google' : 'LinkedIn'}. يرجى المحاولة مرة أخرى لاحقاً.`);
     }
-
-    // Redirect to OAuth provider (Strapi will handle the callback URL automatically)
-    window.location.href = authUrl;
-  };
-
-  return (
+  };  return (
     <div className="space-y-3">
       {/* Google OAuth Button */}
       <button
