@@ -83,16 +83,4 @@ export default ({ env }) => ({
       },
     },
   },
-  'users-permissions': {
-    config: {
-      email: {
-        from: env('SMTP_FROM'),
-        replyTo: env('SMTP_REPLY_TO'),
-      },
-      // Enable email confirmation and password reset
-      register: {
-        allowedFields: ['username', 'email', 'password'],
-      },
-    },
-  },
 });
