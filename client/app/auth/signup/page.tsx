@@ -61,9 +61,9 @@ export default function SignUp() {
           {/* Signup Form */}
           <form action={formAction} className="space-y-6">
             {/* OAuth Buttons */}
-            <div className="mb-6">
+            {/* <div className="mb-6">
               <OAuthButtons />
-            </div>
+            </div> */}
 
             {/* Divider */}
             <div className="relative my-6">
