@@ -1,14 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { getStrapiURL } from "@/lib/utils";
-
-const config = {
-  maxAge: 60 * 60 * 24 * 7, // 1 week
-  path: "/",
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "lax" as const,
-};
+import { createSession } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 export async function GET(
@@ -55,9 +48,17 @@ export async function GET(
     return NextResponse.redirect(errorRedirectUrl);
   }
 
-  console.log("Setting JWT cookie");
-  const cookieStore = await cookies();
-  cookieStore.set("jwt", data.jwt, config);
+  console.log("Creating session for user");
+
+  // Create a session payload with the JWT and user data from Strapi
+  const sessionPayload = {
+    jwt: data.jwt,
+    user: data.user,
+    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+  };
+
+  // Create the session using the session management system
+  await createSession(sessionPayload);
 
   console.log("Redirecting to home after successful authentication");
 
