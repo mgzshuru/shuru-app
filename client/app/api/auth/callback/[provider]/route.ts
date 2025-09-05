@@ -11,10 +11,13 @@ const config = {
 };
 
 export const dynamic = "force-dynamic";
-export async function GET(request: Request) {
-  const { searchParams, pathname } = new URL(request.url);
+export async function GET(
+  request: Request,
+  { params }: { params: { provider: string } }
+) {
+  const { searchParams } = new URL(request.url);
   const token = searchParams.get("access_token");
-  const provider = pathname.split("/")[2];
+  const provider = params.provider;
 
   if (!token) return NextResponse.redirect(new URL("/", request.url));
 
