@@ -10,18 +10,21 @@ export async function GET(
   const error = searchParams.get('error');
   const provider = params.provider;
 
+  // Get the correct base URL for redirects
+  const baseUrl = process.env.NEXTAUTH_URL || request.nextUrl.origin;
+
   // Handle OAuth errors
   if (error) {
     console.error(`OAuth ${provider} error:`, error);
     return NextResponse.redirect(
-      new URL(`/auth/login?error=${encodeURIComponent('Authentication failed')}`, request.url)
+      new URL(`/auth/login?error=${encodeURIComponent('Authentication failed')}`, baseUrl)
     );
   }
 
   if (!code) {
     console.error(`No authorization code received from ${provider}`);
     return NextResponse.redirect(
-      new URL(`/auth/login?error=${encodeURIComponent('No authorization code received')}`, request.url)
+      new URL(`/auth/login?error=${encodeURIComponent('No authorization code received')}`, baseUrl)
     );
   }
 
@@ -59,12 +62,12 @@ export async function GET(
     });
 
     // Redirect to profile page
-    return NextResponse.redirect(new URL('/profile', request.url));
+    return NextResponse.redirect(new URL('/profile', baseUrl));
 
   } catch (error) {
     console.error(`OAuth ${provider} callback error:`, error);
     return NextResponse.redirect(
-      new URL(`/auth/login?error=${encodeURIComponent('Authentication failed')}`, request.url)
+      new URL(`/auth/login?error=${encodeURIComponent('Authentication failed')}`, baseUrl)
     );
   }
 }

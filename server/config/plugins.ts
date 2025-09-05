@@ -1,27 +1,4 @@
 export default ({ env }) => ({
-  // OAuth providers configuration
-  'users-permissions': {
-    config: {
-      providers: {
-        linkedin: {
-          enabled: true,
-          icon: 'linkedin',
-          key: env('LINKEDIN_CLIENT_ID'),
-          secret: env('LINKEDIN_CLIENT_SECRET'),
-          callback: `${env('STRAPI_URL', 'http://localhost:1337')}/api/auth/linkedin/callback`,
-          scope: ['email', 'openid', 'profile'], // Updated LinkedIn v2 API scopes
-        },
-        google: {
-          enabled: true,
-          icon: 'google',
-          key: env('GOOGLE_CLIENT_ID'),
-          secret: env('GOOGLE_CLIENT_SECRET'),
-          callback: `${env('STRAPI_URL', 'http://localhost:1337')}/api/auth/google/callback`,
-          scope: ['email', 'profile'], // Google OAuth scopes
-        },
-      },
-    },
-  },
   upload: {
     config: {
       provider: 'aws-s3',

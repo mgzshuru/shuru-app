@@ -197,7 +197,7 @@ export default function Header({ headerData }: HeaderProps) {
         {/* Right Section */}
         <div className="flex justify-end items-stretch gap-1 sm:gap-2 lg:gap-6 h-full safari-flex-fix">
           {/* Show subscribe button only if user is not authenticated */}
-            <Link href="/subscribe" className="flex items-stretch">
+            {/* <Link href="/subscribe" className="flex items-stretch">
               <Button
                 variant="default"
                 size="sm"
@@ -205,7 +205,7 @@ export default function Header({ headerData }: HeaderProps) {
               >
                 {'اشترك الآن'}
               </Button>
-            </Link>
+            </Link> */}
 
           {/* Desktop Search Icon */}
           <Button
