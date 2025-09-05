@@ -96,7 +96,6 @@ export async function GET(
                 username: username,
                 email: tokenData.email,
                 password: 'oauth-user-' + tokenData.sub + '-' + Date.now(),
-                confirmed: true,
               }),
             });
 
@@ -123,7 +122,6 @@ export async function GET(
               username: username,
               email: tokenData.email,
               password: 'oauth-user-' + tokenData.sub + '-' + Date.now(),
-              confirmed: true,
             }),
           });
 
