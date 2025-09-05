@@ -24,7 +24,10 @@ export async function GET(
 
   if (!token) {
     console.log("No token received, redirecting to home");
-    return NextResponse.redirect(new URL("/", request.url));
+    const noTokenRedirectUrl = process.env.NODE_ENV === "production"
+      ? process.env.NEXT_PUBLIC_SITE_URL || "https://shuru.sa"
+      : new URL("/", request.url).toString();
+    return NextResponse.redirect(noTokenRedirectUrl);
   }
 
   const backendUrl = getStrapiURL();
@@ -46,7 +49,10 @@ export async function GET(
   // Check if authentication was successful
   if (!res.ok || !data.jwt) {
     console.error("OAuth authentication failed:", data);
-    return NextResponse.redirect(new URL("/?error=auth_failed", request.url));
+    const errorRedirectUrl = process.env.NODE_ENV === "production"
+      ? (process.env.NEXT_PUBLIC_SITE_URL || "https://shuru.sa") + "/?error=auth_failed"
+      : new URL("/?error=auth_failed", request.url).toString();
+    return NextResponse.redirect(errorRedirectUrl);
   }
 
   console.log("Setting JWT cookie");
@@ -54,5 +60,12 @@ export async function GET(
   cookieStore.set("jwt", data.jwt, config);
 
   console.log("Redirecting to home after successful authentication");
-  return NextResponse.redirect(new URL("/", request.url));
+
+  // Use absolute URL for production to avoid localhost redirects
+  const redirectUrl = process.env.NODE_ENV === "production"
+    ? process.env.NEXT_PUBLIC_SITE_URL || "https://shuru.sa"
+    : new URL("/", request.url).toString();
+
+  console.log("Redirect URL:", redirectUrl);
+  return NextResponse.redirect(redirectUrl);
 }
