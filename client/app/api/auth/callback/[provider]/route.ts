@@ -8,10 +8,18 @@ export async function GET(
   const searchParams = request.nextUrl.searchParams;
   const code = searchParams.get('code');
   const error = searchParams.get('error');
+  const state = searchParams.get('state');
   const provider = params.provider;
 
   // Get the correct base URL for redirects
   const baseUrl = process.env.NEXTAUTH_URL || request.nextUrl.origin;
+
+  console.log(`OAuth ${provider} callback received:`, {
+    code: code ? 'present' : 'missing',
+    error,
+    state,
+    searchParams: Object.fromEntries(searchParams.entries())
+  });
 
   // Handle OAuth errors
   if (error) {
@@ -22,7 +30,7 @@ export async function GET(
   }
 
   if (!code) {
-    console.error(`No authorization code received from ${provider}`);
+    console.error(`No authorization code received from ${provider}. Full URL:`, request.url);
     return NextResponse.redirect(
       new URL(`/auth/login?error=${encodeURIComponent('No authorization code received')}`, baseUrl)
     );
@@ -31,10 +39,9 @@ export async function GET(
   try {
     // Exchange code for tokens with Strapi
     const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337';
-    const callbackUrl = `${strapiUrl}/api/auth/${provider}/callback`;
 
-    // Create the full callback URL with the code
-    const tokenResponse = await fetch(`${callbackUrl}?code=${code}`, {
+    // Send the authorization code to Strapi for token exchange
+    const tokenResponse = await fetch(`${strapiUrl}/api/auth/${provider}/callback?code=${code}${state ? `&state=${state}` : ''}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -44,10 +51,11 @@ export async function GET(
     if (!tokenResponse.ok) {
       const errorData = await tokenResponse.text();
       console.error(`Strapi ${provider} callback error:`, errorData);
-      throw new Error(`OAuth ${provider} callback failed`);
+      throw new Error(`OAuth ${provider} callback failed: ${errorData}`);
     }
 
     const authData = await tokenResponse.json();
+    console.log(`Strapi ${provider} response:`, authData);
 
     // Check if we have the required data
     if (!authData.jwt || !authData.user) {
@@ -60,6 +68,8 @@ export async function GET(
       user: authData.user,
       jwt: authData.jwt,
     });
+
+    console.log(`OAuth ${provider} success for user:`, authData.user.email);
 
     // Redirect to profile page
     return NextResponse.redirect(new URL('/profile', baseUrl));
