@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 interface User {
   id: number;
@@ -12,39 +12,36 @@ interface AuthState {
   isAuthenticated: boolean;
   user: User | null;
   loading: boolean;
+  refreshAuth: () => Promise<void>;
 }
 
 export function useAuth(): AuthState {
-  const [authState, setAuthState] = useState<AuthState>({
+  const [authState, setAuthState] = useState<{
+    isAuthenticated: boolean;
+    user: User | null;
+    loading: boolean;
+  }>({
     isAuthenticated: false,
     user: null,
     loading: true,
   });
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        // Make a request to check authentication status
-        const response = await fetch('/api/auth/verify', {
-          method: 'GET',
-          credentials: 'include',
-        });
+  const checkAuth = useCallback(async () => {
+    try {
+      // Make a request to check authentication status
+      const response = await fetch('/api/auth/verify', {
+        method: 'GET',
+        credentials: 'include',
+      });
 
-        if (response.ok) {
-          const data = await response.json();
-          if (data.isAuthenticated && data.user) {
-            setAuthState({
-              isAuthenticated: true,
-              user: data.user,
-              loading: false,
-            });
-          } else {
-            setAuthState({
-              isAuthenticated: false,
-              user: null,
-              loading: false,
-            });
-          }
+      if (response.ok) {
+        const data = await response.json();
+        if (data.isAuthenticated && data.user) {
+          setAuthState({
+            isAuthenticated: true,
+            user: data.user,
+            loading: false,
+          });
         } else {
           setAuthState({
             isAuthenticated: false,
@@ -52,18 +49,34 @@ export function useAuth(): AuthState {
             loading: false,
           });
         }
-      } catch (error) {
-        console.error('Auth check failed:', error);
+      } else {
         setAuthState({
           isAuthenticated: false,
           user: null,
           loading: false,
         });
       }
-    };
-
-    checkAuth();
+    } catch (error) {
+      console.error('Auth check failed:', error);
+      setAuthState({
+        isAuthenticated: false,
+        user: null,
+        loading: false,
+      });
+    }
   }, []);
 
-  return authState;
+  const refreshAuth = useCallback(async () => {
+    setAuthState(prev => ({ ...prev, loading: true }));
+    await checkAuth();
+  }, [checkAuth]);
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  return {
+    ...authState,
+    refreshAuth,
+  };
 }

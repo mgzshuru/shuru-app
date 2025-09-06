@@ -17,7 +17,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { logoutAction } from '@/app/actions/auth';
 import { useAuth } from '@/hooks/use-auth';
 
 interface HeaderProps {
@@ -31,7 +30,7 @@ export default function Header({ headerData }: HeaderProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isSafari, setIsSafari] = useState(false);
   const router = useRouter();
-  const { isAuthenticated, user, loading } = useAuth();
+  const { isAuthenticated, user, loading, refreshAuth } = useAuth();
 
   // Detect Safari browser
   useEffect(() => {
@@ -42,8 +41,20 @@ export default function Header({ headerData }: HeaderProps) {
 
   const handleLogout = async () => {
     try {
-      await logoutAction();
-      router.refresh();
+      // Call the logout API endpoint
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        // Refresh auth state immediately after logout
+        await refreshAuth();
+        // Navigate to home page
+        router.push('/');
+      } else {
+        console.error('Logout failed');
+      }
     } catch (error) {
       console.error('Logout failed:', error);
     }
