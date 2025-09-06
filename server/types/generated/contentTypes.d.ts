@@ -566,48 +566,6 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
   };
 }
 
-export interface ApiComingSoonComingSoon extends Struct.SingleTypeSchema {
-  collectionName: 'coming_soons';
-  info: {
-    description: 'Coming soon page content and configuration';
-    displayName: 'Coming Soon';
-    pluralName: 'coming-soons';
-    singularName: 'coming-soon';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    blocks: Schema.Attribute.DynamicZone<
-      [
-        'coming-soon.hero',
-        'coming-soon.features-grid',
-        'coming-soon.team',
-        'coming-soon.newsletter',
-        'coming-soon.timeline',
-        'coming-soon.why',
-        'coming-soon.footer',
-      ]
-    > &
-      Schema.Attribute.Required;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::coming-soon.coming-soon'
-    > &
-      Schema.Attribute.Private;
-    publishedAt: Schema.Attribute.DateTime;
-    seo: Schema.Attribute.Component<'shared.seo', false> &
-      Schema.Attribute.Required;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-  };
-}
-
 export interface ApiContactMessageContactMessage
   extends Struct.CollectionTypeSchema {
   collectionName: 'contact_messages';
@@ -1777,7 +1735,6 @@ declare module '@strapi/strapi' {
       'api::article.article': ApiArticleArticle;
       'api::author.author': ApiAuthorAuthor;
       'api::category.category': ApiCategoryCategory;
-      'api::coming-soon.coming-soon': ApiComingSoonComingSoon;
       'api::contact-message.contact-message': ApiContactMessageContactMessage;
       'api::contact-page.contact-page': ApiContactPageContactPage;
       'api::email-template.email-template': ApiEmailTemplateEmailTemplate;

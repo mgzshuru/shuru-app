@@ -8,7 +8,7 @@ export default ({ env }) => ({
           icon: 'linkedin',
           key: env('LINKEDIN_CLIENT_ID'),
           secret: env('LINKEDIN_CLIENT_SECRET'),
-          callback: 'https://www.shuru.sa/api/auth/callback/linkedin',
+          callback: 'https://cms.shuru.sa/api/connect/linkedin/callback',
           scope: ['openid', 'profile', 'email'],
         },
         google: {

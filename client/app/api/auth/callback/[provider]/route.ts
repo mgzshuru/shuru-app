@@ -15,16 +15,49 @@ async function authenticateWithStrapi(provider: string, searchParams: URLSearchP
   const backendUrl = getStrapiURL();
   const url = new URL(`${backendUrl}/api/auth/${provider}/callback`);
 
-  // Forward all OAuth parameters to Strapi
-  searchParams.forEach((value, key) => {
+  // Create a clean set of parameters for Strapi
+  const cleanParams = new URLSearchParams();
+
+  if (provider === 'linkedin') {
+    // For LinkedIn, only send the essential parameters that Strapi can handle
+    const code = searchParams.get('code');
+    const access_token = searchParams.get('access_token');
+    const id_token = searchParams.get('id_token');
+    const state = searchParams.get('state');
+
+    if (code) cleanParams.set('code', code);
+    if (access_token) cleanParams.set('access_token', access_token);
+    if (id_token) cleanParams.set('id_token', id_token);
+    if (state) cleanParams.set('state', state);
+  } else {
+    // For other providers, forward all parameters
+    searchParams.forEach((value, key) => {
+      cleanParams.append(key, value);
+    });
+  }
+
+  // Append clean parameters to the URL
+  cleanParams.forEach((value, key) => {
     url.searchParams.append(key, value);
   });
+
+  console.log(`Authenticating with Strapi for ${provider}:`, url.toString());
 
   const response = await fetch(url.href);
   const data = await response.json();
 
+  console.log(`Strapi ${provider} response status:`, response.status);
+  console.log(`Strapi ${provider} response data:`, data);
+
   if (!response.ok || !data.jwt) {
-    throw new Error(`Strapi authentication failed: ${data.message || 'Unknown error'}`);
+    // Log more detailed error information
+    console.error(`Strapi authentication failed for ${provider}:`, {
+      status: response.status,
+      statusText: response.statusText,
+      data: data,
+      url: url.toString()
+    });
+    throw new Error(`Strapi authentication failed: ${data.message || data.error?.message || 'Unknown error'}`);
   }
 
   return data;
@@ -49,11 +82,25 @@ export async function GET(
   // Validate required OAuth parameters
   const access_token = searchParams.get("access_token");
   const code = searchParams.get("code");
+  const id_token = searchParams.get("id_token");
 
-  if (!access_token && !code) {
-    console.error(`Missing OAuth parameters for ${provider}`);
+  // For LinkedIn, we might receive id_token instead of access_token
+  if (!access_token && !code && !id_token) {
+    console.error(`Missing OAuth parameters for ${provider}:`, {
+      access_token: !!access_token,
+      code: !!code,
+      id_token: !!id_token,
+      allParams: Object.fromEntries(searchParams.entries())
+    });
     return NextResponse.redirect(getRedirectUrl(request, "missing_oauth_params"));
   }
+
+  console.log(`OAuth parameters for ${provider}:`, {
+    hasAccessToken: !!access_token,
+    hasCode: !!code,
+    hasIdToken: !!id_token,
+    provider: provider
+  });
 
   try {
     // Authenticate with Strapi

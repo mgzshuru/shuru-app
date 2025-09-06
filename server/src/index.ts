@@ -36,18 +36,8 @@ export default {
           icon: 'linkedin',
           key: process.env.LINKEDIN_CLIENT_ID,
           secret: process.env.LINKEDIN_CLIENT_SECRET,
-          callback: '/api/auth/linkedin/callback',
+          callback: 'https://cms.shuru.sa/api/connect/linkedin/callback',
           scope: ['openid', 'profile', 'email'],
-          // Add LinkedIn-specific configuration
-          oauth: 2,
-          oauth2: {
-            authorizationURL: 'https://www.linkedin.com/oauth/v2/authorization',
-            tokenURL: 'https://www.linkedin.com/oauth/v2/accessToken',
-            clientID: process.env.LINKEDIN_CLIENT_ID,
-            clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
-            callbackURL: '/api/auth/linkedin/callback',
-            scope: ['openid', 'profile', 'email'],
-          },
         },
         google: {
           enabled: true,
@@ -73,17 +63,7 @@ export default {
             scope: ['openid', 'profile', 'email'],
             key: process.env.LINKEDIN_CLIENT_ID,
             secret: process.env.LINKEDIN_CLIENT_SECRET,
-            callback: 'https://www.shuru.sa/api/auth/callback/linkedin',
-            // Add LinkedIn-specific OAuth2 configuration
-            oauth: 2,
-            oauth2: {
-              authorizationURL: 'https://www.linkedin.com/oauth/v2/authorization',
-              tokenURL: 'https://www.linkedin.com/oauth/v2/accessToken',
-              clientID: process.env.LINKEDIN_CLIENT_ID,
-              clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
-              callbackURL: 'https://www.shuru.sa/api/auth/callback/linkedin',
-              scope: ['openid', 'profile', 'email'],
-            },
+            callback: 'https://cms.shuru.sa/api/connect/linkedin/callback',
           },
           google: {
             ...(grantConfig.google || {}),
