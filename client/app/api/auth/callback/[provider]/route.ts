@@ -11,11 +11,24 @@ export async function GET(
   const { searchParams } = new URL(request.url);
   const token = searchParams.get("access_token");
   const code = searchParams.get("code"); // LinkedIn uses code parameter
+  const state = searchParams.get("state"); // OAuth state parameter
+  const error = searchParams.get("error"); // OAuth error parameter
   const provider = params.provider;
 
   console.log("OAuth callback - Provider:", provider);
   console.log("OAuth callback - Token received:", !!token);
   console.log("OAuth callback - Code received:", !!code);
+  console.log("OAuth callback - State:", state);
+  console.log("OAuth callback - Error:", error);
+
+  // Check for OAuth errors first
+  if (error) {
+    console.error("OAuth error received:", error);
+    const errorRedirectUrl = process.env.NODE_ENV === "production"
+      ? (process.env.NEXT_PUBLIC_SITE_URL || "https://shuru.sa") + `/?error=oauth_${error}`
+      : new URL(`/?error=oauth_${error}`, request.url).toString();
+    return NextResponse.redirect(errorRedirectUrl);
+  }
 
   // Check for either token (Google) or code (LinkedIn)
   if (!token && !code) {
@@ -31,14 +44,15 @@ export async function GET(
 
   console.log("Calling Strapi callback:", backendUrl + path);
 
+  // For LinkedIn, we need to pass all the original parameters to Strapi
   const url = new URL(backendUrl + path);
 
-  // Add the appropriate parameter based on provider
-  if (token) {
-    url.searchParams.append("access_token", token);
-  } else if (code) {
-    url.searchParams.append("code", code);
-  }
+  // Copy all search parameters from the original request to Strapi
+  searchParams.forEach((value, key) => {
+    url.searchParams.append(key, value);
+  });
+
+  console.log("Full Strapi callback URL:", url.href);
 
   const res = await fetch(url.href);
   const data = await res.json();

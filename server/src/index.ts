@@ -38,6 +38,16 @@ export default {
           secret: process.env.LINKEDIN_CLIENT_SECRET,
           callback: '/api/auth/linkedin/callback',
           scope: ['openid', 'profile', 'email'],
+          // Add LinkedIn-specific configuration
+          oauth: 2,
+          oauth2: {
+            authorizationURL: 'https://www.linkedin.com/oauth/v2/authorization',
+            tokenURL: 'https://www.linkedin.com/oauth/v2/accessToken',
+            clientID: process.env.LINKEDIN_CLIENT_ID,
+            clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
+            callbackURL: '/api/auth/linkedin/callback',
+            scope: ['openid', 'profile', 'email'],
+          },
         },
         google: {
           enabled: true,
@@ -63,6 +73,17 @@ export default {
             scope: ['openid', 'profile', 'email'],
             key: process.env.LINKEDIN_CLIENT_ID,
             secret: process.env.LINKEDIN_CLIENT_SECRET,
+            callback: '/api/auth/linkedin/callback',
+            // Add LinkedIn-specific OAuth2 configuration
+            oauth: 2,
+            oauth2: {
+              authorizationURL: 'https://www.linkedin.com/oauth/v2/authorization',
+              tokenURL: 'https://www.linkedin.com/oauth/v2/accessToken',
+              clientID: process.env.LINKEDIN_CLIENT_ID,
+              clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
+              callbackURL: '/api/auth/linkedin/callback',
+              scope: ['openid', 'profile', 'email'],
+            },
           },
           google: {
             ...(grantConfig.google || {}),

@@ -1,8 +1,6 @@
 export default ({ env }) => [
   'strapi::logger',
   'strapi::errors',
-  // Add OAuth redirect middleware before security
-  'global::oauth-redirect',
   {
     name: "strapi::security",
     config: {
@@ -64,11 +62,13 @@ export default ({ env }) => [
         'https://accounts.google.com',
         'https://www.linkedin.com',
         'https://linkedin.com',
+        'https://api.linkedin.com', // Add LinkedIn API domain
       ],
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
       headers: ['Content-Type', 'Authorization', 'Origin', 'Accept', 'X-Requested-With'],
       keepHeaderOnError: true,
       credentials: true,
+      optionsSuccessStatus: 200, // Add this for LinkedIn compatibility
     },
   },
   'strapi::poweredBy',
