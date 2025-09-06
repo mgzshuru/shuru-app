@@ -13,28 +13,47 @@ function getRedirectUrl(request: Request, error?: string): string {
 
 async function authenticateWithStrapi(provider: string, searchParams: URLSearchParams): Promise<any> {
   const backendUrl = getStrapiURL();
+
+  // Special handling for LinkedIn
+  if (provider === 'linkedin') {
+    const access_token = searchParams.get('access_token');
+    const id_token = searchParams.get('id_token');
+
+    console.log('Using custom LinkedIn authentication endpoint');
+
+    const response = await fetch(`${backendUrl}/api/linkedin-auth/callback`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        access_token,
+        id_token,
+      }),
+    });
+
+    const data = await response.json();
+
+    console.log(`Custom LinkedIn API response status:`, response.status);
+    console.log(`Custom LinkedIn API response data:`, data);
+
+    if (!response.ok || !data.jwt) {
+      throw new Error(`LinkedIn authentication failed: ${data.message || 'Unknown error'}`);
+    }
+
+    return data;
+  }
+
+  // Default handling for other providers
   const url = new URL(`${backendUrl}/api/auth/${provider}/callback`);
 
   // Create a clean set of parameters for Strapi
   const cleanParams = new URLSearchParams();
 
-  if (provider === 'linkedin') {
-    // For LinkedIn, only send the essential parameters that Strapi can handle
-    const code = searchParams.get('code');
-    const access_token = searchParams.get('access_token');
-    const id_token = searchParams.get('id_token');
-    const state = searchParams.get('state');
-
-    if (code) cleanParams.set('code', code);
-    if (access_token) cleanParams.set('access_token', access_token);
-    if (id_token) cleanParams.set('id_token', id_token);
-    if (state) cleanParams.set('state', state);
-  } else {
-    // For other providers, forward all parameters
-    searchParams.forEach((value, key) => {
-      cleanParams.append(key, value);
-    });
-  }
+  // For other providers, forward all parameters
+  searchParams.forEach((value, key) => {
+    cleanParams.append(key, value);
+  });
 
   // Append clean parameters to the URL
   cleanParams.forEach((value, key) => {
