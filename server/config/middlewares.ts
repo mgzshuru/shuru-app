@@ -1,6 +1,8 @@
 export default ({ env }) => [
   'strapi::logger',
   'strapi::errors',
+  // Add OAuth redirect middleware before security
+  'global::oauth-redirect',
   {
     name: "strapi::security",
     config: {

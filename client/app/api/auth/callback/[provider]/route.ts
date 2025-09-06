@@ -10,13 +10,16 @@ export async function GET(
 ) {
   const { searchParams } = new URL(request.url);
   const token = searchParams.get("access_token");
+  const code = searchParams.get("code"); // LinkedIn uses code parameter
   const provider = params.provider;
 
   console.log("OAuth callback - Provider:", provider);
   console.log("OAuth callback - Token received:", !!token);
+  console.log("OAuth callback - Code received:", !!code);
 
-  if (!token) {
-    console.log("No token received, redirecting to home");
+  // Check for either token (Google) or code (LinkedIn)
+  if (!token && !code) {
+    console.log("No token or code received, redirecting to home");
     const noTokenRedirectUrl = process.env.NODE_ENV === "production"
       ? process.env.NEXT_PUBLIC_SITE_URL || "https://shuru.sa"
       : new URL("/", request.url).toString();
@@ -28,10 +31,14 @@ export async function GET(
 
   console.log("Calling Strapi callback:", backendUrl + path);
 
-  console.log("Calling Strapi callback:", backendUrl + path);
-
   const url = new URL(backendUrl + path);
-  url.searchParams.append("access_token", token);
+
+  // Add the appropriate parameter based on provider
+  if (token) {
+    url.searchParams.append("access_token", token);
+  } else if (code) {
+    url.searchParams.append("code", code);
+  }
 
   const res = await fetch(url.href);
   const data = await res.json();

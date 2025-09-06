@@ -13,4 +13,8 @@ export default ({ env }) => ({
   },
   // Add HTTP server timeout
   httpTimeout: 60000,
+  // OAuth callback configuration
+  auth: {
+    secret: env('AUTH_SECRET', env.array('APP_KEYS')[0]),
+  },
 });

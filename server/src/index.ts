@@ -17,6 +17,81 @@ export default {
    * run jobs, or perform some special logic.
    */
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {
+    console.log('Setting up OAuth providers...');
+
+    try {
+      // Register OAuth providers programmatically
+      const pluginStore = strapi.store({
+        environment: '',
+        type: 'plugin',
+        name: 'users-permissions',
+      });
+
+      // Get current providers
+      const grantConfig = await pluginStore.get({ key: 'grant' }) as any;
+
+      const defaultOAuthConfig = {
+        linkedin: {
+          enabled: true,
+          icon: 'linkedin',
+          key: process.env.LINKEDIN_CLIENT_ID,
+          secret: process.env.LINKEDIN_CLIENT_SECRET,
+          callback: '/api/auth/linkedin/callback',
+          scope: ['openid', 'profile', 'email'],
+        },
+        google: {
+          enabled: true,
+          icon: 'google',
+          key: process.env.GOOGLE_CLIENT_ID,
+          secret: process.env.GOOGLE_CLIENT_SECRET,
+          callback: '/api/auth/google/callback',
+          scope: ['openid', 'profile', 'email'],
+        },
+      };
+
+      if (!grantConfig || typeof grantConfig !== 'object') {
+        // Initialize grant config if it doesn't exist
+        await pluginStore.set({ key: 'grant', value: defaultOAuthConfig });
+        console.log('OAuth providers configured successfully');
+      } else {
+        // Update existing config with correct scopes
+        const updatedConfig = {
+          ...grantConfig,
+          linkedin: {
+            ...(grantConfig.linkedin || {}),
+            enabled: true,
+            scope: ['openid', 'profile', 'email'],
+            key: process.env.LINKEDIN_CLIENT_ID,
+            secret: process.env.LINKEDIN_CLIENT_SECRET,
+          },
+          google: {
+            ...(grantConfig.google || {}),
+            enabled: true,
+            scope: ['openid', 'profile', 'email'],
+            key: process.env.GOOGLE_CLIENT_ID,
+            secret: process.env.GOOGLE_CLIENT_SECRET,
+          },
+        };
+
+        await pluginStore.set({ key: 'grant', value: updatedConfig });
+        console.log('OAuth providers updated successfully');
+      }
+
+      // Configure advanced settings for OAuth
+      const advancedConfig = await pluginStore.get({ key: 'advanced' }) as any;
+      if (advancedConfig && typeof advancedConfig === 'object') {
+        const updatedAdvanced = {
+          ...advancedConfig,
+          allow_register: true,
+          default_role: 'authenticated',
+        };
+        await pluginStore.set({ key: 'advanced', value: updatedAdvanced });
+      }
+
+    } catch (error) {
+      console.error('Error configuring OAuth providers:', error);
+    }
+
     console.log('Setting up saved-article permissions...');
 
     try {
