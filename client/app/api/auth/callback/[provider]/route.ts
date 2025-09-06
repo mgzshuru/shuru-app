@@ -3,6 +3,40 @@ import { cookies } from "next/headers";
 import { getStrapiURL } from "@/lib/utils";
 import { createSession } from "@/lib/session";
 
+// Helper function to decode JWT base64url payload
+function decodeJWTPayload(token: string) {
+  try {
+    // Validate JWT format (should have 3 parts separated by dots)
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+      throw new Error("Invalid JWT format: token should have 3 parts");
+    }
+    
+    const base64UrlPayload = parts[1];
+    if (!base64UrlPayload) {
+      throw new Error("Invalid JWT format: missing payload");
+    }
+    
+    // Convert base64url to base64 by replacing characters and adding padding
+    const base64Payload = base64UrlPayload
+      .replace(/-/g, '+')
+      .replace(/_/g, '/')
+      .padEnd(base64UrlPayload.length + (4 - base64UrlPayload.length % 4) % 4, '=');
+    
+    const decoded = JSON.parse(atob(base64Payload));
+    
+    // Validate that we have the essential fields
+    if (!decoded.sub || !decoded.email) {
+      throw new Error("Invalid JWT payload: missing required fields (sub, email)");
+    }
+    
+    return decoded;
+  } catch (error) {
+    console.error("Error decoding JWT payload:", error);
+    throw new Error(`Invalid JWT token: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
+}
+
 export const dynamic = "force-dynamic";
 export async function GET(
   request: Request,
@@ -44,7 +78,7 @@ export async function GET(
 
     try {
       // Decode the ID token to get user information
-      const idTokenPayload = JSON.parse(atob(id_token.split('.')[1]));
+      const idTokenPayload = decodeJWTPayload(id_token);
       console.log("ID token payload:", idTokenPayload);
 
       // Create user object from ID token
@@ -82,6 +116,16 @@ export async function GET(
 
     } catch (decodeError) {
       console.error("Error processing ID token:", decodeError);
+      
+      // Log the raw token for debugging (first and last 20 characters only for security)
+      if (id_token) {
+        const tokenPreview = id_token.length > 40 
+          ? `${id_token.substring(0, 20)}...${id_token.substring(id_token.length - 20)}`
+          : id_token;
+        console.error("ID token preview:", tokenPreview);
+        console.error("ID token length:", id_token.length);
+      }
+      
       const errorRedirectUrl = process.env.NODE_ENV === "production"
         ? (process.env.NEXT_PUBLIC_SITE_URL || "https://shuru.sa") + "/?error=token_decode_failed"
         : new URL("/?error=token_decode_failed", request.url).toString();
