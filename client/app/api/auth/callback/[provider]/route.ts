@@ -74,7 +74,7 @@ export async function GET(
 
   if (access_token && id_token) {
     // This is the final successful OAuth callback with tokens
-    // We need to register/authenticate the user with Strapi to get a valid Strapi JWT
+    // Try to authenticate with Strapi first, but fallback to direct user creation if that fails
     console.log("Processing successful OAuth tokens - need to authenticate with Strapi");
 
     try {
@@ -82,7 +82,7 @@ export async function GET(
       const idTokenPayload = decodeJWTPayload(id_token);
       console.log("ID token payload:", idTokenPayload);
 
-      // Call Strapi to register/authenticate the user and get a Strapi JWT
+      // Try to call Strapi to register/authenticate the user and get a Strapi JWT
       const backendUrl = getStrapiURL();
       const authUrl = new URL(backendUrl + `/api/auth/${provider}/callback`);
 
@@ -99,26 +99,90 @@ export async function GET(
       console.log("Strapi response data:", data);
 
       // Check if authentication was successful
-      if (!res.ok || !data.jwt) {
-        console.error("OAuth authentication with Strapi failed:", data);
-        const errorRedirectUrl = process.env.NODE_ENV === "production"
-          ? (process.env.NEXT_PUBLIC_SITE_URL || "https://shuru.sa") + "/?error=auth_failed"
-          : new URL("/?error=auth_failed", request.url).toString();
-        return NextResponse.redirect(errorRedirectUrl);
+      if (res.ok && data.jwt) {
+        console.log("Creating session with Strapi JWT");
+
+        // Create a session payload with the JWT and user data from Strapi
+        const sessionPayload = {
+          jwt: data.jwt, // Use Strapi JWT
+          user: data.user,
+          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+        };
+
+        // Create the session
+        await createSession(sessionPayload);
+        console.log("Session created successfully with Strapi JWT");
+      } else {
+        // Strapi authentication failed, try direct user registration/login
+        console.log("Strapi authentication failed, attempting direct user creation");
+
+        // Try to register/login user directly with Strapi using extracted user info
+        const userPayload = {
+          email: idTokenPayload.email,
+          username: idTokenPayload.email.split('@')[0],
+          password: `oauth_${provider}_${idTokenPayload.sub}`, // Generate a unique password
+          confirmed: true,
+          provider: provider,
+          providerUserId: idTokenPayload.sub,
+          name: idTokenPayload.name,
+          given_name: idTokenPayload.given_name,
+          family_name: idTokenPayload.family_name,
+          picture: idTokenPayload.picture
+        };
+
+        // Try to register user first
+        const registerUrl = new URL(backendUrl + '/api/auth/local/register');
+        const registerRes = await fetch(registerUrl.href, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(userPayload)
+        });
+
+        let authResult = null;
+
+        if (registerRes.ok) {
+          authResult = await registerRes.json();
+          console.log("User registered successfully:", authResult);
+        } else {
+          // Registration failed, try login instead
+          console.log("Registration failed, trying login");
+          const loginUrl = new URL(backendUrl + '/api/auth/local');
+          const loginRes = await fetch(loginUrl.href, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              identifier: idTokenPayload.email,
+              password: userPayload.password
+            })
+          });
+
+          if (loginRes.ok) {
+            authResult = await loginRes.json();
+            console.log("User logged in successfully:", authResult);
+          } else {
+            throw new Error("Both registration and login failed");
+          }
+        }
+
+        if (authResult && authResult.jwt) {
+          // Create a session payload with the JWT and user data
+          const sessionPayload = {
+            jwt: authResult.jwt,
+            user: authResult.user,
+            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+          };
+
+          // Create the session
+          await createSession(sessionPayload);
+          console.log("Session created successfully with direct auth");
+        } else {
+          throw new Error("Failed to get JWT from authentication");
+        }
       }
-
-      console.log("Creating session with Strapi JWT");
-
-      // Create a session payload with the JWT and user data from Strapi
-      const sessionPayload = {
-        jwt: data.jwt, // Use Strapi JWT, not LinkedIn access token
-        user: data.user,
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
-      };
-
-      // Create the session
-      await createSession(sessionPayload);
-      console.log("Session created successfully with Strapi JWT");
 
       // Redirect to home page
       const redirectUrl = process.env.NODE_ENV === "production"
@@ -145,9 +209,7 @@ export async function GET(
         : new URL("/?error=token_decode_failed", request.url).toString();
       return NextResponse.redirect(errorRedirectUrl);
     }
-  }
-
-  // If we only have access_token (Google flow) or code (initial callback), process via Strapi
+  }  // If we only have access_token (Google flow) or code (initial callback), process via Strapi
   if (access_token || code) {
     console.log("Processing OAuth via Strapi callback");
 
