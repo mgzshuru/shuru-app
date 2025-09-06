@@ -36,7 +36,7 @@ export default {
           icon: 'linkedin',
           key: process.env.LINKEDIN_CLIENT_ID,
           secret: process.env.LINKEDIN_CLIENT_SECRET,
-          callback: 'https://cms.shuru.sa/api/connect/linkedin/callback',
+          callback: 'https://www.shuru.sa/api/auth/callback/linkedin',
           scope: ['openid', 'profile', 'email'],
         },
         google: {
@@ -63,7 +63,7 @@ export default {
             scope: ['openid', 'profile', 'email'],
             key: process.env.LINKEDIN_CLIENT_ID,
             secret: process.env.LINKEDIN_CLIENT_SECRET,
-            callback: 'https://cms.shuru.sa/api/connect/linkedin/callback',
+            callback: 'https://www.shuru.sa/api/auth/callback/linkedin',
           },
           google: {
             ...(grantConfig.google || {}),
