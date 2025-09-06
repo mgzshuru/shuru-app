@@ -117,10 +117,11 @@ export async function GET(
         console.log("Strapi authentication failed, attempting direct user creation");
 
         // Try to register/login user directly with Strapi using extracted user info
+        const uniquePassword = `OAuth${provider}${idTokenPayload.sub}${Date.now()}!`; // Ensure strong password
         const userPayload = {
           email: idTokenPayload.email,
           username: idTokenPayload.email.split('@')[0] + '_' + provider, // Make username unique
-          password: `oauth_${provider}_${idTokenPayload.sub}`, // Generate a unique password
+          password: uniquePassword,
           confirmed: true, // Auto-confirm OAuth users
         };
 
@@ -150,7 +151,7 @@ export async function GET(
           const loginUrl = new URL(backendUrl + '/api/auth/local');
           const loginPayload = {
             identifier: idTokenPayload.email,
-            password: userPayload.password
+            password: uniquePassword
           };
           console.log("Login payload:", JSON.stringify(loginPayload, null, 2));
           
