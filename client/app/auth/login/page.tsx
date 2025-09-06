@@ -83,9 +83,9 @@ export default function SignIn() {
             )}
 
             {/* OAuth Buttons */}
-            {/* <div className="mb-6">
+            <div className="mb-6">
               <OAuthButtons />
-            </div> */}
+            </div>
 
             {/* Divider */}
             <div className="relative my-6">
