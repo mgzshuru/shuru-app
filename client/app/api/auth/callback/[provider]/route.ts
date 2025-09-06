@@ -11,25 +11,25 @@ function decodeJWTPayload(token: string) {
     if (parts.length !== 3) {
       throw new Error("Invalid JWT format: token should have 3 parts");
     }
-    
+
     const base64UrlPayload = parts[1];
     if (!base64UrlPayload) {
       throw new Error("Invalid JWT format: missing payload");
     }
-    
+
     // Convert base64url to base64 by replacing characters and adding padding
     const base64Payload = base64UrlPayload
       .replace(/-/g, '+')
       .replace(/_/g, '/')
       .padEnd(base64UrlPayload.length + (4 - base64UrlPayload.length % 4) % 4, '=');
-    
+
     const decoded = JSON.parse(atob(base64Payload));
-    
+
     // Validate that we have the essential fields
     if (!decoded.sub || !decoded.email) {
       throw new Error("Invalid JWT payload: missing required fields (sub, email)");
     }
-    
+
     return decoded;
   } catch (error) {
     console.error("Error decoding JWT payload:", error);
@@ -73,38 +73,52 @@ export async function GET(
   // 3. Just code (initial OAuth callback - needs token exchange)
 
   if (access_token && id_token) {
-    // This is the final successful OAuth callback from Strapi with tokens
-    console.log("Processing successful OAuth tokens from Strapi");
+    // This is the final successful OAuth callback with tokens
+    // We need to register/authenticate the user with Strapi to get a valid Strapi JWT
+    console.log("Processing successful OAuth tokens - need to authenticate with Strapi");
 
     try {
       // Decode the ID token to get user information
       const idTokenPayload = decodeJWTPayload(id_token);
       console.log("ID token payload:", idTokenPayload);
 
-      // Create user object from ID token
-      const user = {
-        id: idTokenPayload.sub,
-        username: idTokenPayload.name || idTokenPayload.email.split('@')[0],
-        email: idTokenPayload.email,
-        name: idTokenPayload.name,
-        given_name: idTokenPayload.given_name,
-        family_name: idTokenPayload.family_name,
-        picture: idTokenPayload.picture,
-        provider: provider,
-        confirmed: true,
-        blocked: false,
-      };
+      // Call Strapi to register/authenticate the user and get a Strapi JWT
+      const backendUrl = getStrapiURL();
+      const authUrl = new URL(backendUrl + `/api/auth/${provider}/callback`);
 
-      // Create a session payload
+      // Pass the tokens to Strapi
+      authUrl.searchParams.append('access_token', access_token);
+      authUrl.searchParams.append('id_token', id_token);
+
+      console.log("Authenticating with Strapi:", authUrl.href);
+
+      const res = await fetch(authUrl.href);
+      const data = await res.json();
+
+      console.log("Strapi response status:", res.status);
+      console.log("Strapi response data:", data);
+
+      // Check if authentication was successful
+      if (!res.ok || !data.jwt) {
+        console.error("OAuth authentication with Strapi failed:", data);
+        const errorRedirectUrl = process.env.NODE_ENV === "production"
+          ? (process.env.NEXT_PUBLIC_SITE_URL || "https://shuru.sa") + "/?error=auth_failed"
+          : new URL("/?error=auth_failed", request.url).toString();
+        return NextResponse.redirect(errorRedirectUrl);
+      }
+
+      console.log("Creating session with Strapi JWT");
+
+      // Create a session payload with the JWT and user data from Strapi
       const sessionPayload = {
-        jwt: access_token, // Use access token as JWT
-        user: user,
+        jwt: data.jwt, // Use Strapi JWT, not LinkedIn access token
+        user: data.user,
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
       };
 
       // Create the session
       await createSession(sessionPayload);
-      console.log("Session created successfully for LinkedIn user");
+      console.log("Session created successfully with Strapi JWT");
 
       // Redirect to home page
       const redirectUrl = process.env.NODE_ENV === "production"
@@ -115,17 +129,17 @@ export async function GET(
       return NextResponse.redirect(redirectUrl);
 
     } catch (decodeError) {
-      console.error("Error processing ID token:", decodeError);
-      
+      console.error("Error processing OAuth tokens:", decodeError);
+
       // Log the raw token for debugging (first and last 20 characters only for security)
       if (id_token) {
-        const tokenPreview = id_token.length > 40 
+        const tokenPreview = id_token.length > 40
           ? `${id_token.substring(0, 20)}...${id_token.substring(id_token.length - 20)}`
           : id_token;
         console.error("ID token preview:", tokenPreview);
         console.error("ID token length:", id_token.length);
       }
-      
+
       const errorRedirectUrl = process.env.NODE_ENV === "production"
         ? (process.env.NEXT_PUBLIC_SITE_URL || "https://shuru.sa") + "/?error=token_decode_failed"
         : new URL("/?error=token_decode_failed", request.url).toString();
