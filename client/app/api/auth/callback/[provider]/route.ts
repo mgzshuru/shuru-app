@@ -119,19 +119,15 @@ export async function GET(
         // Try to register/login user directly with Strapi using extracted user info
         const userPayload = {
           email: idTokenPayload.email,
-          username: idTokenPayload.email.split('@')[0],
+          username: idTokenPayload.email.split('@')[0] + '_' + provider, // Make username unique
           password: `oauth_${provider}_${idTokenPayload.sub}`, // Generate a unique password
-          confirmed: true,
-          provider: provider,
-          providerUserId: idTokenPayload.sub,
-          name: idTokenPayload.name,
-          given_name: idTokenPayload.given_name,
-          family_name: idTokenPayload.family_name,
-          picture: idTokenPayload.picture
+          confirmed: true, // Auto-confirm OAuth users
         };
 
         // Try to register user first
         const registerUrl = new URL(backendUrl + '/api/auth/local/register');
+        console.log("Registration payload:", JSON.stringify(userPayload, null, 2));
+        
         const registerRes = await fetch(registerUrl.href, {
           method: 'POST',
           headers: {
@@ -147,23 +143,32 @@ export async function GET(
           console.log("User registered successfully:", authResult);
         } else {
           // Registration failed, try login instead
-          console.log("Registration failed, trying login");
+          const registerError = await registerRes.json();
+          console.log("Registration failed with status:", registerRes.status);
+          console.log("Registration error:", registerError);
+          console.log("Attempting login instead");
           const loginUrl = new URL(backendUrl + '/api/auth/local');
+          const loginPayload = {
+            identifier: idTokenPayload.email,
+            password: userPayload.password
+          };
+          console.log("Login payload:", JSON.stringify(loginPayload, null, 2));
+          
           const loginRes = await fetch(loginUrl.href, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-              identifier: idTokenPayload.email,
-              password: userPayload.password
-            })
+            body: JSON.stringify(loginPayload)
           });
 
           if (loginRes.ok) {
             authResult = await loginRes.json();
             console.log("User logged in successfully:", authResult);
           } else {
+            const loginError = await loginRes.json();
+            console.log("Login failed with status:", loginRes.status);
+            console.log("Login error:", loginError);
             throw new Error("Both registration and login failed");
           }
         }
