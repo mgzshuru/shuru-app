@@ -49,6 +49,7 @@ async function getSavedArticles(jwt: string): Promise<SavedArticle[]> {
     });
 
     if (!response.ok) {
+      console.error("Failed to fetch saved articles:", response);
       console.error('Failed to fetch saved articles:', response.status);
       return [];
     }
