@@ -108,7 +108,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
         router.push(`/categories/${item.slug}`);
         break;
       case 'author':
-        router.push(`/authors/${item.id}`);
+        router.push(`/authors/${item.documentId}`);
         break;
       case 'magazine':
         router.push(`/magazine/${item.slug}`);
@@ -124,7 +124,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/90 z-50 shadow-lg">
+    <div className="fixed inset-0 bg-black bg-opacity-90 backdrop-blur-sm z-50 shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between mb-6">
           <div className="flex-1 relative">
@@ -155,17 +155,17 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
 
         {/* Search Results */}
         {searchTerm && (
-          <div className="max-h-[70vh] overflow-y-auto">
+          <div className="max-h-[70vh] overflow-y-auto bg-black/90">
             {totalResults === 0 && !isSearching ? (
               <div className="text-center text-gray-400 py-8">
                 <p>لا توجد نتائج لـ "{searchTerm}"</p>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {/* Articles */}
                 {searchResults.articles.length > 0 && (
-                  <div>
-                    <h3 className="text-white font-semibold mb-2 flex items-center gap-2">
+                  <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+                    <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
                       <BookOpen className="h-4 w-4" />
                       المقالات ({searchResults.articles.length})
                     </h3>
@@ -174,7 +174,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                         <div
                           key={article.id}
                           onClick={() => handleSearchResultClick('article', article)}
-                          className="p-3 bg-white/10 rounded-none cursor-pointer hover:bg-white/20 transition-colors"
+                          className="p-3 bg-white/10 rounded-md cursor-pointer hover:bg-white/20 transition-colors border border-white/5"
                         >
                           <h4 className="text-white font-medium">{article.title}</h4>
                           {article.description && (
@@ -190,8 +190,8 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
 
                 {/* Categories */}
                 {searchResults.categories.length > 0 && (
-                  <div>
-                    <h3 className="text-white font-semibold mb-2 flex items-center gap-2">
+                  <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+                    <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
                       <Folder className="h-4 w-4" />
                       التصنيفات ({searchResults.categories.length})
                     </h3>
@@ -200,7 +200,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                         <div
                           key={category.id}
                           onClick={() => handleSearchResultClick('category', category)}
-                          className="p-3 bg-white/10 rounded-none cursor-pointer hover:bg-white/20 transition-colors"
+                          className="p-3 bg-white/10 rounded-md cursor-pointer hover:bg-white/20 transition-colors border border-white/5"
                         >
                           <h4 className="text-white font-medium">{category.name}</h4>
                           {category.description && (
@@ -216,8 +216,8 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
 
                 {/* Authors */}
                 {searchResults.authors.length > 0 && (
-                  <div>
-                    <h3 className="text-white font-semibold mb-2 flex items-center gap-2">
+                  <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+                    <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
                       <User className="h-4 w-4" />
                       المؤلفين ({searchResults.authors.length})
                     </h3>
@@ -226,7 +226,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                         <div
                           key={author.id}
                           onClick={() => handleSearchResultClick('author', author)}
-                          className="p-3 bg-white/10 rounded-none cursor-pointer hover:bg-white/20 transition-colors"
+                          className="p-3 bg-white/10 rounded-md cursor-pointer hover:bg-white/20 transition-colors border border-white/5"
                         >
                           <h4 className="text-white font-medium">{author.name}</h4>
                           {author.jobTitle && (
@@ -243,8 +243,8 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
 
                 {/* Magazine Issues */}
                 {searchResults.magazine_issues.length > 0 && (
-                  <div>
-                    <h3 className="text-white font-semibold mb-2 flex items-center gap-2">
+                  <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+                    <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
                       <Clock className="h-4 w-4" />
                       أعداد المجلة ({searchResults.magazine_issues.length})
                     </h3>
@@ -253,7 +253,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                         <div
                           key={issue.id}
                           onClick={() => handleSearchResultClick('magazine', issue)}
-                          className="p-3 bg-white/10 rounded-none cursor-pointer hover:bg-white/20 transition-colors"
+                          className="p-3 bg-white/10 rounded-md cursor-pointer hover:bg-white/20 transition-colors border border-white/5"
                         >
                           <h4 className="text-white font-medium">{issue.title}</h4>
                           {issue.description && (

@@ -339,6 +339,7 @@ export interface Author {
   organization?: string
   phone_number?: string
   linkedin_url?: string
+  bio?: string
   createdAt: string
   updatedAt: string
   publishedAt?: string

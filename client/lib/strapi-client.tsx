@@ -80,13 +80,13 @@ export async function getArticlesByCategory(categorySlug: string, limit?: number
 }
 
 // Get articles by author non
-export async function getArticlesByAuthor(authorId: string, limit?: number) {
+export async function getArticlesByAuthor(authorDocumentId: string, limit?: number) {
   const query = {
     filters: {
       $and: [
         {
           author: {
-            id: { $eq: authorId }
+            documentId: { $eq: authorDocumentId }
           }
         },
         getCurrentDateFilter()
@@ -428,29 +428,24 @@ export async function getAllAuthors() {
   return authors;
 }
 
-export async function getAuthorById(id: string) {
-  const query = {
-    filters: { id: { $eq: id } },
-    populate: {
-      avatar: {
-        fields: ["url", "alternativeText", "width", "height"]
-      },
-      articles: {
-        filters: getCurrentDateFilter(),
-        fields: ['title', 'slug', 'publish_date', 'is_featured'],
-        populate: {
-          cover_image: {
-            fields: ["url", "alternativeText", "width", "height"]
-          }
+export async function getAuthorById(documentId: string) {
+  try {
+    const response = await client.collection("authors").findOne(documentId, {
+      fields: ["name", "email", "jobTitle", "organization", "phone_number", "linkedin_url", "bio"],
+      populate: {
+        avatar: {
+          fields: ["url", "alternativeText", "width", "height"]
         }
       }
-    }
-  };
+    });
 
-  const response = await client.collection("authors").find(query);
-  if (response && Array.isArray(response.data) && response.data.length > 0) {
-    return response.data[0];
+    if (response && response.data) {
+      return response.data;
+    }
+  } catch (error) {
+    console.error('Error fetching author by documentId:', error);
   }
+
   return null;
 }
 
