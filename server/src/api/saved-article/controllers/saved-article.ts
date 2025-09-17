@@ -121,7 +121,7 @@ export default factories.createCoreController('api::saved-article.saved-article'
               cover_image: {
                 fields: ['url', 'alternativeText', 'width', 'height']
               },
-              category: {
+              categories: {
                 fields: ['name', 'slug']
               },
               author: {
