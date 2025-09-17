@@ -117,72 +117,58 @@ export default async function Profile() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-6">
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <Button asChild variant="outline" className="h-auto p-6 justify-start border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all">
+                <div className="grid gap-6 sm:grid-cols-2">
+                  <Button asChild variant="outline" className="group h-auto p-0 border-gray-200 hover:border-blue-300 hover:shadow-md transition-all duration-300 overflow-hidden">
                     <Link href="/auth/change-password">
-                      <div className="flex items-center gap-4 text-right">
-                        <div className="p-3 bg-blue-100 rounded-xl flex-shrink-0">
-                          <Shield className="h-6 w-6 text-blue-600" />
+                      <div className="flex items-center gap-4 text-right p-6 w-full">
+                        <div className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl flex-shrink-0 group-hover:from-blue-100 group-hover:to-blue-200 transition-all duration-300">
+                          <Shield className="h-7 w-7 text-blue-600" />
                         </div>
-                        <div>
-                          <div className="font-semibold text-gray-900">تغيير كلمة المرور</div>
-                          <div className="text-sm text-gray-600 mt-1">تحديث كلمة المرور الخاصة بك</div>
+                        <div className="text-right flex-1 min-w-0">
+                          <div className="font-bold text-gray-900 text-lg mb-1">تغيير كلمة المرور</div>
+                          <div className="text-sm text-gray-500 leading-relaxed">تحديث كلمة المرور الخاصة بك</div>
                         </div>
                       </div>
                     </Link>
                   </Button>
 
-                  <Button asChild variant="outline" className="h-auto p-6 justify-start border-gray-200 hover:border-green-300 hover:bg-green-50 transition-all">
+                  <Button asChild variant="outline" className="group h-auto p-0 border-gray-200 hover:border-green-300 hover:shadow-md transition-all duration-300 overflow-hidden">
                     <Link href="/submit">
-                      <div className="flex items-center gap-4 text-right">
-                        <div className="p-3 bg-green-100 rounded-xl flex-shrink-0">
-                          <Edit3 className="h-6 w-6 text-green-600" />
+                      <div className="flex items-center gap-4 text-right p-6 w-full">
+                        <div className="p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-2xl flex-shrink-0 group-hover:from-green-100 group-hover:to-green-200 transition-all duration-300">
+                          <Edit3 className="h-7 w-7 text-green-600" />
                         </div>
-                        <div>
-                          <div className="font-semibold text-gray-900">اكتب معنا</div>
-                          <div className="text-sm text-gray-600 mt-1"></div>
+                        <div className="text-right flex-1 min-w-0">
+                          <div className="font-bold text-gray-900 text-lg mb-1">اكتب معنا</div>
+                          {/* <div className="text-sm text-gray-500 leading-relaxed">شارك أفكارك ومقالاتك</div> */}
                         </div>
                       </div>
                     </Link>
                   </Button>
 
-                  <Button asChild variant="outline" className="h-auto p-6 justify-start border-gray-200 hover:border-purple-300 hover:bg-purple-50 transition-all">
+                  <Button asChild variant="outline" className="group h-auto p-0 border-gray-200 hover:border-purple-300 hover:shadow-md transition-all duration-300 overflow-hidden">
                     <Link href="/profile/saved-articles">
-                      <div className="flex items-center gap-4 text-right">
-                        <div className="p-3 bg-purple-100 rounded-xl flex-shrink-0">
-                          <Bookmark className="h-6 w-6 text-purple-600" />
+                      <div className="flex items-center gap-4 text-right p-6 w-full">
+                        <div className="p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl flex-shrink-0 group-hover:from-purple-100 group-hover:to-purple-200 transition-all duration-300">
+                          <Bookmark className="h-7 w-7 text-purple-600" />
                         </div>
-                        <div>
-                          <div className="font-semibold text-gray-900">المقالات المحفوظة</div>
-                          <div className="text-sm text-gray-600 mt-1">المقالات التي قمت بحفظها</div>
+                        <div className="text-right flex-1 min-w-0">
+                          <div className="font-bold text-gray-900 text-lg mb-1">المقالات المحفوظة</div>
+                          <div className="text-sm text-gray-500 leading-relaxed">المقالات التي قمت بحفظها</div>
                         </div>
                       </div>
                     </Link>
                   </Button>
 
-                    <Button asChild variant="outline" className="h-auto p-6 justify-start border-gray-200 hover:border-orange-300 hover:bg-orange-50 transition-all">
-                      <Link href="/subscribe">
-                        <div className="flex items-center gap-4 text-right">
-                          <div className="p-3 bg-orange-100 rounded-xl flex-shrink-0">
-                            <Star className="h-6 w-6 text-orange-600" />
-                          </div>
-                          <div>
-                            <div className="font-semibold text-gray-900">اشترك الآن</div>
-                            <div className="text-sm text-gray-600 mt-1">في النشرة الاسبوعية</div>
-                          </div>
-                        </div>
-                      </Link>
-                    </Button>
-
-                  <Button asChild variant="outline" className={`h-auto p-6 justify-start border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all`}>
+                  <Button asChild variant="outline" className="group h-auto p-0 border-gray-200 hover:border-indigo-300 hover:shadow-md transition-all duration-300 overflow-hidden">
                     <Link href="/magazine">
-                      <div className="flex items-center gap-4 text-right">
-                        <div className="p-3 bg-blue-100 rounded-xl flex-shrink-0">
-                          <BookOpen className="h-6 w-6 text-blue-600" />
+                      <div className="flex items-center gap-4 text-right p-6 w-full">
+                        <div className="p-4 bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl flex-shrink-0 group-hover:from-indigo-100 group-hover:to-indigo-200 transition-all duration-300">
+                          <BookOpen className="h-7 w-7 text-indigo-600" />
                         </div>
-                        <div>
-                          <div className="font-semibold text-gray-900">المجلة</div>
-                          <div className="text-sm text-gray-600 mt-1">تصفح الأعداد السابقة</div>
+                        <div className="text-right flex-1 min-w-0">
+                          <div className="font-bold text-gray-900 text-lg mb-1">المجلة</div>
+                          <div className="text-sm text-gray-500 leading-relaxed">تصفح الأعداد السابقة</div>
                         </div>
                       </div>
                     </Link>
