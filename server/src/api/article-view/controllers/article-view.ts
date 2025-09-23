@@ -8,14 +8,14 @@ export default factories.createCoreController('api::article-view.article-view', 
   async find(ctx) {
     // Custom find method to ensure article data is properly populated
     const { query } = ctx;
-    
+
     try {
       // Get the standard response first
       const { data, meta } = await super.find(ctx);
-      
+
       // Filter out any entries where the article relation is null or invalid
       const validData = data.filter(item => item.article && item.article.id);
-      
+
       // Update meta to reflect the actual count after filtering
       const updatedMeta = {
         ...meta,
@@ -25,7 +25,7 @@ export default factories.createCoreController('api::article-view.article-view', 
           pageCount: Math.ceil(validData.length / (meta.pagination.limit || 25))
         }
       };
-      
+
       return { data: validData, meta: updatedMeta };
     } catch (error) {
       strapi.log.error('Error in article-view find:', error);
@@ -53,7 +53,7 @@ export default factories.createCoreController('api::article-view.article-view', 
           const article = await strapi.documents('api::article.article').findOne({
             documentId: view.article.documentId
           });
-          
+
           if (!article) {
             orphanedViews.push(view.id);
           } else {

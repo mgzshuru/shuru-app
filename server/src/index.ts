@@ -415,20 +415,20 @@ async function cleanupAndSeedArticleViews(strapi: any) {
     const articles = await strapi.documents('api::article.article').findMany({
       status: 'published'
     });
-    
+
     console.log(`Found ${articles.length} published articles`);
-    
+
     // Get all existing article views
     const existingViews = await strapi.db.query('api::article-view.article-view').findMany({
       populate: ['article']
     });
-    
+
     console.log(`Found ${existingViews.length} existing article views`);
-    
+
     // Clean up orphaned views (views without valid articles)
     const orphanedViews = [];
     const validViews = [];
-    
+
     for (const view of existingViews) {
       if (!view.article || !view.article.id) {
         orphanedViews.push(view.id);
@@ -442,7 +442,7 @@ async function cleanupAndSeedArticleViews(strapi: any) {
         }
       }
     }
-    
+
     // Delete orphaned views
     if (orphanedViews.length > 0) {
       console.log(`Deleting ${orphanedViews.length} orphaned article views...`);
@@ -454,14 +454,14 @@ async function cleanupAndSeedArticleViews(strapi: any) {
         }
       });
     }
-    
+
     // Create views for articles that don't have them yet
     const articlesWithViews = new Set(validViews.map(v => v.article.id));
     const articlesNeedingViews = articles.filter(article => !articlesWithViews.has(article.id));
-    
+
     if (articlesNeedingViews.length > 0) {
       console.log(`Creating views for ${articlesNeedingViews.length} articles...`);
-      
+
       // Create views for articles that don't have them
       for (const article of articlesNeedingViews) {
         await strapi.db.query('api::article-view.article-view').create({
@@ -473,12 +473,12 @@ async function cleanupAndSeedArticleViews(strapi: any) {
         });
       }
     }
-    
+
     console.log(`✅ Article views cleanup completed successfully!`);
     console.log(`- Deleted ${orphanedViews.length} orphaned views`);
     console.log(`- Kept ${validViews.length} valid existing views`);
     console.log(`- Created ${articlesNeedingViews.length} new views`);
-    
+
   } catch (error) {
     console.error('❌ Error in article views cleanup:', error);
     throw error;

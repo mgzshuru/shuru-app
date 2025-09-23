@@ -13,22 +13,22 @@ process.chdir(path.join(__dirname, '..'));
 
 async function fixArticleViews() {
   console.log('🚀 Starting article views fix...');
-  
+
   let strapi;
-  
+
   try {
     // Import and start Strapi
     strapi = require('@strapi/strapi');
     const app = await strapi.createStrapi({ distDir: './dist' }).load();
-    
+
     console.log('✅ Strapi loaded successfully');
-    
+
     // Run the seeding function
     const { seedArticleViews } = require('./seed-views');
     await seedArticleViews();
-    
+
     console.log('🎉 Article views fix completed successfully!');
-    
+
   } catch (error) {
     console.error('❌ Error fixing article views:', error);
     process.exit(1);
