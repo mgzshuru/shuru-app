@@ -61,8 +61,7 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
       : articles;
 
     const trendingArticles = trendingPool
-      .filter(article => article.id !== mainArticle?.id)
-      .slice(0, maxMostReadArticles);
+      .slice(0, maxMostReadArticles );
 
     return { mainArticle, sideArticles, trendingArticles };
   }, [featuredArticle, articles, selectedArticles, maxArticles, mostReadArticles, maxMostReadArticles, apiMostReadArticles]);
