@@ -40,10 +40,10 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
   const processedArticles = useMemo(() => {
     const mainArticle = featuredArticle || articles[0];
 
-    // Use selected articles if available, otherwise fallback to regular articles
+    // Only use selected articles if they are available, no fallback
     const sideArticles = selectedArticles.length > 0
       ? selectedArticles.slice(0, maxArticles)
-      : articles.slice(1, 4);
+      : [];
 
     console.log('Processing articles:', {
       selectedArticlesCount: selectedArticles.length,
@@ -99,7 +99,7 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
             {/* Section Title */}
             <div className="mb-4">
               <h3 className="text-right font-centra text-[14px] md:text-[16px] font-bold leading-[16px] md:leading-[18px] text-black border-b border-primary-light pb-2">
-                {selectedArticles.length > 0 ? 'مقالات مختارة' : 'أحدث المقالات'}
+                مقالات مختارة
               </h3>
             </div>
 
@@ -151,7 +151,7 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
                   </svg>
                 </div>
                 <p className="text-gray-500 text-sm font-medium">
-                  {selectedLoading ? 'جارٍ تحميل المقالات المختارة...' : 'لا توجد مقالات متاحة'}
+                  {selectedLoading ? 'جارٍ تحميل المقالات المختارة...' : 'لا توجد مقالات مختارة'}
                 </p>
               </div>
             )}
