@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
 
     // First, try to fetch article views with populated article data
     const viewsResponse = await fetch(
-      `${getStrapiURL()}/api/article-views?sort[0]=views:desc&pagination[limit]=100&populate[article][populate][cover_image][fields][0]=url&populate[article][populate][cover_image][fields][1]=alternativeText&populate[article][populate][categories][fields][0]=name&populate[article][populate][categories][fields][1]=slug&populate[article][populate][author][fields][0]=name&populate[article][fields][0]=title&populate[article][fields][1]=slug&populate[article][fields][2]=description&populate[article][fields][3]=publish_date&populate[article][fields][4]=documentId&fields[0]=views`,
+      `${getStrapiURL()}/api/article-views?sort[0]=views:desc&pagination[limit]=100&populate[article][populate][cover_image]=*&populate[article][populate][categories]=*&populate[article][populate][author]=*&populate[article]=*`,
       { headers }
     );
 
@@ -41,7 +41,6 @@ export async function GET(request: NextRequest) {
     if (viewsResponse.ok) {
       // If we have views data, process it
       const viewsData = await viewsResponse.json();
-
       // Create articles with views - filter out entries without article data
       const articlesWithViews = viewsData.data?.filter((item: any) => item.article && item.article.id)
         .map((item: any) => ({
