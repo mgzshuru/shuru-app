@@ -42,11 +42,12 @@ export async function GET(request: NextRequest) {
       // If we have views data, process it
       const viewsData = await viewsResponse.json();
 
-      // Create articles with views
-      const articlesWithViews = viewsData.data?.map((item: any) => ({
-        ...item.article,
-        views: item.views
-      })) || [];
+      // Create articles with views - filter out entries without article data
+      const articlesWithViews = viewsData.data?.filter((item: any) => item.article && item.article.id)
+        .map((item: any) => ({
+          ...item.article,
+          views: item.views
+        })) || [];
 
       // Get IDs of articles that have views
       const articlesWithViewsIds = new Set(articlesWithViews.map((article: any) => article.id));
