@@ -93,11 +93,6 @@
       "type": "component",
       "repeatable": false,
       "component": "shared.seo"
-    },
-    "views": {
-      "type": "integer",
-      "default": 0,
-      "min": 0
     }
   }
 }

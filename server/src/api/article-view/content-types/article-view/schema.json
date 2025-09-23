@@ -1,0 +1,31 @@
+{
+  "kind": "collectionType",
+  "collectionName": "article_views",
+  "info": {
+    "singularName": "article-view",
+    "pluralName": "article-views",
+    "displayName": "Article Views",
+    "description": "Track article view counts without modifying article content"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "article": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::article.article",
+      "required": true
+    },
+    "views": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "required": true
+    },
+    "last_viewed": {
+      "type": "datetime",
+      "required": false
+    }
+  }
+}

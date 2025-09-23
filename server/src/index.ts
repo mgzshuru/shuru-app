@@ -358,5 +358,45 @@ export default {
     } catch (error) {
       console.error('Error setting up article and category permissions:', error);
     }
+
+    // Set up article-view permissions (public access for creating/updating view counts)
+    console.log('Setting up article-view permissions...');
+    try {
+      const publicRole = await strapi.query('plugin::users-permissions.role').findOne({
+        where: { type: 'public' }
+      });
+
+      if (publicRole) {
+        const viewEndpoints = ['create', 'update', 'find', 'findOne'];
+
+        for (const endpoint of viewEndpoints) {
+          const existingPermission = await strapi.query('plugin::users-permissions.permission').findOne({
+            where: {
+              role: publicRole.id,
+              action: `api::article-view.article-view.${endpoint}`
+            }
+          });
+
+          if (!existingPermission) {
+            await strapi.query('plugin::users-permissions.permission').create({
+              data: {
+                role: publicRole.id,
+                action: `api::article-view.article-view.${endpoint}`,
+                enabled: true
+              }
+            });
+          } else {
+            await strapi.query('plugin::users-permissions.permission').update({
+              where: { id: existingPermission.id },
+              data: { enabled: true }
+            });
+          }
+        }
+
+        console.log('Article-view permissions set up successfully');
+      }
+    } catch (error) {
+      console.error('Error setting up article-view permissions:', error);
+    }
   },
 };

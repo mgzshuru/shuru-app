@@ -48,7 +48,27 @@ export default factories.createCoreController('api::selected-article.selected-ar
             articles.sort((a: any, b: any) => new Date(a.publishedAt).getTime() - new Date(b.publishedAt).getTime());
             break;
           case 'mostRead':
-            articles.sort((a: any, b: any) => (b.views || 0) - (a.views || 0));
+            // Fetch view counts for all articles and sort by them
+            const articleIds = articles.map((article: any) => article.id);
+            const articleViews = await strapi.db.query('api::article-view.article-view').findMany({
+              where: {
+                article: { $in: articleIds }
+              },
+              select: ['article', 'views']
+            });
+
+            // Create a map of article ID to view count
+            const viewsMap = new Map();
+            articleViews.forEach((view: any) => {
+              viewsMap.set(view.article, view.views);
+            });
+
+            // Sort articles by view count
+            articles.sort((a: any, b: any) => {
+              const aViews = viewsMap.get(a.id) || 0;
+              const bViews = viewsMap.get(b.id) || 0;
+              return bViews - aViews;
+            });
             break;
           default:
             // manual order - keep as is

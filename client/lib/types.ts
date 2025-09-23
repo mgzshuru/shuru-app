@@ -172,7 +172,7 @@ export interface Article {
   SEO?: SEOComponent
   magazine_issues?: MagazineIssue[]
   newsletters?: NewsletterEdition[]
-  views?: number
+  views?: number // This will come from the separate article-view tracking
 }
 
 // Based on your schema's dynamic zone components
