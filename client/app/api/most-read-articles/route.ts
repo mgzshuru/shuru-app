@@ -1,98 +1,122 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getStrapiURL } from '@/lib/utils';
 
-export async function GET(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const limit = searchParams.get('limit') || '10';
+interface Article {
+  id: number;
+  documentId: string;
+  title: string;
+  slug: string;
+  description: string;
+  publish_date: string;
+  publishedAt?: string;
+  cover_image?: any;
+  categories?: any[];
+  author?: any;
+  views: number;
+}
 
-    // Check if we have an API token
-    const apiToken = process.env.STRAPI_API_TOKEN;
+interface ArticleView {
+  id: number;
+  views: number;
+  article: Article | null;
+}
 
-    // Build headers conditionally
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
+interface StrapiResponse<T> {
+  data: T[];
+  meta: {
+    pagination: {
+      start: number;
+      limit: number;
+      total: number;
+      pageCount?: number;
     };
+  };
+}
 
-    if (apiToken && apiToken !== 'your-strapi-api-token-here') {
-      headers['Authorization'] = `Bearer ${apiToken}`;
-    }
+/**
+ * Builds the request headers for Strapi API calls
+ */
+function buildHeaders(): Record<string, string> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
 
-    // First, try to fetch article views with populated article data
-    const viewsResponse = await fetch(
+  const apiToken = process.env.STRAPI_API_TOKEN;
+  if (apiToken && apiToken !== 'your-strapi-api-token-here') {
+    headers['Authorization'] = `Bearer ${apiToken}`;
+  }
+
+  return headers;
+}
+
+/**
+ * Fetches article views from Strapi with populated article data
+ */
+async function fetchArticleViews(headers: Record<string, string>): Promise<StrapiResponse<ArticleView> | null> {
+  try {
+    const response = await fetch(
       `${getStrapiURL()}/api/article-views?sort[0]=views:desc&pagination[limit]=100&populate[article][populate][cover_image]=*&populate[article][populate][categories]=*&populate[article][populate][author]=*&populate[article]=*`,
       { headers }
     );
 
-    // Also fetch all articles to include those without views
-    const articlesResponse = await fetch(
-      `${getStrapiURL()}/api/articles?sort[0]=publishedAt:desc&pagination[limit]=100&populate[cover_image][fields][0]=url&populate[cover_image][fields][1]=alternativeText&populate[categories][fields][0]=name&populate[categories][fields][1]=slug&populate[author][fields][0]=name&fields[0]=title&fields[1]=slug&fields[2]=description&fields[3]=publish_date&fields[4]=documentId`,
-      { headers }
-    );
-
-    if (!articlesResponse.ok) {
-      console.error('Strapi API error fetching articles:', articlesResponse.status, articlesResponse.statusText);
-      return NextResponse.json({ error: 'Failed to fetch articles' }, { status: 500 });
+    if (response.ok) {
+      return await response.json();
     }
+    return null;
+  } catch (error) {
+    console.error('Error fetching article views:', error);
+    return null;
+  }
+}
 
-    const articlesData = await articlesResponse.json();
-    let combinedArticles: any[] = [];
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const limit = parseInt(searchParams.get('limit') || '10');
 
-    if (viewsResponse.ok) {
-      // If we have views data, process it
-      const viewsData = await viewsResponse.json();
-      // Create articles with views - filter out entries without article data
-      const articlesWithViews = viewsData.data?.filter((item: any) => item.article && item.article.id)
-        .map((item: any) => ({
-          ...item.article,
+    const headers = buildHeaders();
+
+    // Only fetch article views - we don't need all articles for most viewed
+    const viewsData = await fetchArticleViews(headers);
+
+    let mostViewedArticles: Article[] = [];
+
+    if (viewsData) {
+      // Filter out article views with invalid article references
+      const validArticleViews = viewsData.data.filter(
+        (item: ArticleView) => item.article && item.article.id && item.views > 0
+      );
+
+      // Extract articles with views and sort by view count (descending)
+      mostViewedArticles = validArticleViews
+        .map((item: ArticleView) => ({
+          ...item.article!,
           views: item.views
-        })) || [];
-
-      // Get IDs of articles that have views
-      const articlesWithViewsIds = new Set(articlesWithViews.map((article: any) => article.id));
-
-      // Get articles without views
-      const articlesWithoutViews = articlesData.data?.filter((article: any) =>
-        !articlesWithViewsIds.has(article.id)
-      ).map((article: any) => ({
-        ...article,
-        views: 0
-      })) || [];
-
-      // Combine and sort: articles with views first (sorted by views desc), then articles without views (sorted by date desc)
-      combinedArticles = [
-        ...articlesWithViews.sort((a: any, b: any) => (b.views || 0) - (a.views || 0)),
-        ...articlesWithoutViews.sort((a: any, b: any) =>
-          new Date(b.publishedAt || b.publish_date).getTime() - new Date(a.publishedAt || a.publish_date).getTime()
-        )
-      ];
-    } else {
-      // If no views data available, just use all articles with 0 views
-      combinedArticles = articlesData.data?.map((article: any) => ({
-        ...article,
-        views: 0
-      })) || [];
+        }))
+        .sort((a, b) => b.views - a.views);
     }
 
-    // Limit to requested number
-    const limitNum = parseInt(limit);
-    const finalArticles = combinedArticles.slice(0, limitNum);
+    // Apply pagination limit
+    const finalArticles = mostViewedArticles.slice(0, limit);
 
-    const transformedData = {
+    const response = {
       data: finalArticles,
       meta: {
-        ...articlesData.meta,
         pagination: {
-          ...articlesData.meta?.pagination,
-          total: combinedArticles.length,
-          pageCount: Math.ceil(combinedArticles.length / limitNum)
+          start: 0,
+          limit: limit,
+          total: mostViewedArticles.length,
+          pageCount: Math.ceil(mostViewedArticles.length / limit)
         }
       }
     };
 
-    return NextResponse.json(transformedData);
+    return NextResponse.json(response);
   } catch (error) {
-    console.error('Error fetching most read articles:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error('Error in most-read-articles API:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
