@@ -240,6 +240,42 @@ export async function getArticlesByDateRange(startDate: string, endDate: string)
   return articles;
 }
 
+// Get most read articles with proper population
+export async function getMostReadArticles(limit: number = 10) {
+  const query = {
+    filters: {
+      views: { $gt: 0 }
+    },
+    sort: ['views:desc'],
+    pagination: { limit },
+    populate: {
+      article: {
+        populate: {
+          cover_image: {
+            fields: ["url", "alternativeText", "width", "height"]
+          },
+          categories: {
+            fields: ["name", "slug"]
+          },
+          author: {
+            fields: ["name", "jobTitle", "organization"]
+          }
+        }
+      }
+    }
+  };
+
+  const response = await client.collection("article-views").find(query);
+
+  // Transform the data to include views count with article data
+  const articles = response.data?.map((item: any) => ({
+    ...item.article,
+    views: item.views
+  })) || [];
+
+  return articles;
+}
+
 // Get article with full population (all relations and media)
 export async function getArticleWithFullPopulation(slug: string, status: "draft" | "published" = "published") {
   const query = {
