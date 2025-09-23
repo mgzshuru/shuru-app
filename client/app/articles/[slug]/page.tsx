@@ -15,6 +15,7 @@ import { formatDate, extractTextFromRichContent } from '@/lib/utils';
 import { Article, Block } from '@/lib/types';
 import styles from '@/components/article-content.module.css';
 import { ArticleStructuredData } from '@/components/seo/StructuredData';
+import { ArticleViewTracker } from '@/components/article-view-tracker';
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;
@@ -254,6 +255,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
   return (
     <div className="min-h-screen bg-white" dir="rtl">
+      <ArticleViewTracker articleDocumentId={article.documentId} articleSlug={article.slug} />
       <ArticleStructuredData article={article} globalData={globalData} />
       {/* Breadcrumb Navigation */}
       <nav className="bg-white/95 backdrop-blur-md border-b border-gray-200 top-0 z-10">

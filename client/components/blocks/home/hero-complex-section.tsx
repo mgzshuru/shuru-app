@@ -6,6 +6,7 @@ import { Article } from '@/lib/types';
 import { getStrapiMedia } from '@/components/custom/strapi-image';
 import { formatDate } from '@/lib/utils';
 import { useSelectedArticles } from '@/hooks/use-selected-articles';
+import { useMostReadArticles } from '@/hooks/use-most-read-articles';
 
 interface HeroComplexSectionData {
   title?: string;
@@ -32,6 +33,9 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
   // Fetch selected articles from the new endpoint
   const { selectedArticles, maxArticles, loading: selectedLoading } = useSelectedArticles();
 
+  // Fetch most read articles
+  const { mostReadArticles: apiMostReadArticles, loading: mostReadLoading } = useMostReadArticles(maxMostReadArticles);
+
   // Memoize article calculations to prevent unnecessary re-renders
   const processedArticles = useMemo(() => {
     const mainArticle = featuredArticle || articles[0];
@@ -48,12 +52,20 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
       usingSelectedArticles: selectedArticles.length > 0
     });
 
-    const trendingArticles = mostReadArticles.length > 0
-      ? mostReadArticles.slice(0, maxMostReadArticles)
-      : articles.slice(0, maxMostReadArticles);
+    // Use API most read articles first, then CMS most read, then fallback to regular articles
+    // Filter out the main article to avoid duplicates
+    let trendingPool = apiMostReadArticles.length > 0
+      ? apiMostReadArticles
+      : mostReadArticles.length > 0
+      ? mostReadArticles
+      : articles;
+
+    const trendingArticles = trendingPool
+      .filter(article => article.id !== mainArticle?.id)
+      .slice(0, maxMostReadArticles);
 
     return { mainArticle, sideArticles, trendingArticles };
-  }, [featuredArticle, articles, selectedArticles, maxArticles, mostReadArticles, maxMostReadArticles]);
+  }, [featuredArticle, articles, selectedArticles, maxArticles, mostReadArticles, maxMostReadArticles, apiMostReadArticles]);
 
   const { mainArticle, sideArticles, trendingArticles } = processedArticles;
 
