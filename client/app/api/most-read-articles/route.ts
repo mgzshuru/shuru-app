@@ -55,7 +55,7 @@ function buildHeaders(): Record<string, string> {
 async function fetchArticleViews(headers: Record<string, string>): Promise<StrapiResponse<ArticleView> | null> {
   try {
     const response = await fetch(
-      `${getStrapiURL()}/api/article-views?sort[0]=views:desc&pagination[limit]=100&populate[article][populate][cover_image]=*&populate[article][populate][categories]=*&populate[article][populate][author]=*&populate[article]=*`,
+      `${getStrapiURL()}/api/article-views?populate=*`,
       { headers }
     );
 
