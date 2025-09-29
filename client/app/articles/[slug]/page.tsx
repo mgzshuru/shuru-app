@@ -10,12 +10,12 @@ import { getStrapiMedia } from '@/components/custom/strapi-image';
 import { SocialShare } from '@/components/custom/social-share';
 import { TableOfContents } from '@/components/custom/table-of-contents';
 import { SaveButton } from '@/components/custom/save-button';
-import NewsletterSignup from '@/components/custom/NewsletterSignup';
 import { formatDate, extractTextFromRichContent } from '@/lib/utils';
 import { Article, Block } from '@/lib/types';
 import styles from '@/components/article-content.module.css';
 import { ArticleStructuredData } from '@/components/seo/StructuredData';
 import { ArticleViewTracker } from '@/components/article-view-tracker';
+import { ArticleLayout } from './article-layout';
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;
@@ -395,189 +395,119 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
         {/* Main Content Grid */}
         <div className="px-4 md:px-6">
-          <div className="max-w-6xl mx-auto grid lg:grid-cols-12 gap-8 lg:gap-16">
+          <ArticleLayout author={article.author}>
             {/* Article Content */}
-            <main className="lg:col-span-8 order-2 lg:order-1" dir="rtl">
-              {/* Article Content */}
-              <div id="article-content" className={styles.articleContent}>
-                {article.blocks && article.blocks.length > 0 ? (
-                  <ContentRenderer blocks={article.blocks} />
-                ) : (
-                  <div className="text-center py-24 bg-gray-50">
-                    <div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
-                      <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">لا يوجد محتوى متاح</h3>
-                    <p className="text-gray-500">
-                      المحتوى غير متوفر لهذا المقال في الوقت الحالي.
-                    </p>
+            <div id="article-content" className={styles.articleContent}>
+              {article.blocks && article.blocks.length > 0 ? (
+                <ContentRenderer blocks={article.blocks} />
+              ) : (
+                <div className="text-center py-24 bg-gray-50">
+                  <div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
                   </div>
-                )}
-              </div>
-
-              {/* Article Tags */}
-              {article.SEO?.meta_keywords && (
-                <div className="mt-12 md:mt-16 pt-6 md:pt-8 border-t border-gray-200">
-                  <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-3 md:mb-4 text-right">الكلمات المفتاحية</h3>
-                  <div className="flex flex-wrap gap-2 justify-end" dir="rtl">
-                    {article.SEO.meta_keywords.split(',').map((keyword, index) => (
-                      <span
-                        key={index}
-                        className="px-2 md:px-3 py-1 bg-gray-100 text-gray-700 text-xs md:text-sm hover:bg-gray-200 hover:text-gray-900 transition-colors cursor-pointer border border-gray-200 hover:border-gray-300"
-                      >
-                        #{keyword.trim()}
-                      </span>
-                    ))}
-                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">لا يوجد محتوى متاح</h3>
+                  <p className="text-gray-500">
+                    المحتوى غير متوفر لهذا المقال في الوقت الحالي.
+                  </p>
                 </div>
               )}
+            </div>
 
-              {/* Magazine Issues */}
-              <MagazineIssues issues={article.magazine_issues} />
-
-              {/* Social Share - Bottom */}
+            {/* Article Tags */}
+            {article.SEO?.meta_keywords && (
               <div className="mt-12 md:mt-16 pt-6 md:pt-8 border-t border-gray-200">
-                <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-6 md:p-8 border border-gray-200">
-                  <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-3 md:mb-4 text-right">شارك هذا المقال</h3>
-                  <SocialShare
-                    title={article.title}
-                    slug={article.slug}
-                    description={article.description}
-                  />
+                <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-3 md:mb-4 text-right">الكلمات المفتاحية</h3>
+                <div className="flex flex-wrap gap-2 justify-end" dir="rtl">
+                  {article.SEO.meta_keywords.split(',').map((keyword, index) => (
+                    <span
+                      key={index}
+                      className="px-2 md:px-3 py-1 bg-gray-100 text-gray-700 text-xs md:text-sm hover:bg-gray-200 hover:text-gray-900 transition-colors cursor-pointer border border-gray-200 hover:border-gray-300"
+                    >
+                      #{keyword.trim()}
+                    </span>
+                  ))}
                 </div>
               </div>
+            )}
 
-              {/* Related Articles in Main Content */}
-              {relatedArticles.length > 0 && (
-                <div className="mt-12 md:mt-16 pt-6 md:pt-8 border-t border-gray-200">
-                  <div className="flex items-center gap-2 md:gap-3 mb-6 md:mb-8">
-                    <div className="w-1 h-6 md:h-8 bg-gray-600"></div>
-                    <h3 className="text-xl md:text-2xl font-bold text-gray-900">مقالات ذات صلة</h3>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-                    {relatedArticles.slice(0, 4).map((relatedArticle) => (
-                      <Link
-                        key={relatedArticle.id}
-                        href={`/articles/${relatedArticle.slug}`}
-                        className="group block"
-                      >
-                        <article className="bg-white hover:bg-gray-50 transition-colors duration-200 rounded-none overflow-hidden border border-gray-200 ">
-                          {relatedArticle.cover_image && (
-                            <div className="aspect-[4/3] md:aspect-[16/9] bg-gray-100 overflow-hidden">
-                              <Image
-                                src={getStrapiMedia(relatedArticle.cover_image.url) || ''}
-                                alt={relatedArticle.title}
-                                width={400}
-                                height={225}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                              />
-                            </div>
-                          )}
-                          <div className="p-4 md:p-6" dir="rtl">
-                            <h4 className="font-bold text-gray-900 group-hover:text-gray-700 transition-colors  text-base md:text-lg mb-2 md:mb-3 text-right">
-                              {relatedArticle.title}
-                            </h4>
-                            {relatedArticle.description && (
-                              <p className="text-xs md:text-sm text-gray-600  mb-3 md:mb-4 text-right">
-                                {relatedArticle.description}
-                              </p>
-                            )}
-                            <div className="flex items-center justify-between text-xs text-gray-500">
-                              <time>{formatDate(relatedArticle.publish_date)}</time>
-                              {relatedArticle.categories && relatedArticle.categories.length > 0 && (
-                                <div className="flex items-center gap-1 flex-wrap">
-                                  {relatedArticle.categories.map((category, index) => (
-                                    <span key={category.id} className="text-gray-600 font-medium">
-                                      {category.name}
-                                      {index < relatedArticle.categories!.length - 1 && <span className="text-gray-400 ml-1">•</span>}
-                                    </span>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
+            {/* Magazine Issues */}
+            <MagazineIssues issues={article.magazine_issues} />
+
+            {/* Social Share - Bottom */}
+            <div className="mt-12 md:mt-16 pt-6 md:pt-8 border-t border-gray-200">
+              <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-6 md:p-8 border border-gray-200">
+                <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-3 md:mb-4 text-right">شارك هذا المقال</h3>
+                <SocialShare
+                  title={article.title}
+                  slug={article.slug}
+                  description={article.description}
+                />
+              </div>
+            </div>
+
+            {/* Related Articles in Main Content */}
+            {relatedArticles.length > 0 && (
+              <div className="mt-12 md:mt-16 pt-6 md:pt-8 border-t border-gray-200">
+                <div className="flex items-center gap-2 md:gap-3 mb-6 md:mb-8">
+                  <div className="w-1 h-6 md:h-8 bg-gray-600"></div>
+                  <h3 className="text-xl md:text-2xl font-bold text-gray-900">مقالات ذات صلة</h3>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                  {relatedArticles.slice(0, 4).map((relatedArticle) => (
+                    <Link
+                      key={relatedArticle.id}
+                      href={`/articles/${relatedArticle.slug}`}
+                      className="group block"
+                    >
+                      <article className="bg-white hover:bg-gray-50 transition-colors duration-200 rounded-none overflow-hidden border border-gray-200 ">
+                        {relatedArticle.cover_image && (
+                          <div className="aspect-[4/3] md:aspect-[16/9] bg-gray-100 overflow-hidden">
+                            <Image
+                              src={getStrapiMedia(relatedArticle.cover_image.url) || ''}
+                              alt={relatedArticle.title}
+                              width={400}
+                              height={225}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
                           </div>
-                        </article>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Newsletter Signup - Mobile Only */}
-              {/* <div className="lg:hidden mt-12 md:mt-16 pt-6 md:pt-8 border-t border-gray-200">
-                <NewsletterSignup variant="inline" />
-              </div> */}
-            </main>
-
-            {/* Enhanced Sidebar */}
-            <aside className="lg:col-span-4 space-y-6 lg:space-y-8 order-1 lg:order-2">
-              {/* Mobile Table of Contents - Show only on mobile */}
-              <div className="lg:hidden">
-                <TableOfContents articleContentId="article-content" />
-              </div>
-              {/* Author Card */}
-              {article.author && (
-                <div className="bg-white p-6 lg:p-8 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-                  <div className="flex items-center gap-3 lg:gap-4 mb-4 lg:mb-6">
-                    <div className="w-2 h-12 lg:h-16 bg-gray-600"></div>
-                    <h3 className="text-lg lg:text-xl font-bold text-gray-900">عن الكاتب</h3>
-                  </div>
-                  <div className="flex items-start gap-4 lg:gap-6" dir="rtl">
-                    {article.author.avatar && (
-                      <div className="relative flex-shrink-0">
-                        <Image
-                          src={getStrapiMedia(article.author.avatar.url) || ''}
-                          alt={article.author.name}
-                          width={60}
-                          height={60}
-                          className="lg:w-20 lg:h-20 rounded-full object-cover border-2 border-gray-100"
-                        />
-                        <div className="absolute -bottom-1 -left-1 lg:-bottom-2 lg:-left-2 w-4 h-4 lg:w-6 lg:h-6 bg-gray-600 rounded-full border-2 lg:border-3 border-white flex items-center justify-center">
-                          <svg className="w-2 h-2 lg:w-3 lg:h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                        </div>
-                      </div>
-                    )}
-                    <div className="flex-1 text-right">
-                      <h4 className="font-bold text-gray-900 text-base lg:text-lg mb-2">
-                        {article.author.name}
-                      </h4>
-                      {(article.author.jobTitle || article.author.organization) && (
-                        <p className="text-xs lg:text-sm text-gray-600 mb-3 leading-relaxed">
-                          {[article.author.jobTitle, article.author.organization].filter(Boolean).join(' • ')}
-                        </p>
-                      )}
-                      <div className="flex gap-2 justify-end">
-                        {article.author.linkedin_url && (
-                          <a
-                            href={article.author.linkedin_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-7 h-7 lg:w-8 lg:h-8 bg-blue-600 text-white flex items-center justify-center hover:bg-blue-700 transition-colors"
-                          >
-                            <svg className="w-3 h-3 lg:w-4 lg:h-4" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M16.338 16.338H13.67V12.16c0-.995-.017-2.277-1.387-2.277-1.39 0-1.601 1.086-1.601 2.207v4.248H8.014v-8.59h2.559v1.174h.037c.356-.675 1.227-1.387 2.526-1.387 2.703 0 3.203 1.778 3.203 4.092v4.711zM5.005 6.575a1.548 1.548 0 11-.003-3.096 1.548 1.548 0 01.003 3.096zm-1.337 9.763H6.34v-8.59H3.667v8.59zM17.668 1H2.328C1.595 1 1 1.581 1 2.298v15.403C1 18.418 1.595 19 2.328 19h15.34c.734 0 1.332-.582 1.332-1.299V2.298C19 1.581 18.402 1 17.668 1z" clipRule="evenodd" />
-                            </svg>
-                          </a>
                         )}
-                      </div>
-                    </div>
-                  </div>
+                        <div className="p-4 md:p-6" dir="rtl">
+                          <h4 className="font-bold text-gray-900 group-hover:text-gray-700 transition-colors  text-base md:text-lg mb-2 md:mb-3 text-right">
+                            {relatedArticle.title}
+                          </h4>
+                          {relatedArticle.description && (
+                            <p className="text-xs md:text-sm text-gray-600  mb-3 md:mb-4 text-right">
+                              {relatedArticle.description}
+                            </p>
+                          )}
+                          <div className="flex items-center justify-between text-xs text-gray-500">
+                            <time>{formatDate(relatedArticle.publish_date)}</time>
+                            {relatedArticle.categories && relatedArticle.categories.length > 0 && (
+                              <div className="flex items-center gap-1 flex-wrap">
+                                {relatedArticle.categories.map((category, index) => (
+                                  <span key={category.id} className="text-gray-600 font-medium">
+                                    {category.name}
+                                    {index < relatedArticle.categories!.length - 1 && <span className="text-gray-400 ml-1">•</span>}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </article>
+                    </Link>
+                  ))}
                 </div>
-              )}
-
-              {/* Newsletter Signup - Desktop Only */}
-              {/* <NewsletterSignup variant="sidebar" /> */}
-
-              {/* Desktop Table of Contents - Hidden on mobile */}
-              <div className="hidden lg:block sticky top-24">
-                <TableOfContents articleContentId="article-content" />
               </div>
-            </aside>
-          </div>
+            )}
+
+            {/* Newsletter Signup - Mobile Only */}
+            {/* <div className="lg:hidden mt-12 md:mt-16 pt-6 md:pt-8 border-t border-gray-200">
+              <NewsletterSignup variant="inline" />
+            </div> */}
+          </ArticleLayout>
         </div>
       </div>
 
