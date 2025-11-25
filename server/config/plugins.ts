@@ -85,6 +85,8 @@ export default ({ env }) => ({
           collection: 'api::email-template.email-template',
           subjectMatcherField: 'subjectMatcher',
           testEmailSubjectToMatch: 'Strapi test mail',
+          forgotPasswordSubjectToMatch: 'Reset password request',
+          emailConfirmationSubjectToMatch: 'Email address confirmation',
           // Authentication email configurations
           forgotPasswordUrl: '/api/auth/forgot-password',
           sendEmailConfirmationUrl: '/api/auth/send-email-confirmation',
