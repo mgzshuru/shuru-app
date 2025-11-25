@@ -81,7 +81,7 @@ export default ({ env }) => ({
         },
         // DYNAMIC TEMPLATES FOR AUTH EMAILS
         dynamicTemplates: {
-          enabled: true,
+          enabled: env('DYNAMIC_TEMPLATES_ENABLED', true),
           collection: 'api::email-template.email-template',
           subjectMatcherField: 'subjectMatcher',
           testEmailSubjectToMatch: 'Strapi test mail',

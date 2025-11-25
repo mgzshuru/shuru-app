@@ -51,7 +51,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 
     // Get SEO data from article or fallback
     const seoTitle = article.SEO?.meta_title ||
-      `${article.title} | ${globalData?.siteName || 'شروع'}`;
+      `${article.title} || 'شروع'}`;
 
     const seoDescription = article.SEO?.meta_description ||
       extractedDescription.substring(0, 160);
