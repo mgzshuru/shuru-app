@@ -49,7 +49,7 @@ export async function generateMetadata({ params }: MagazineIssuePageProps): Prom
 
     if (!issue) {
       return {
-        title: 'العدد غير موجود | شروع',
+        title: 'العدد غير موجود',
         description: 'العدد المطلوب غير موجود',
       };
     }
@@ -61,9 +61,7 @@ export async function generateMetadata({ params }: MagazineIssuePageProps): Prom
     const description = issue.SEO?.meta_description ||
       (issue.description ? issue.description.substring(0, 160) + '...' : `العدد ${issue.issue_number} من مجلة شروع`);
 
-    const fullTitle = globalData?.siteName
-      ? `${title} | ${globalData.siteName}`
-      : title;
+    const fullTitle = title;
 
     const defaultImage = globalData?.defaultSeo?.og_image ?
       (getStrapiMedia(globalData.defaultSeo.og_image.url) || `${baseUrl}/og-image.jpg`) :

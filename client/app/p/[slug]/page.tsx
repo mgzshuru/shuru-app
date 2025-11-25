@@ -90,7 +90,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!page) {
     return {
-      title: 'الصفحة غير موجودة | شروع',
+      title: 'الصفحة غير موجودة',
       description: 'الصفحة المطلوبة غير متوفرة.',
       robots: { index: false, follow: false },
     };
@@ -106,8 +106,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     'صفحة في موقع شروع';
 
   // Get SEO data from page or fallback
-  const seoTitle = page.SEO?.meta_title ||
-    `${page.title} | 'شروع'`;
+  const seoTitle = page.SEO?.meta_title || page.title;
 
   const seoDescription = page.SEO?.meta_description ||
     extractedDescription.substring(0, 160);

@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 
     if (!article) {
       return {
-        title: 'المقال غير موجود | شروع',
+        title: 'المقال غير موجود',
         description: 'المقال المطلوب غير متوفر.',
         robots: { index: false, follow: false },
       };

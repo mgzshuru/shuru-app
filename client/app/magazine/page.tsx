@@ -44,9 +44,7 @@ export async function generateMetadata({ searchParams }: MagazinePageProps): Pro
       description = `أعداد مجلة شروع - الصفحة ${page}`;
     }
 
-    const fullTitle = globalData?.siteName
-      ? `${title} | ${globalData.siteName}`
-      : title;
+    const fullTitle = title;
 
     const defaultImage = globalData?.defaultSeo?.og_image ?
       (getStrapiMedia(globalData.defaultSeo.og_image.url) || `${baseUrl}/og-image.jpg`) :

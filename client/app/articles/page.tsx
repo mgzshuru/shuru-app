@@ -61,7 +61,7 @@ export async function generateMetadata({ searchParams }: ArticlesPageProps): Pro
     }
 
     const siteName = globalData?.siteName || 'شروع';
-    const fullTitle = `${title} | ${siteName}`;
+    const fullTitle = title;
 
     return {
       metadataBase: new URL(baseUrl),

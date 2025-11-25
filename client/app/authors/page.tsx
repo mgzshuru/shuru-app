@@ -15,7 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shuru.sa';
     const authorsUrl = `${baseUrl}/authors`;
 
-    const title = 'المؤلفون | شروع';
+    const title = 'المؤلفون';
     const description = 'تعرف على فريق الكتاب والمؤلفين في شروع';
 
     const defaultImage = globalData?.defaultSeo?.og_image ?

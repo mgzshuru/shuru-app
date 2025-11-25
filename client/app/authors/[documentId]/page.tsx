@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: AuthorPageProps): Promise<Met
 
     if (!author) {
       return {
-        title: 'المؤلف غير موجود | شروع',
+        title: 'المؤلف غير موجود',
         description: 'المؤلف المطلوب غير متوفر.',
         robots: { index: false, follow: false },
       };
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: AuthorPageProps): Promise<Met
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shuru.sa';
     const authorUrl = `${baseUrl}/authors/${(author as any).documentId}`;
 
-    const title = `${(author as any).name} | شروع`;
+    const title = (author as any).name || 'مؤلف شروع';
 
     // Create description with bio if available, fallback to job info
     let description = '';
@@ -84,7 +84,7 @@ export async function generateMetadata({ params }: AuthorPageProps): Promise<Met
   } catch (error) {
     console.error('Error generating author metadata:', error);
     return {
-      title: 'خطأ في تحميل المؤلف | شروع',
+      title: 'خطأ في تحميل المؤلف',
       description: 'حدث خطأ أثناء تحميل صفحة المؤلف.',
     };
   }
