@@ -119,14 +119,14 @@ function Breadcrumbs({ search, category }: { search?: string; category?: string 
 // Page Header Component
 function PageHeader({ search, category }: { search?: string; category?: string }) {
   let title = 'المقالات';
-  let description = 'اكتشف أحدث المقالات والأفكار في عالم الابتكار والتقنيات الناشئة';
+  // let description = 'اكتشف أحدث المقالات والأفكار في عالم الابتكار والتقنيات الناشئة';
 
   if (search) {
     title = `نتائج البحث: ${search}`;
-    description = `نتائج البحث عن "${search}" في مقالات شروع`;
+    // description = `نتائج البحث عن "${search}" في مقالات شروع`;
   } else if (category) {
     title = `مقالات فئة: ${category}`;
-    description = `تصفح مقالات فئة ${category} في شروع`;
+    // description = `تصفح مقالات فئة ${category} في شروع`;
   }
 
   return (
@@ -136,9 +136,9 @@ function PageHeader({ search, category }: { search?: string; category?: string }
           <h1 className="text-4xl font-bold text-gray-900 mb-6 leading-tight">
             {title}
           </h1>
-          <p className="text-lg text-gray-600 leading-relaxed max-w-2xl mx-auto">
+          {/* <p className="text-lg text-gray-600 leading-relaxed max-w-2xl mx-auto">
             {description}
-          </p>
+          </p> */}
         </div>
       </div>
     </div>
