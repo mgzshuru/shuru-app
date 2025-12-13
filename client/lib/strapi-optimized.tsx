@@ -107,12 +107,20 @@ export async function getArticlesOptimized(options: {
   categorySlug?: string;
   featured?: boolean;
   authorId?: string;
+  search?: string;
 } = {}) {
-  const { page = 1, pageSize = 12, categorySlug, featured, authorId } = options;
+  const { page = 1, pageSize = 12, categorySlug, featured, authorId, search } = options;
 
   const filters: any = {
     ...getCurrentDateFilter()
   };
+
+  if (search) {
+    filters.$or = [
+      { title: { $containsi: search } },
+      { description: { $containsi: search } }
+    ];
+  }
 
   if (categorySlug) {
     // Get the category and its children to include articles from child categories

@@ -333,7 +333,12 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
 
     // Prepare parallel data fetching
     const [articlesResponse, featuredArticlesResponse, categoriesResponse] = await Promise.all([
-      getArticlesOptimized({ page: currentPage, pageSize }),
+      getArticlesOptimized({
+        page: currentPage,
+        pageSize,
+        categorySlug: category,
+        search: search
+      }),
       getArticlesOptimized({ featured: true, pageSize: 3 }), // Get top 3 featured articles
       getAllCategories(), // Still need all categories for SearchAndFilterClient
     ]);
