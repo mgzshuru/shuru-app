@@ -272,7 +272,7 @@ function Pagination({
       params.set('page', page.toString());
     }
     const queryString = params.toString();
-    return `/articles`;
+    return `/articles${queryString ? `?${queryString}` : ''}`;
   };
 
   return (
@@ -423,7 +423,9 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
                 <Pagination
                   currentPage={currentPage}
                   totalPages={totalPages}
-                  searchParams={{ page, search, category } as Record<string, string>}
+                  searchParams={Object.fromEntries(
+                    Object.entries({ page, search, category }).filter(([_, v]) => v !== undefined)
+                  ) as Record<string, string>}
                 />
               </>
             ) : (
