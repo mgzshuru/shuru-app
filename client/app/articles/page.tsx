@@ -272,7 +272,7 @@ function Pagination({
       params.set('page', page.toString());
     }
     const queryString = params.toString();
-    return `/articles${queryString ? `?${queryString}` : ''}`;
+    return `/articles`;
   };
 
   return (
