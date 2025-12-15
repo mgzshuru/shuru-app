@@ -240,7 +240,26 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
 
               {/* Most Read Articles */}
               <div className="recommender-feed min-h-[300px] md:min-h-[400px] lg:min-h-[500px] rounded-[3px] rounded-bl-[3px] rounded-br-[3px] rounded-tl-none rounded-tr-none border-b border-l border-r border-b-primary-light border-l-primary-light border-r-primary-light flex-1">
-                {trendingArticles.length > 0 ? trendingArticles.map((article, index) => (
+                {mostReadLoading ? (
+                  // Loading skeleton
+                  <div className="animate-pulse">
+                    {[1, 2, 3, 4].map((item) => (
+                      <div key={item} className="flex w-full border-b border-b-primary-light pb-3 pt-3 last:border-b-0">
+                        <div className="flex-shrink-0 ml-2 mr-2 md:ml-3 md:mr-3">
+                          <div className="w-8 h-8 bg-gray-200 rounded"></div>
+                        </div>
+                        <div className="flex-1 flex gap-3 md:gap-4">
+                          <div className="flex-1 space-y-2">
+                            <div className="h-3 bg-gray-200 rounded w-20"></div>
+                            <div className="h-4 bg-gray-200 rounded w-full"></div>
+                            <div className="h-3 bg-gray-200 rounded w-3/4"></div>
+                          </div>
+                          <div className="w-[100px] h-[75px] bg-gray-200 rounded"></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : trendingArticles.length > 0 ? trendingArticles.map((article, index) => (
                   <div key={article.id} className="flex w-full border-b border-b-primary-light pb-3 pt-3 last:border-b-0">
                     <div className="flex-shrink-0 ml-2 mr-2 md:ml-3 md:mr-3">
                       <p className="font-gt-america text-[24px] md:text-[32px] font-[275] leading-[20px] md:leading-[24px] text-primary">
