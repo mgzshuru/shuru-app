@@ -143,7 +143,20 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
 
             {/* Articles Container Box */}
             <div className="bg-white border border-primary-light rounded-none p-3 md:p-4 shadow-sm flex-1">
-              {sideArticles.length > 0 ? sideArticles.map((article, index) => (
+              {selectedLoading ? (
+                // Loading skeleton
+                <div className="animate-pulse">
+                  {[1, 2, 3].map((item) => (
+                    <div key={item} className="border-b border-primary-light pt-2 pb-4 md:pb-5 last:border-b-0">
+                      <div className="space-y-2">
+                        <div className="h-3 bg-gray-200 rounded w-20"></div>
+                        <div className="h-4 bg-gray-200 rounded w-full"></div>
+                        <div className="h-3 bg-gray-200 rounded w-3/4"></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : sideArticles.length > 0 ? sideArticles.map((article, index) => (
               <div
                 key={article.id}
                 data-parsely-slot={`text-only-article-${index + 1}`}
