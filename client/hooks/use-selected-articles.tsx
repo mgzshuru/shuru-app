@@ -43,16 +43,10 @@ export function useSelectedArticles() {
         const data: SelectedArticlesData = await response.json();
 
         if (data.data?.showInHero) {
-          console.log('Fetched selected articles config:', {
-            articlesCount: data.data.articles?.length || 0,
-            maxArticles: data.data.maxArticles,
-            useRandom: data.data.useRandomArticles
-          });
           setSelectedArticles(data.data.articles || []);
           setMaxArticles(data.data.maxArticles || 3);
           setUseRandom(data.data.useRandomArticles || false);
         } else {
-          console.log('showInHero is false');
           setSelectedArticles([]);
           setMaxArticles(3);
           setUseRandom(false);

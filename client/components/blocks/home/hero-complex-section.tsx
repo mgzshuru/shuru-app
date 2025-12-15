@@ -33,10 +33,10 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
   } = data;
 
   // Fetch selected articles from the new endpoint
-  const { selectedArticles, maxArticles, useRandom: useRandomSelectedArticles, loading: selectedLoading } = useSelectedArticles();
+  const { selectedArticles, maxArticles, useRandom: useRandomSelectedArticles, loading: selectedLoading, error: selectedError } = useSelectedArticles();
 
   // Fetch most read articles
-  const { mostReadArticles: apiMostReadArticles, loading: mostReadLoading } = useMostReadArticles(maxMostReadArticles);
+  const { mostReadArticles: apiMostReadArticles, loading: mostReadLoading, error: mostReadError } = useMostReadArticles(maxMostReadArticles);
 
   // Helper function to shuffle array randomly
   const shuffleArray = <T,>(array: T[]): T[] => {
@@ -48,11 +48,11 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
     return shuffled;
   };
 
-  // State for stable random selections - only change when articles count changes
+  // State for stable random selections - only change when articles change
   const [randomSeed] = useState(() => Math.random());
   const [isMainArticleReady, setIsMainArticleReady] = useState(false);
 
-  // Memoize shuffled articles - use seed to keep stable
+  // Memoize shuffled articles - depends on actual articles array
   const shuffledSelectedArticles = useMemo(() => {
     // إذا كان useRandomSelectedArticles مفعل، استخدم جميع المقالات
     if (useRandomSelectedArticles && articles.length > 0) {
@@ -61,7 +61,7 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
     // وإلا استخدم المقالات المحددة يدوياً
     if (selectedArticles.length === 0) return [];
     return shuffleArray(selectedArticles);
-  }, [useRandomSelectedArticles, selectedArticles.length, articles.length, randomSeed]);
+  }, [useRandomSelectedArticles, selectedArticles, articles, randomSeed]);
 
   const shuffledMainArticle = useMemo(() => {
     // إذا كان useRandomFeaturedArticle مفعل، اختر عشوائياً من كل المقالات
@@ -74,48 +74,33 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
       return featuredArticle;
     }
     return articles[0];
-  }, [useRandomFeaturedArticle, featuredArticle, articles.length, randomSeed]);
+  }, [useRandomFeaturedArticle, featuredArticle, articles, randomSeed]);
 
-  // Mark main article as ready after hydration
+  // Mark main article as ready only when data is actually loaded
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsMainArticleReady(true);
-    }, 100);
-    return () => clearTimeout(timer);
-  }, []);
+    if (shuffledMainArticle || featuredArticle) {
+      const timer = setTimeout(() => {
+        setIsMainArticleReady(true);
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [shuffledMainArticle, featuredArticle]);
 
   // Memoize article calculations to prevent unnecessary re-renders
   const processedArticles = useMemo(() => {
     const mainArticle = shuffledMainArticle || featuredArticle || articles[0];
 
-    // Use shuffled selected articles, fallback to original if shuffle not ready
+    // Use shuffled selected articles or original selected articles
     const sideArticles = shuffledSelectedArticles.length > 0
       ? shuffledSelectedArticles.slice(0, maxArticles)
-      : selectedArticles.length > 0
-      ? selectedArticles.slice(0, maxArticles)
-      : [];
+      : selectedArticles.slice(0, maxArticles);
 
-    console.log('Processing articles:', {
-      selectedArticlesCount: selectedArticles.length,
-      maxArticles,
-      sideArticlesCount: sideArticles.length,
-      usingSelectedArticles: selectedArticles.length > 0
-    });
-
-    // Only use API most read articles if loading is complete
-    // Don't show CMS most read articles during loading to avoid flash
-    let trendingPool: Article[] = [];
-    if (!mostReadLoading && apiMostReadArticles.length > 0) {
-      trendingPool = apiMostReadArticles;
-    } else if (!mostReadLoading && mostReadArticles.length > 0) {
-      trendingPool = mostReadArticles;
-    }
-
-    const trendingArticles = trendingPool
-      .slice(0, maxMostReadArticles );
+    // Prioritize API most read articles, fallback to CMS articles
+    const trendingArticles = (apiMostReadArticles.length > 0 ? apiMostReadArticles : mostReadArticles)
+      .slice(0, maxMostReadArticles);
 
     return { mainArticle, sideArticles, trendingArticles };
-  }, [shuffledMainArticle, featuredArticle, articles, shuffledSelectedArticles, selectedArticles, maxArticles, mostReadArticles, maxMostReadArticles, apiMostReadArticles, mostReadLoading, useRandomFeaturedArticle, useRandomSelectedArticles]);
+  }, [shuffledMainArticle, featuredArticle, articles, shuffledSelectedArticles, selectedArticles, maxArticles, mostReadArticles, maxMostReadArticles, apiMostReadArticles]);
 
   const { mainArticle, sideArticles, trendingArticles } = processedArticles;
 
@@ -141,7 +126,7 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
 
   return (
     <div className="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-5 mt-4 mb-8 md:mb-6 lg:mb-8">
-      <section aria-label="homepage-hero-section" className="grid grid-cols-1 lg:grid-cols-4 gap-8 md:gap-5 lg:gap-6">
+      <section aria-label="homepage-hero-section" aria-live="polite" className="grid grid-cols-1 lg:grid-cols-4 gap-8 md:gap-5 lg:gap-6">
 
         {/* Left Sidebar Articles */}
         <div className="lg:col-span-1 order-3 lg:order-1">
@@ -155,7 +140,16 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
 
             {/* Articles Container Box */}
             <div className="bg-white border border-primary-light rounded-none p-3 md:p-4 shadow-sm flex-1">
-              {selectedLoading ? (
+              {selectedError ? (
+                <div className="text-center py-8">
+                  <div className="w-16 h-16 bg-red-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                    <svg className="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <p className="text-red-500 text-sm font-medium">حدث خطأ في تحميل المقالات المختارة</p>
+                </div>
+              ) : selectedLoading ? (
                 // Loading skeleton
                 <div className="animate-pulse">
                   {[1, 2, 3].map((item) => (
@@ -336,7 +330,16 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
 
               {/* Most Read Articles */}
               <div className="recommender-feed min-h-[300px] md:min-h-[400px] lg:min-h-[500px] rounded-[3px] rounded-bl-[3px] rounded-br-[3px] rounded-tl-none rounded-tr-none border-b border-l border-r border-b-primary-light border-l-primary-light border-r-primary-light flex-1">
-                {mostReadLoading ? (
+                {mostReadError ? (
+                  <div className="p-8 text-center">
+                    <div className="w-16 h-16 bg-red-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                      <svg className="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <p className="text-red-500 text-sm font-medium">حدث خطأ في تحميل الأكثر قراءة</p>
+                  </div>
+                ) : mostReadLoading ? (
                   // Loading skeleton
                   <div className="animate-pulse">
                     {[1, 2, 3, 4].map((item) => (

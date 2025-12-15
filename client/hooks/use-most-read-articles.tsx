@@ -21,19 +21,14 @@ export function useMostReadArticles(limit: number = 4) {
 
         const data = await response.json();
 
-        console.log('Most read articles API response:', data);
-
         if (data.data && Array.isArray(data.data)) {
-          console.log('Fetched most read articles:', data.data.length);
           setMostReadArticles(data.data);
         } else {
-          console.log('No most read articles data');
           setMostReadArticles([]);
         }
 
         setError(null);
       } catch (err) {
-        console.error('Error fetching most read articles:', err);
         setError(err instanceof Error ? err.message : 'Unknown error');
         setMostReadArticles([]);
       } finally {
