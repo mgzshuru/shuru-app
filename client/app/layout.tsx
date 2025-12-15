@@ -189,6 +189,14 @@ export default async function RootLayout({
       className={`${ibmPlexSansArabic.variable} ${notoSansArabic.variable} ${tajawal.variable}`}
     >
       <head>
+        {/* Preconnect to CDN for faster image loading */}
+        <link rel="preconnect" href="https://shuru-bkt.s3.eu-west-3.amazonaws.com" />
+        <link rel="dns-prefetch" href="https://shuru-bkt.s3.eu-west-3.amazonaws.com" />
+
+        {/* Preconnect to CMS API */}
+        <link rel="preconnect" href="https://cms.shuru.sa" />
+        <link rel="dns-prefetch" href="https://cms.shuru.sa" />
+
         {/* Google Analytics */}
         {GA_MEASUREMENT_ID && (
           <>

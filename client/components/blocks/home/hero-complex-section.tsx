@@ -241,6 +241,7 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
                     <Image
                       alt={mainArticle.cover_image.alternativeText || mainArticle.title}
                       fetchPriority="high"
+                      priority={true}
                       width={640}
                       height={360}
                       className="w-full h-full object-cover object-center"

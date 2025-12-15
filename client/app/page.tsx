@@ -1,6 +1,8 @@
 import { HomePageBlocksRenderer } from '@/lib/home-blocks';
 import { fetchHomePageData } from '@/lib/strapi-client'
 import { getArticlesOptimized, getAllCategories } from '@/lib/strapi-optimized';
+import { getStrapiMedia } from '@/components/custom/strapi-image';
+import Link from 'next/link';
 
 // Force static generation
 // export const dynamic = 'force-static'
@@ -18,14 +20,64 @@ export default async function Home() {
     const articles = Array.isArray(articlesResponse.data) ? articlesResponse.data : [];
     const categories = Array.isArray(categoriesResponse.data) ? categoriesResponse.data : [];
 
+    // Extract hero section data for preloading
+    const heroBlock = homePageData?.blocks?.find((b: any) => b.__component === 'home.hero-complex-section');
+    const heroImages: string[] = [];
+
+    if (heroBlock) {
+      // Preload featured article image
+      if (heroBlock.featuredArticle?.cover_image?.url) {
+        const imgUrl = getStrapiMedia(heroBlock.featuredArticle.cover_image.url);
+        if (imgUrl) heroImages.push(imgUrl);
+      }
+
+      // Preload most read articles images
+      heroBlock.mostReadArticles?.slice(0, 4).forEach((article: any) => {
+        if (article.cover_image?.url) {
+          const imgUrl = getStrapiMedia(article.cover_image.url);
+          if (imgUrl) heroImages.push(imgUrl);
+        }
+      });
+    }
+
+    // Preload selected articles images from first 4 articles
+    articles.slice(0, 4).forEach((article: any) => {
+      if (article.cover_image?.url) {
+        const imgUrl = getStrapiMedia(article.cover_image.url);
+        if (imgUrl && !heroImages.includes(imgUrl)) {
+          heroImages.push(imgUrl);
+        }
+      }
+    });
+
     return (
-      <main className="min-h-screen bg-white">
-        <HomePageBlocksRenderer
-          blocks={homePageData?.blocks}
-          articles={articles as any}
-          categories={categories as any}
-        />
-      </main>
+      <>
+        {/* Preload critical hero images */}
+        <head>
+          {heroImages.slice(0, 8).map((imgUrl, index) => (
+            <link
+              key={imgUrl}
+              rel="preload"
+              as="image"
+              href={imgUrl}
+              // @ts-ignore
+              fetchpriority={index === 0 ? "high" : "low"}
+            />
+          ))}
+
+          {/* Prefetch APIs */}
+          <link rel="prefetch" href="/api/selected-article" />
+          <link rel="prefetch" href="/api/most-read-articles?limit=4" />
+        </head>
+
+        <main className="min-h-screen bg-white">
+          <HomePageBlocksRenderer
+            blocks={homePageData?.blocks}
+            articles={articles as any}
+            categories={categories as any}
+          />
+        </main>
+      </>
     );
   } catch (error) {
     console.error('Error loading home page:', error);
