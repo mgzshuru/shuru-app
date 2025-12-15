@@ -939,7 +939,6 @@ export interface HomeHeroComplexSection extends Struct.ComponentSchema {
     subtitle: Schema.Attribute.Text;
     title: Schema.Attribute.String;
     useRandomFeaturedArticle: Schema.Attribute.Boolean &
-      Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<false>;
   };
 }
