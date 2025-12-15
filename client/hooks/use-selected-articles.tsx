@@ -12,6 +12,7 @@ interface SelectedArticlesData {
     maxArticles: number;
     showInHero: boolean;
     displayOrder: 'manual' | 'newest' | 'oldest' | 'mostRead';
+    useRandomArticles: boolean;
     createdAt: string;
     updatedAt: string;
     publishedAt: string;
@@ -21,6 +22,7 @@ interface SelectedArticlesData {
 export function useSelectedArticles() {
   const [selectedArticles, setSelectedArticles] = useState<Article[]>([]);
   const [maxArticles, setMaxArticles] = useState<number>(3);
+  const [useRandom, setUseRandom] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -40,15 +42,20 @@ export function useSelectedArticles() {
 
         const data: SelectedArticlesData = await response.json();
 
-        if (data.data?.articles && data.data.showInHero) {
-          console.log('Fetched selected articles:', data.data.articles);
-          console.log('Max articles setting:', data.data.maxArticles);
-          setSelectedArticles(data.data.articles);
+        if (data.data?.showInHero) {
+          console.log('Fetched selected articles config:', {
+            articlesCount: data.data.articles?.length || 0,
+            maxArticles: data.data.maxArticles,
+            useRandom: data.data.useRandomArticles
+          });
+          setSelectedArticles(data.data.articles || []);
           setMaxArticles(data.data.maxArticles || 3);
+          setUseRandom(data.data.useRandomArticles || false);
         } else {
-          console.log('No selected articles or showInHero is false');
+          console.log('showInHero is false');
           setSelectedArticles([]);
           setMaxArticles(3);
+          setUseRandom(false);
         }
 
         setError(null);
@@ -64,5 +71,5 @@ export function useSelectedArticles() {
     fetchSelectedArticles();
   }, []);
 
-  return { selectedArticles, maxArticles, loading, error };
+  return { selectedArticles, maxArticles, useRandom, loading, error };
 }

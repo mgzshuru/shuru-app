@@ -44,6 +44,11 @@
       "enum": ["manual", "newest", "oldest", "mostRead"],
       "default": "manual",
       "required": false
+    },
+    "useRandomArticles": {
+      "type": "boolean",
+      "default": false,
+      "required": false
     }
   }
 }

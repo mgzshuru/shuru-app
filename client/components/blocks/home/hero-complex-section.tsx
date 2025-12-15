@@ -15,6 +15,7 @@ interface HeroComplexSectionData {
   mostReadArticles?: Article[];
   showMostRead?: boolean;
   maxMostReadArticles?: number;
+  useRandomFeaturedArticle?: boolean;
 }
 
 interface HeroComplexSectionProps {
@@ -28,10 +29,11 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
     mostReadArticles = [],
     showMostRead = true,
     maxMostReadArticles = 4,
+    useRandomFeaturedArticle = false,
   } = data;
 
   // Fetch selected articles from the new endpoint
-  const { selectedArticles, maxArticles, loading: selectedLoading } = useSelectedArticles();
+  const { selectedArticles, maxArticles, useRandom: useRandomSelectedArticles, loading: selectedLoading } = useSelectedArticles();
 
   // Fetch most read articles
   const { mostReadArticles: apiMostReadArticles, loading: mostReadLoading } = useMostReadArticles(maxMostReadArticles);
@@ -48,16 +50,27 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
 
   // Memoize shuffled articles - shuffle only when source data changes
   const shuffledSelectedArticles = useMemo(() => {
+    // إذا كان useRandomSelectedArticles مفعل، استخدم جميع المقالات
+    if (useRandomSelectedArticles && articles.length > 0) {
+      return shuffleArray(articles);
+    }
+    // وإلا استخدم المقالات المحددة يدوياً
     if (selectedArticles.length === 0) return [];
     return shuffleArray(selectedArticles);
-  }, [selectedArticles]);
+  }, [useRandomSelectedArticles, selectedArticles, articles]);
 
   const shuffledMainArticle = useMemo(() => {
+    // إذا كان useRandomFeaturedArticle مفعل، اختر عشوائياً من كل المقالات
+    if (useRandomFeaturedArticle && articles.length > 0) {
+      const shuffled = shuffleArray(articles);
+      return shuffled[0];
+    }
+    // وإلا استخدم المقال المحدد أو أول مقال
     const availableForMain = featuredArticle ? [featuredArticle] : articles;
     if (availableForMain.length === 0) return undefined;
     const shuffled = shuffleArray(availableForMain);
     return shuffled[0];
-  }, [featuredArticle, articles]);
+  }, [useRandomFeaturedArticle, featuredArticle, articles]);
 
   // Memoize article calculations to prevent unnecessary re-renders
   const processedArticles = useMemo(() => {
@@ -90,7 +103,7 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
       .slice(0, maxMostReadArticles );
 
     return { mainArticle, sideArticles, trendingArticles };
-  }, [shuffledMainArticle, featuredArticle, articles, shuffledSelectedArticles, selectedArticles, maxArticles, mostReadArticles, maxMostReadArticles, apiMostReadArticles, mostReadLoading]);
+  }, [shuffledMainArticle, featuredArticle, articles, shuffledSelectedArticles, selectedArticles, maxArticles, mostReadArticles, maxMostReadArticles, apiMostReadArticles, mostReadLoading, useRandomFeaturedArticle, useRandomSelectedArticles]);
 
   const { mainArticle, sideArticles, trendingArticles } = processedArticles;
 

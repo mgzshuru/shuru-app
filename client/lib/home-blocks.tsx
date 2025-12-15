@@ -34,6 +34,7 @@ export const renderHomePageBlock = (block: HomePageBlock, articles: Article[] = 
         mostReadArticles: block.mostReadArticles || [],
         showMostRead: block.showMostRead ?? true,
         maxMostReadArticles: block.maxMostReadArticles || 4,
+        useRandomFeaturedArticle: block.useRandomFeaturedArticle ?? false,
       };
       return <HeroComplexSection key={uniqueKey} data={heroComplexData} articles={articles} />;
     }
