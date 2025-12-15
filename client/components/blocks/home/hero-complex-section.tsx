@@ -50,7 +50,7 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
 
   // State for stable random selections - only change when articles count changes
   const [randomSeed] = useState(() => Math.random());
-  
+
   // Memoize shuffled articles - use seed to keep stable
   const shuffledSelectedArticles = useMemo(() => {
     // إذا كان useRandomSelectedArticles مفعل، استخدم جميع المقالات
