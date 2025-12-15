@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Article } from '@/lib/types';
@@ -36,13 +36,43 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
   // Fetch most read articles
   const { mostReadArticles: apiMostReadArticles, loading: mostReadLoading } = useMostReadArticles(maxMostReadArticles);
 
+  // Helper function to shuffle array randomly
+  const shuffleArray = <T,>(array: T[]): T[] => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  // State to store shuffled articles (only shuffle once per data load)
+  const [shuffledSelectedArticles, setShuffledSelectedArticles] = useState<Article[]>([]);
+  const [shuffledMainArticle, setShuffledMainArticle] = useState<Article | undefined>();
+
+  // Shuffle selected articles when they change (only once per load)
+  useEffect(() => {
+    if (selectedArticles.length > 0) {
+      setShuffledSelectedArticles(shuffleArray(selectedArticles));
+    }
+  }, [selectedArticles.length]); // Only re-shuffle when count changes, not the array itself
+
+  // Shuffle main article when articles change (only once per load)
+  useEffect(() => {
+    const availableForMain = featuredArticle ? [featuredArticle] : articles;
+    if (availableForMain.length > 0) {
+      const shuffled = shuffleArray(availableForMain);
+      setShuffledMainArticle(shuffled[0]);
+    }
+  }, [featuredArticle, articles.length]); // Only re-shuffle when count changes
+
   // Memoize article calculations to prevent unnecessary re-renders
   const processedArticles = useMemo(() => {
-    const mainArticle = featuredArticle || articles[0];
+    const mainArticle = shuffledMainArticle || featuredArticle || articles[0];
 
-    // Only use selected articles if they are available, no fallback
-    const sideArticles = selectedArticles.length > 0
-      ? selectedArticles.slice(0, maxArticles)
+    // Use shuffled selected articles
+    const sideArticles = shuffledSelectedArticles.length > 0
+      ? shuffledSelectedArticles.slice(0, maxArticles)
       : [];
 
     console.log('Processing articles:', {
