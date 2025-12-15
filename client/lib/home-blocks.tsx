@@ -27,6 +27,11 @@ export const renderHomePageBlock = (block: HomePageBlock, articles: Article[] = 
 
   switch (block.__component) {
     case 'home.hero-complex-section': {
+      console.log('home-blocks.tsx - block data:', {
+        useRandomFeaturedArticle: block.useRandomFeaturedArticle,
+        hasField: 'useRandomFeaturedArticle' in block,
+        allKeys: Object.keys(block)
+      });
       const heroComplexData = {
         title: block.title,
         subtitle: block.subtitle,
