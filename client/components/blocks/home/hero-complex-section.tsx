@@ -65,11 +65,11 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
       const shuffled = shuffleArray(articles);
       return shuffled[0];
     }
-    // وإلا استخدم المقال المحدد أو أول مقال
-    const availableForMain = featuredArticle ? [featuredArticle] : articles;
-    if (availableForMain.length === 0) return undefined;
-    const shuffled = shuffleArray(availableForMain);
-    return shuffled[0];
+    // وإلا استخدم المقال المحدد (بدون shuffle) أو اختر أول مقال
+    if (featuredArticle) {
+      return featuredArticle;
+    }
+    return articles[0];
   }, [useRandomFeaturedArticle, featuredArticle, articles]);
 
   // Memoize article calculations to prevent unnecessary re-renders
