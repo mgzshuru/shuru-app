@@ -46,33 +46,28 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
     return shuffled;
   };
 
-  // State to store shuffled articles (only shuffle once per data load)
-  const [shuffledSelectedArticles, setShuffledSelectedArticles] = useState<Article[]>([]);
-  const [shuffledMainArticle, setShuffledMainArticle] = useState<Article | undefined>();
+  // Memoize shuffled articles - shuffle only when source data changes
+  const shuffledSelectedArticles = useMemo(() => {
+    if (selectedArticles.length === 0) return [];
+    return shuffleArray(selectedArticles);
+  }, [selectedArticles]);
 
-  // Shuffle selected articles when they change (only once per load)
-  useEffect(() => {
-    if (selectedArticles.length > 0) {
-      setShuffledSelectedArticles(shuffleArray(selectedArticles));
-    }
-  }, [selectedArticles.length]); // Only re-shuffle when count changes, not the array itself
-
-  // Shuffle main article when articles change (only once per load)
-  useEffect(() => {
+  const shuffledMainArticle = useMemo(() => {
     const availableForMain = featuredArticle ? [featuredArticle] : articles;
-    if (availableForMain.length > 0) {
-      const shuffled = shuffleArray(availableForMain);
-      setShuffledMainArticle(shuffled[0]);
-    }
-  }, [featuredArticle, articles.length]); // Only re-shuffle when count changes
+    if (availableForMain.length === 0) return undefined;
+    const shuffled = shuffleArray(availableForMain);
+    return shuffled[0];
+  }, [featuredArticle, articles]);
 
   // Memoize article calculations to prevent unnecessary re-renders
   const processedArticles = useMemo(() => {
     const mainArticle = shuffledMainArticle || featuredArticle || articles[0];
 
-    // Use shuffled selected articles
+    // Use shuffled selected articles, fallback to original if shuffle not ready
     const sideArticles = shuffledSelectedArticles.length > 0
       ? shuffledSelectedArticles.slice(0, maxArticles)
+      : selectedArticles.length > 0
+      ? selectedArticles.slice(0, maxArticles)
       : [];
 
     console.log('Processing articles:', {
@@ -95,7 +90,7 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
       .slice(0, maxMostReadArticles );
 
     return { mainArticle, sideArticles, trendingArticles };
-  }, [featuredArticle, articles, selectedArticles, maxArticles, mostReadArticles, maxMostReadArticles, apiMostReadArticles, mostReadLoading]);
+  }, [shuffledMainArticle, featuredArticle, articles, shuffledSelectedArticles, selectedArticles, maxArticles, mostReadArticles, maxMostReadArticles, apiMostReadArticles, mostReadLoading]);
 
   const { mainArticle, sideArticles, trendingArticles } = processedArticles;
 
