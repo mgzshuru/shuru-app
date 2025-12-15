@@ -32,10 +32,6 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
     useRandomFeaturedArticle = false,
   } = data;
 
-  console.log('HeroComplexSection - useRandomFeaturedArticle:', useRandomFeaturedArticle);
-  console.log('HeroComplexSection - featuredArticle:', featuredArticle?.title);
-  console.log('HeroComplexSection - articles count:', articles.length);
-
   // Fetch selected articles from the new endpoint
   const { selectedArticles, maxArticles, useRandom: useRandomSelectedArticles, loading: selectedLoading } = useSelectedArticles();
 

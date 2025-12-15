@@ -30,7 +30,7 @@ const populateQuery = {
             }
           }
         },
-        fields: ['title', 'subtitle', 'showMostRead', 'maxMostReadArticles']
+        fields: ['title', 'subtitle', 'showMostRead', 'maxMostReadArticles', 'useRandomFeaturedArticle']
       },
       'home.article-grid-section': {
         populate: {
