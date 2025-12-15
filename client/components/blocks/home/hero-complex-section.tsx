@@ -48,7 +48,10 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
     return shuffled;
   };
 
-  // Memoize shuffled articles - shuffle only when source data changes
+  // State for stable random selections - only change when articles count changes
+  const [randomSeed] = useState(() => Math.random());
+  
+  // Memoize shuffled articles - use seed to keep stable
   const shuffledSelectedArticles = useMemo(() => {
     // إذا كان useRandomSelectedArticles مفعل، استخدم جميع المقالات
     if (useRandomSelectedArticles && articles.length > 0) {
@@ -57,27 +60,20 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
     // وإلا استخدم المقالات المحددة يدوياً
     if (selectedArticles.length === 0) return [];
     return shuffleArray(selectedArticles);
-  }, [useRandomSelectedArticles, selectedArticles, articles]);
+  }, [useRandomSelectedArticles, selectedArticles.length, articles.length, randomSeed]);
 
   const shuffledMainArticle = useMemo(() => {
-    console.log('shuffledMainArticle useMemo - useRandomFeaturedArticle:', useRandomFeaturedArticle);
-    console.log('shuffledMainArticle useMemo - articles.length:', articles.length);
-
     // إذا كان useRandomFeaturedArticle مفعل، اختر عشوائياً من كل المقالات
     if (useRandomFeaturedArticle && articles.length > 0) {
-      console.log('Using random featured article');
       const shuffled = shuffleArray(articles);
-      console.log('Selected random article:', shuffled[0]?.title);
       return shuffled[0];
     }
     // وإلا استخدم المقال المحدد (بدون shuffle) أو اختر أول مقال
     if (featuredArticle) {
-      console.log('Using manually selected featured article:', featuredArticle.title);
       return featuredArticle;
     }
-    console.log('Using first article:', articles[0]?.title);
     return articles[0];
-  }, [useRandomFeaturedArticle, featuredArticle, articles]);
+  }, [useRandomFeaturedArticle, featuredArticle, articles.length, randomSeed]);
 
   // Memoize article calculations to prevent unnecessary re-renders
   const processedArticles = useMemo(() => {
