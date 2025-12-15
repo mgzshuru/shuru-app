@@ -52,19 +52,20 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
       usingSelectedArticles: selectedArticles.length > 0
     });
 
-    // Use API most read articles first, then CMS most read, then fallback to regular articles
-    // Filter out the main article to avoid duplicates
-    let trendingPool = apiMostReadArticles.length > 0
-      ? apiMostReadArticles
-      : mostReadArticles.length > 0
-      ? mostReadArticles
-      : articles;
+    // Only use API most read articles if loading is complete
+    // Don't show CMS most read articles during loading to avoid flash
+    let trendingPool: Article[] = [];
+    if (!mostReadLoading && apiMostReadArticles.length > 0) {
+      trendingPool = apiMostReadArticles;
+    } else if (!mostReadLoading && mostReadArticles.length > 0) {
+      trendingPool = mostReadArticles;
+    }
 
     const trendingArticles = trendingPool
       .slice(0, maxMostReadArticles );
 
     return { mainArticle, sideArticles, trendingArticles };
-  }, [featuredArticle, articles, selectedArticles, maxArticles, mostReadArticles, maxMostReadArticles, apiMostReadArticles]);
+  }, [featuredArticle, articles, selectedArticles, maxArticles, mostReadArticles, maxMostReadArticles, apiMostReadArticles, mostReadLoading]);
 
   const { mainArticle, sideArticles, trendingArticles } = processedArticles;
 
