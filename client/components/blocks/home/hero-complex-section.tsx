@@ -216,25 +216,56 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
         {/* Main Featured Article - Center */}
         <div className="lg:col-span-2 order-1 lg:order-2">
           <div className="h-full">
-            <article className="grid grid-flow-row auto-rows-max gap-2 md:gap-3 h-full" aria-label="Landing page card">
-              {/* Category Label */}
-              <div className="flex items-center gap-1">
-                <p className="flex items-center font-centra text-primary-dark text-left text-[11px] md:text-[13px] font-bold leading-[12px] md:leading-[14px] tracking-[1.2px] md:tracking-[1.4px]">
-                  <Link
-                    className=""
-                    href={`/categories/${mainArticle.categories?.[0]?.slug || '#'}`}
-                    target="_blank"
-                  >
-                    {mainArticle.categories?.[0]?.name?.toUpperCase() || 'أخبار'}
-                  </Link>
-                </p>
-              </div>
+            {!mainArticle ? (
+              // Loading skeleton for main article
+              <article className="grid grid-flow-row auto-rows-max gap-2 md:gap-3 h-full animate-pulse" aria-label="Loading">
+                {/* Category skeleton */}
+                <div className="flex items-center gap-1">
+                  <div className="h-3 bg-gray-200 rounded w-20"></div>
+                </div>
 
-              <Link
-                href={`/articles/${mainArticle.slug}`}
-                aria-label={`card link`}
-                className="flex flex-col h-full"
-              >
+                <div className="flex flex-col h-full">
+                  {/* Image skeleton */}
+                  <div className="relative mb-2 md:mb-3 flex aspect-[16/9] h-auto w-full flex-col items-stretch">
+                    <div className="w-full h-full bg-gray-200 rounded"></div>
+                  </div>
+
+                  {/* Content skeleton */}
+                  <div className="flex-1 flex flex-col justify-between space-y-3">
+                    {/* Title skeleton */}
+                    <div className="space-y-2">
+                      <div className="h-6 md:h-7 bg-gray-200 rounded w-full"></div>
+                      <div className="h-6 md:h-7 bg-gray-200 rounded w-4/5"></div>
+                    </div>
+
+                    {/* Description skeleton */}
+                    <div className="space-y-2 mt-auto">
+                      <div className="h-4 bg-gray-200 rounded w-full"></div>
+                      <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            ) : (
+              <article className="grid grid-flow-row auto-rows-max gap-2 md:gap-3 h-full" aria-label="Landing page card">
+                {/* Category Label */}
+                <div className="flex items-center gap-1">
+                  <p className="flex items-center font-centra text-primary-dark text-left text-[11px] md:text-[13px] font-bold leading-[12px] md:leading-[14px] tracking-[1.2px] md:tracking-[1.4px]">
+                    <Link
+                      className=""
+                      href={`/categories/${mainArticle.categories?.[0]?.slug || '#'}`}
+                      target="_blank"
+                    >
+                      {mainArticle.categories?.[0]?.name?.toUpperCase() || 'أخبار'}
+                    </Link>
+                  </p>
+                </div>
+
+                <Link
+                  href={`/articles/${mainArticle.slug}`}
+                  aria-label={`card link`}
+                  className="flex flex-col h-full"
+                >
                 {/* Hero Image */}
                 <div className="relative mb-2 md:mb-3 flex aspect-[16/9] h-auto w-full flex-col items-stretch">
                   {mainArticle.cover_image && getStrapiMedia(mainArticle.cover_image.url) ? (
@@ -276,6 +307,7 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
                 </div>
               </Link>
             </article>
+            )}
           </div>
         </div>
 
