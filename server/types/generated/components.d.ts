@@ -938,6 +938,8 @@ export interface HomeHeroComplexSection extends Struct.ComponentSchema {
     showMostRead: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     subtitle: Schema.Attribute.Text;
     title: Schema.Attribute.String;
+    useRandomFeaturedArticle: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
   };
 }
 
