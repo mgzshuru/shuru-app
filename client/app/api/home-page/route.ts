@@ -6,8 +6,9 @@ export async function GET(request: NextRequest) {
     const baseUrl = getStrapiURL();
     const url = new URL(`${baseUrl}/api/home-page`);
 
-    // Use deep populate to get all dynamic blocks and their relationships
-    url.searchParams.append('populate', 'deep');
+    // Populate all blocks and their nested relations
+    url.searchParams.append('populate[blocks][populate]', '*');
+    url.searchParams.append('populate[seo][populate]', '*');
 
     const response = await fetch(url.toString(), {
       method: 'GET',

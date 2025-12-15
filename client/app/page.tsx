@@ -15,6 +15,12 @@ export default async function Home() {
       getAllCategories().catch(() => ({ data: [] }))
     ]);
     console.log('Fetched home page data:', JSON.stringify(homePageData, null, 2));
+
+    // Debug: Check hero section data
+    const heroBlock = homePageData?.blocks?.find((b: any) => b.__component === 'home.hero-complex-section');
+    if (heroBlock) {
+      console.log('SERVER - Hero block useRandomFeaturedArticle:', heroBlock.useRandomFeaturedArticle);
+    }
     const articles = Array.isArray(articlesResponse.data) ? articlesResponse.data : [];
     const categories = Array.isArray(categoriesResponse.data) ? categoriesResponse.data : [];
 
