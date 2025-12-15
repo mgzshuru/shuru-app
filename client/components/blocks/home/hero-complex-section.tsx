@@ -50,6 +50,7 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
 
   // State for stable random selections - only change when articles count changes
   const [randomSeed] = useState(() => Math.random());
+  const [isMainArticleReady, setIsMainArticleReady] = useState(false);
 
   // Memoize shuffled articles - use seed to keep stable
   const shuffledSelectedArticles = useMemo(() => {
@@ -74,6 +75,14 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
     }
     return articles[0];
   }, [useRandomFeaturedArticle, featuredArticle, articles.length, randomSeed]);
+
+  // Mark main article as ready after hydration
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsMainArticleReady(true);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Memoize article calculations to prevent unnecessary re-renders
   const processedArticles = useMemo(() => {
@@ -216,7 +225,7 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
         {/* Main Featured Article - Center */}
         <div className="lg:col-span-2 order-1 lg:order-2">
           <div className="h-full">
-            {!mainArticle ? (
+            {!isMainArticleReady || !mainArticle ? (
               // Loading skeleton for main article
               <article className="grid grid-flow-row auto-rows-max gap-2 md:gap-3 h-full animate-pulse" aria-label="Loading">
                 {/* Category skeleton */}
