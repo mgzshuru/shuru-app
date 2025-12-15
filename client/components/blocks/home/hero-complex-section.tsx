@@ -32,6 +32,10 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
     useRandomFeaturedArticle = false,
   } = data;
 
+  console.log('HeroComplexSection - useRandomFeaturedArticle:', useRandomFeaturedArticle);
+  console.log('HeroComplexSection - featuredArticle:', featuredArticle?.title);
+  console.log('HeroComplexSection - articles count:', articles.length);
+
   // Fetch selected articles from the new endpoint
   const { selectedArticles, maxArticles, useRandom: useRandomSelectedArticles, loading: selectedLoading } = useSelectedArticles();
 
@@ -60,15 +64,22 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
   }, [useRandomSelectedArticles, selectedArticles, articles]);
 
   const shuffledMainArticle = useMemo(() => {
+    console.log('shuffledMainArticle useMemo - useRandomFeaturedArticle:', useRandomFeaturedArticle);
+    console.log('shuffledMainArticle useMemo - articles.length:', articles.length);
+
     // إذا كان useRandomFeaturedArticle مفعل، اختر عشوائياً من كل المقالات
     if (useRandomFeaturedArticle && articles.length > 0) {
+      console.log('Using random featured article');
       const shuffled = shuffleArray(articles);
+      console.log('Selected random article:', shuffled[0]?.title);
       return shuffled[0];
     }
     // وإلا استخدم المقال المحدد (بدون shuffle) أو اختر أول مقال
     if (featuredArticle) {
+      console.log('Using manually selected featured article:', featuredArticle.title);
       return featuredArticle;
     }
+    console.log('Using first article:', articles[0]?.title);
     return articles[0];
   }, [useRandomFeaturedArticle, featuredArticle, articles]);
 
