@@ -7,26 +7,31 @@ interface SocialShareProps {
   url?: string;
   description?: string;
   slug?: string;
+  type?: 'article' | 'meeting' | 'podcast' | 'news';
 }
 
-export function SocialShare({ title, url, description, slug }: SocialShareProps) {
+export function SocialShare({ title, url, description, slug, type = 'article' }: SocialShareProps) {
   const [copied, setCopied] = useState(false);
 
-  // Generate URL if not provided
-  const shareUrl = url || (typeof window !== 'undefined' && slug ?
-    `${window.location.origin}/articles/${slug}` :
-    'https://www.shuru.sa');
+  // Generate URL function to get the latest URL
+  const getShareUrl = () => {
+    if (url) return url;
+    if (typeof window !== 'undefined') return window.location.href;
+    if (slug) return `https://www.shuru.sa/${type === 'article' ? 'articles' : type}/${slug}`;
+    return 'https://www.shuru.sa';
+  };
 
   const shareText = `${title} - شروع`;
 
   const shareLinks = {
-    linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
-    twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`,
-    facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
-    whatsapp: `https://wa.me/?text=${encodeURIComponent(`${shareText} ${shareUrl}`)}`,
+    linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(getShareUrl())}`,
+    twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(getShareUrl())}`,
+    facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getShareUrl())}`,
+    whatsapp: `https://wa.me/?text=${encodeURIComponent(`${shareText} ${getShareUrl()}`)}`,
   };
 
   const copyToClipboard = async () => {
+    const shareUrl = getShareUrl(); // Get fresh URL at copy time
     try {
       await navigator.clipboard.writeText(shareUrl);
       setCopied(true);

@@ -1,0 +1,20 @@
+{
+  "collectionName": "components_content_guests",
+  "info": {
+    "displayName": "Guest",
+    "icon": "user",
+    "description": "Guest information for meetings"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "required": false
+    }
+  }
+}
+

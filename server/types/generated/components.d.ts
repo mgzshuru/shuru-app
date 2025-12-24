@@ -768,6 +768,19 @@ export interface ContentGallery extends Struct.ComponentSchema {
   };
 }
 
+export interface ContentGuest extends Struct.ComponentSchema {
+  collectionName: 'components_content_guests';
+  info: {
+    description: 'Guest information for meetings';
+    displayName: 'Guest';
+    icon: 'user';
+  };
+  attributes: {
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    title: Schema.Attribute.String;
+  };
+}
+
 export interface ContentImage extends Struct.ComponentSchema {
   collectionName: 'components_content_images';
   info: {
@@ -1460,6 +1473,7 @@ declare module '@strapi/strapi' {
       'content.call-to-action': ContentCallToAction;
       'content.code-block': ContentCodeBlock;
       'content.gallery': ContentGallery;
+      'content.guest': ContentGuest;
       'content.image': ContentImage;
       'content.quote': ContentQuote;
       'content.rich-text': ContentRichText;

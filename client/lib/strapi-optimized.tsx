@@ -789,6 +789,204 @@ export async function getFeaturedMagazineIssuesOptimized(limit?: number) {
 }
 
 // =====================
+// MEETING FUNCTIONS (OPTIMIZED)
+// =====================
+
+// Minimal population for meeting listings
+const MEETING_LIST_POPULATE = {
+  cover_image: {
+    fields: ["url", "alternativeText", "width", "height"]
+  },
+  SEO: {
+    fields: ["meta_title", "meta_description"]
+  }
+};
+
+// Full population for meeting detail pages
+const MEETING_DETAIL_POPULATE = {
+  cover_image: {
+    fields: ["url", "alternativeText", "width", "height"]
+  },
+  guests: true,
+  SEO: {
+    populate: "*"
+  }
+};
+
+export async function getMeetingsOptimized() {
+  const query = {
+    sort: ['meeting_date:desc'],
+    populate: MEETING_LIST_POPULATE
+  };
+
+  const meetings = await client.collection("meetings").find(query);
+  return meetings;
+}
+
+export async function getMeetingBySlugOptimized(slug: string) {
+  const query = {
+    filters: {
+      slug: { $eq: slug }
+    },
+    populate: MEETING_DETAIL_POPULATE
+  };
+
+  try {
+    const response = await client.collection("meetings").find(query);
+    if (response && Array.isArray(response.data) && response.data.length > 0) {
+      return response.data[0];
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching meeting:", error);
+    return null;
+  }
+}
+
+export async function getFeaturedMeetingsOptimized(limit?: number) {
+  const query = {
+    filters: {
+      is_featured: { $eq: true }
+    },
+    sort: ['meeting_date:desc'],
+    ...(limit && { pagination: { limit } }),
+    populate: MEETING_LIST_POPULATE
+  };
+
+  const meetings = await client.collection("meetings").find(query);
+  return meetings;
+}
+
+// =====================
+// PODCAST PAGE FUNCTIONS (OPTIMIZED)
+// =====================
+
+// Minimal population for podcast listings
+const PODCAST_LIST_POPULATE = {
+  cover_image: { fields: ['url', 'alternativeText', 'width', 'height'] },
+  guests: true
+};
+
+// Full population for podcast detail pages
+const PODCAST_DETAIL_POPULATE = {
+  cover_image: { fields: ['url', 'alternativeText', 'width', 'height'] },
+  video_file: { fields: ['url', 'alternativeText', 'width', 'height', 'mime'] },
+  guests: true,
+  SEO: {
+    populate: {
+      og_image: { fields: ['url', 'alternativeText', 'width', 'height'] }
+    }
+  }
+};
+
+export async function getPodcastsOptimized() {
+  const query = {
+    sort: ['podcast_date:desc'],
+    populate: PODCAST_LIST_POPULATE
+  };
+
+  const podcasts = await client.collection("podcasts").find(query);
+  return podcasts;
+}
+
+export async function getPodcastBySlugOptimized(slug: string) {
+  const query = {
+    filters: {
+      slug: { $eq: slug }
+    },
+    populate: PODCAST_DETAIL_POPULATE
+  };
+
+  try {
+    const response = await client.collection("podcasts").find(query);
+    if (response && response.data && response.data.length > 0) {
+      return response.data[0];
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching podcast:", error);
+    return null;
+  }
+}
+
+export async function getFeaturedPodcastsOptimized(limit?: number) {
+  const query = {
+    filters: {
+      is_featured: { $eq: true }
+    },
+    sort: ['podcast_date:desc'],
+    ...(limit && { pagination: { limit } }),
+    populate: PODCAST_LIST_POPULATE
+  };
+
+  const podcasts = await client.collection("podcasts").find(query);
+  return podcasts;
+}
+
+// =====================
+// NEWS PAGE FUNCTIONS (OPTIMIZED)
+// =====================
+
+// Minimal population for news listings
+const NEWS_LIST_POPULATE = {
+  cover_image: { fields: ['url', 'alternativeText', 'width', 'height'] }
+};
+
+// Full population for news detail pages
+const NEWS_DETAIL_POPULATE = {
+  cover_image: { fields: ['url', 'alternativeText', 'width', 'height'] },
+  SEO: {
+    populate: {
+      og_image: { fields: ['url', 'alternativeText', 'width', 'height'] }
+    }
+  }
+};
+
+export async function getNewsOptimized() {
+  const query = {
+    sort: ['news_date:desc'],
+    populate: NEWS_LIST_POPULATE
+  };
+
+  const news = await client.collection("news-items").find(query);
+  return news;
+}
+
+export async function getNewsBySlugOptimized(slug: string) {
+  const query = {
+    filters: {
+      slug: { $eq: slug }
+    },
+    populate: NEWS_DETAIL_POPULATE
+  };
+
+  try {
+    const response = await client.collection("news-items").find(query);
+    if (response && response.data && response.data.length > 0) {
+      return response.data[0];
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching news:", error);
+    return null;
+  }
+}
+
+export async function getFeaturedNewsOptimized(limit?: number) {
+  const query = {
+    filters: {
+      is_featured: { $eq: true }
+    },
+    sort: ['news_date:desc'],
+    ...(limit && { pagination: { limit } }),
+    populate: NEWS_LIST_POPULATE
+  };
+
+  const news = await client.collection("news-items").find(query);
+  return news;
+}
+
+// =====================
 // NEWSLETTER PAGE FUNCTIONS (OPTIMIZED)
 // =====================
 

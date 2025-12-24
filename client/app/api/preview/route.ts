@@ -16,6 +16,18 @@ function getPreviewPath(
       return slug ? "/articles/" + slug : "/articles";
     }
 
+    if (contentType === "meeting" || contentType.includes("meetings")) {
+      return slug ? "/meeting/" + slug : "/meeting";
+    }
+
+    if (contentType === "podcast" || contentType.includes("podcasts")) {
+      return slug ? "/podcast/" + slug : "/podcast";
+    }
+
+    if (contentType === "news-item" || contentType.includes("news-items")) {
+      return slug ? "/news/" + slug : "/news";
+    }
+
     // Can add other content types here
 
     if (contentType === 'page' || contentType.includes('pages')) {

@@ -385,6 +385,105 @@ export interface MagazineIssue {
   SEO?: SEOComponent
 }
 
+export interface Podcast {
+  id: number
+  documentId: string
+  title: string
+  slug: string
+  description: string  // This is richtext in Strapi
+  content?: string  // This is richtext in Strapi
+  podcast_date: string
+  is_featured: boolean
+  audio_url?: string
+  video_url?: string
+  video_file?: {
+    id: number
+    documentId: string
+    url: string
+    alternativeText?: string
+    width?: number
+    height?: number
+    mime?: string
+  }
+  duration?: string
+  guests?: Guest[]
+  createdAt: string
+  updatedAt: string
+  publishedAt?: string
+  cover_image: {
+    id: number
+    documentId: string
+    url: string
+    alternativeText: string
+    width?: number
+    height?: number
+  }
+  SEO?: SEOComponent
+}
+
+export interface Guest {
+  id: number
+  name: string
+  title?: string
+  bio?: string
+  image?: {
+    id: number
+    documentId: string
+    url: string
+    alternativeText?: string
+    width?: number
+    height?: number
+  }
+}
+
+export interface Meeting {
+  id: number
+  documentId: string
+  title: string
+  slug: string
+  description: string  // This is richtext in Strapi
+  content?: string  // This is richtext in Strapi
+  meeting_date: string
+  is_featured: boolean
+  video_url?: string
+  guests?: Guest[]
+  createdAt: string
+  updatedAt: string
+  publishedAt?: string
+  cover_image: {
+    id: number
+    documentId: string
+    url: string
+    alternativeText: string
+    width?: number
+    height?: number
+  }
+  SEO?: SEOComponent
+}
+
+export interface News {
+  id: number
+  documentId: string
+  title: string
+  slug: string
+  description: string  // This is richtext in Strapi
+  content?: string  // This is richtext in Strapi
+  news_date: string
+  is_featured: boolean
+  createdAt: string
+  updatedAt: string
+  publishedAt?: string
+  cover_image: {
+    id: number
+    documentId: string
+    url: string
+    alternativeText: string
+    width?: number
+    height?: number
+  }
+  SEO?: SEOComponent
+}
+
 export interface NewsletterEdition {
   id: number
   documentId: string

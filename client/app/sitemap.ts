@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next'
 import { getAllArticles, getAllPages, getAllMagazineIssues, getAllCategories } from '@/lib/strapi-client'
-import { getArticlesOptimized, getMagazineIssuesOptimized, getAllCategories as getCategoriesOptimized } from '@/lib/strapi-optimized'
+import { getArticlesOptimized, getMagazineIssuesOptimized, getAllCategories as getCategoriesOptimized, getMeetingsOptimized, getPodcastsOptimized, getNewsOptimized } from '@/lib/strapi-optimized'
 
 // Force static generation for sitemap
 export const dynamic = 'force-static'
@@ -43,6 +43,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
+      url: `${baseUrl}/meeting`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/podcast`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/news`,
+      lastModified: new Date(),
+      changeFrequency: 'daily' as const,
+      priority: 0.9,
+    },
+    {
       url: `${baseUrl}/contact`,
       lastModified: new Date(),
       changeFrequency: 'monthly' as const,
@@ -58,10 +76,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   try {
     // Fetch all content in parallel
-    const [articlesResult, magazineResult, categoriesResult] = await Promise.all([
+    const [articlesResult, magazineResult, categoriesResult, meetingsResult, podcastsResult, newsResult] = await Promise.all([
       getArticlesOptimized({ pageSize: 1000 }).catch(() => getAllArticles()),
       getMagazineIssuesOptimized().catch(() => getAllMagazineIssues()),
       getCategoriesOptimized().catch(() => getAllCategories()),
+      getMeetingsOptimized().catch(() => ({ data: [] })),
+      getPodcastsOptimized().catch(() => ({ data: [] })),
+      getNewsOptimized().catch(() => ({ data: [] })),
     ])
 
     // Articles
@@ -94,6 +115,36 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.6,
       }))
 
+    // Meetings
+    const meetingRoutes = (meetingsResult?.data || [])
+      .filter((meeting: any) => meeting && meeting.slug) // Filter out invalid meetings
+      .map((meeting: any) => ({
+        url: `${baseUrl}/meeting/${meeting.slug}`,
+        lastModified: safeDate(meeting.updatedAt || meeting.publishedAt),
+        changeFrequency: 'monthly' as const,
+        priority: 0.7,
+      }))
+
+    // Podcasts
+    const podcastRoutes = (podcastsResult?.data || [])
+      .filter((podcast: any) => podcast && podcast.slug) // Filter out invalid podcasts
+      .map((podcast: any) => ({
+        url: `${baseUrl}/podcast/${podcast.slug}`,
+        lastModified: safeDate(podcast.updatedAt || podcast.publishedAt),
+        changeFrequency: 'monthly' as const,
+        priority: 0.7,
+      }))
+
+    // News
+    const newsRoutes = (newsResult?.data || [])
+      .filter((news: any) => news && news.slug) // Filter out invalid news
+      .map((news: any) => ({
+        url: `${baseUrl}/news/${news.slug}`,
+        lastModified: safeDate(news.updatedAt || news.publishedAt),
+        changeFrequency: 'monthly' as const,
+        priority: 0.7,
+      }))
+
     // Try to fetch pages - handle gracefully if not available
     let pageRoutes: any[] = []
     try {
@@ -117,6 +168,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ...articleRoutes,
       ...magazineRoutes,
       ...categoryRoutes,
+      ...meetingRoutes,
+      ...podcastRoutes,
+      ...newsRoutes,
       ...pageRoutes,
     ]
   } catch (error) {
