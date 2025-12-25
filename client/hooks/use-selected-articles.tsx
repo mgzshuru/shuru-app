@@ -30,7 +30,8 @@ export function useSelectedArticles() {
     async function fetchSelectedArticles() {
       try {
         setLoading(true);
-        const response = await fetch(`${getStrapiURL()}/api/selected-article`);
+        // Use local API route instead of direct Strapi call
+        const response = await fetch('/api/selected-article');
 
         if (!response.ok) {
           // If the endpoint is not configured or returns error, use empty array

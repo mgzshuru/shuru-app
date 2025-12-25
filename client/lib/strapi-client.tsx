@@ -276,6 +276,40 @@ export async function getMostReadArticles(limit: number = 10) {
   return articles;
 }
 
+// Get selected articles configuration
+export async function getSelectedArticles() {
+  const query = {
+    populate: {
+      articles: {
+        populate: {
+          cover_image: {
+            fields: ["url", "alternativeText", "width", "height"]
+          },
+          categories: {
+            fields: ["name", "slug"]
+          },
+          author: {
+            fields: ["name", "jobTitle", "organization"],
+            populate: {
+              avatar: {
+                fields: ["url", "alternativeText"]
+              }
+            }
+          }
+        }
+      }
+    }
+  };
+
+  try {
+    const response = await client.single("selected-article").find(query);
+    return response;
+  } catch (error) {
+    console.error("Error fetching selected articles from Strapi:", error);
+    return null;
+  }
+}
+
 // Get article with full population (all relations and media)
 export async function getArticleWithFullPopulation(slug: string, status: "draft" | "published" = "published") {
   const query = {
