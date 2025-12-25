@@ -46,6 +46,18 @@ export interface GlobalData {
   footer: FooterData;
 }
 
+export interface TopBannerData {
+  isEnabled: boolean;
+  type: 'meeting' | 'magazine';
+  meetingText?: string;
+  meetingDate?: string;
+  magazineText?: string;
+  magazineStartDate?: string;
+  magazineEndDate?: string;
+  linkUrl?: string;
+  linkText?: string;
+}
+
 export interface HeaderData {
   logo: {
     logoImage: {

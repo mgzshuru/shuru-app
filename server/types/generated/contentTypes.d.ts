@@ -1391,6 +1391,46 @@ export interface ApiSubscriberSubscriber extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiTopBannerTopBanner extends Struct.SingleTypeSchema {
+  collectionName: 'top_banners';
+  info: {
+    description: 'Configuration for the top banner';
+    displayName: 'Top Banner';
+    pluralName: 'top-banners';
+    singularName: 'top-banner';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    isEnabled: Schema.Attribute.Boolean &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<false>;
+    linkText: Schema.Attribute.String;
+    linkUrl: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::top-banner.top-banner'
+    > &
+      Schema.Attribute.Private;
+    magazineEndDate: Schema.Attribute.DateTime;
+    magazineStartDate: Schema.Attribute.DateTime;
+    magazineText: Schema.Attribute.Text;
+    meetingDate: Schema.Attribute.DateTime;
+    meetingText: Schema.Attribute.Text;
+    publishedAt: Schema.Attribute.DateTime;
+    type: Schema.Attribute.Enumeration<['meeting', 'magazine']> &
+      Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface PluginContentReleasesRelease
   extends Struct.CollectionTypeSchema {
   collectionName: 'strapi_releases';
@@ -1920,6 +1960,7 @@ declare module '@strapi/strapi' {
       'api::selected-article.selected-article': ApiSelectedArticleSelectedArticle;
       'api::submit-page-content.submit-page-content': ApiSubmitPageContentSubmitPageContent;
       'api::subscriber.subscriber': ApiSubscriberSubscriber;
+      'api::top-banner.top-banner': ApiTopBannerTopBanner;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

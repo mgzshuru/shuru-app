@@ -1,6 +1,6 @@
 import { strapi } from "@strapi/client";
 import { getStrapiURL } from "./utils";
-import { GlobalData, NewsletterPageData, ContactPageData } from "./types";
+import { GlobalData, NewsletterPageData, ContactPageData, TopBannerData } from "./types";
 
 const PATH = "/api";
 const STRAPI_BASE_URL = getStrapiURL();
@@ -1382,3 +1382,21 @@ export async function getSubmitPageCached(): Promise<SubmitPageData | null> {
 
   return freshData;
 }
+
+// Get top banner data
+export async function getTopBanner(): Promise<TopBannerData | null> {
+  try {
+    const response = await client.single('top-banner').find({
+      fields: ['isEnabled', 'type', 'meetingText', 'meetingDate', 'magazineText', 'magazineStartDate', 'magazineEndDate', 'linkUrl', 'linkText']
+    });
+
+    if (response && response.data) {
+      return response.data as unknown as TopBannerData;
+    }
+    return null;
+  } catch (error) {
+    console.error('Error fetching top banner:', error);
+    return null;
+  }
+}
+

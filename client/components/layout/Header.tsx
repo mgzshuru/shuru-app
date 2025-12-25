@@ -6,9 +6,10 @@ import { useState, useEffect } from 'react';
 import { Menu, Search, User, Settings, LogOut, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
-import { HeaderData } from '@/lib/types';
+import { HeaderData, TopBannerData } from '@/lib/types';
 import SearchOverlay from './SearchOverlay';
 import MobileMenu from './MobileMenu';
+import TopBanner from './TopBanner';
 import Link from 'next/link';
 import {
   DropdownMenu,
@@ -21,9 +22,10 @@ import { useAuth } from '@/hooks/use-auth';
 
 interface HeaderProps {
   headerData: HeaderData;
+  topBannerData?: TopBannerData | null;
 }
 
-export default function Header({ headerData }: HeaderProps) {
+export default function Header({ headerData, topBannerData }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -31,6 +33,62 @@ export default function Header({ headerData }: HeaderProps) {
   const [isSafari, setIsSafari] = useState(false);
   const router = useRouter();
   const { isAuthenticated, user, loading, refreshAuth } = useAuth();
+  const [showBanner, setShowBanner] = useState(true);
+  const [bannerContent, setBannerContent] = useState<{ message: string; bgColor?: string; linkUrl?: string; linkText?: string } | null>(null);
+
+  // Handle banner logic with timezone-safe date comparisons
+  useEffect(() => {
+    if (!topBannerData || !topBannerData.isEnabled) {
+      setBannerContent(null);
+      return;
+    }
+
+    // Get current date at midnight for consistent comparison
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    const nowTime = now.getTime();
+
+    let shouldShow = false;
+    let message = '';
+    let bgColor = '';
+    const linkUrl = topBannerData.linkUrl;
+    const linkText = topBannerData.linkText;
+
+    if (topBannerData.type === 'meeting') {
+      if (topBannerData.meetingDate) {
+        const meetingDate = new Date(topBannerData.meetingDate);
+        meetingDate.setHours(0, 0, 0, 0);
+        const meetingTime = meetingDate.getTime();
+        const diffTime = meetingTime - nowTime;
+        const diffDays = diffTime / (1000 * 3600 * 24);
+
+        if (diffDays >= 0 && diffDays <= 7) {
+          shouldShow = true;
+          message = topBannerData.meetingText || '';
+          bgColor = 'bg-blue-600';
+        }
+      }
+    } else if (topBannerData.type === 'magazine') {
+      if (topBannerData.magazineStartDate && topBannerData.magazineEndDate) {
+        const startDate = new Date(topBannerData.magazineStartDate);
+        startDate.setHours(0, 0, 0, 0);
+        const endDate = new Date(topBannerData.magazineEndDate);
+        endDate.setHours(23, 59, 59, 999);
+
+        if (nowTime >= startDate.getTime() && nowTime <= endDate.getTime()) {
+          shouldShow = true;
+          message = topBannerData.magazineText || '';
+          bgColor = 'bg-gradient-to-r from-orange-500 to-orange-600';
+        }
+      }
+    }
+
+    if (shouldShow && message) {
+      setBannerContent({ message, bgColor, linkUrl, linkText });
+    } else {
+      setBannerContent(null);
+    }
+  }, [topBannerData]);
 
   // Detect Safari browser
   useEffect(() => {
@@ -109,6 +167,18 @@ export default function Header({ headerData }: HeaderProps) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
+      {/* Top Banner */}
+      {showBanner && bannerContent && (
+        <TopBanner
+          message={bannerContent.message}
+          bgColor={bannerContent.bgColor}
+          linkUrl={bannerContent.linkUrl}
+          linkText={bannerContent.linkText}
+          dismissible={true}
+          onDismiss={() => setShowBanner(false)}
+        />
+      )}
+
       {/* Top Navigation Bar */}
       <div className="min-h-[40px] sm:min-h-[44px] lg:min-h-[50px] safari-grid-fix safari-grid-fallback overflow-hidden">
         {/* Left Section */}

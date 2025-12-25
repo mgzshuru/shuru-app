@@ -2,7 +2,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import { IBM_Plex_Sans_Arabic, Noto_Sans_Arabic, Tajawal } from "next/font/google"
 import "./globals.css"
-import { getGlobalCached } from '@/lib/strapi-optimized'
+import { getGlobalCached, getTopBanner } from '@/lib/strapi-optimized'
 import MainLayout from '@/components/layout/MainLayout'
 import type { GlobalData, SocialLink } from '@/lib/types';
 import { getStrapiMedia } from '@/components/custom/strapi-image';
@@ -166,6 +166,7 @@ export default async function RootLayout({
 }) {
   // Fetch global data from Strapi
   const globalData = await getGlobalCached();
+  const topBannerData = await getTopBanner();
   const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS;
 
   if (!globalData || !globalData.footer) {
@@ -296,7 +297,7 @@ export default async function RootLayout({
           </Suspense>
         }
 
-        <MainLayout globalData={globalData as GlobalData}>
+        <MainLayout globalData={globalData as GlobalData} topBannerData={topBannerData}>
           <ToastContainer
             position="top-right"
             autoClose={5000}

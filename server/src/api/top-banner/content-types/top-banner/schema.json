@@ -1,0 +1,50 @@
+{
+  "kind": "singleType",
+  "collectionName": "top_banners",
+  "info": {
+    "singularName": "top-banner",
+    "pluralName": "top-banners",
+    "displayName": "Top Banner",
+    "description": "Configuration for the top banner"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "isEnabled": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "meeting",
+        "magazine"
+      ],
+      "required": true
+    },
+    "meetingText": {
+      "type": "text"
+    },
+    "meetingDate": {
+      "type": "datetime"
+    },
+    "magazineText": {
+      "type": "text"
+    },
+    "magazineStartDate": {
+      "type": "datetime"
+    },
+    "magazineEndDate": {
+      "type": "datetime"
+    },
+    "linkUrl": {
+      "type": "string"
+    },
+    "linkText": {
+      "type": "string"
+    }
+  }
+}

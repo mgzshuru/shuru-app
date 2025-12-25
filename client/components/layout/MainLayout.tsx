@@ -3,14 +3,15 @@
 import React, { useEffect, useState } from 'react';
 import Header from './Header';
 import Footer from './Footer';
-import { GlobalData } from '@/lib/types';
+import { GlobalData, TopBannerData } from '@/lib/types';
 
 interface MainLayoutProps {
   children: React.ReactNode;
   globalData: GlobalData;
+  topBannerData?: TopBannerData | null;
 }
 
-export default function MainLayout({ children, globalData }: MainLayoutProps) {
+export default function MainLayout({ children, globalData, topBannerData }: MainLayoutProps) {
   const [headerHeight, setHeaderHeight] = useState(73); // Default fallback
 
   useEffect(() => {
@@ -57,6 +58,7 @@ export default function MainLayout({ children, globalData }: MainLayoutProps) {
     <div className="min-h-screen flex flex-col">
       <Header
         headerData={headerData}
+        topBannerData={topBannerData}
       />
       <main
         className="flex-grow transition-all duration-300"
