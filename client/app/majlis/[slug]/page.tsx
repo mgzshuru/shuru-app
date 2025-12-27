@@ -3,51 +3,51 @@ import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getGlobalCached, getMeetingBySlugOptimized, getMeetingsOptimized } from '@/lib/strapi-optimized';
+import { getGlobalCached, getMajlisBySlugOptimized, getMajlisesOptimized } from '@/lib/strapi-optimized';
 import { getStrapiMedia } from '@/components/custom/strapi-image';
 import { formatDate, safeBuildTimeApiCall } from '@/lib/utils';
-import { Meeting } from '@/lib/types';
+import { Majlis } from '@/lib/types';
 import { RichText } from '@/components/blocks/content/rich-text';
 import { SocialShare } from '@/components/custom/social-share';
 import { GuestDisplay } from '@/components/custom/guest-display';
 
-// Generate static params for all meetings
+// Generate static params for all majlises
 export async function generateStaticParams() {
   const fallbackResult: { slug: string }[] = [];
 
   const result = await safeBuildTimeApiCall(
-    () => getMeetingsOptimized(),
+    () => getMajlisesOptimized(),
     { data: [], meta: { pagination: { page: 1, pageSize: 0, pageCount: 0, total: 0 } } } as any,
     8000 // 8 second timeout
   );
 
-  const meetings = result?.data || [];
+  const majlises = result?.data || [];
 
-  if (Array.isArray(meetings)) {
-    return meetings.map((meeting: any) => ({
-      slug: meeting.slug,
+  if (Array.isArray(majlises)) {
+    return majlises.map((majlis: any) => ({
+      slug: majlis.slug,
     }));
   }
 
   return fallbackResult;
 }
 
-interface MeetingPageProps {
+interface MajlisPageProps {
   params: {
     slug: string;
   };
 }
 
-// Generate metadata for meeting page
-export async function generateMetadata({ params }: MeetingPageProps): Promise<Metadata> {
+// Generate metadata for majlis page
+export async function generateMetadata({ params }: MajlisPageProps): Promise<Metadata> {
   try {
     const { slug } = await params;
-    const [meeting, globalData] = await Promise.all([
-      getMeetingBySlugOptimized(slug),
+    const [majlis, globalData] = await Promise.all([
+      getMajlisBySlugOptimized(slug),
       getGlobalCached().catch(() => null)
     ]);
 
-    if (!meeting) {
+    if (!majlis) {
       return {
         title: 'الجلسة غير موجودة',
         description: 'الجلسة المطلوبة غير موجودة',
@@ -55,11 +55,11 @@ export async function generateMetadata({ params }: MeetingPageProps): Promise<Me
     }
 
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.shuru.sa';
-    const meetingUrl = `${baseUrl}/meeting/${slug}`;
+    const majlisUrl = `${baseUrl}/majlis/${slug}`;
 
-    const title = meeting.SEO?.meta_title || `${meeting.title}`;
-    const description = meeting.SEO?.meta_description ||
-      (meeting.description ? meeting.description.replace(/<[^>]*>/g, '').substring(0, 160) + '...' : `جلسة من شروع`);
+    const title = majlis.SEO?.meta_title || `${majlis.title}`;
+    const description = majlis.SEO?.meta_description ||
+      (majlis.description ? majlis.description.replace(/<[^>]*>/g, '').substring(0, 160) + '...' : `جلسة من شروع`);
 
     const fullTitle = title;
 
@@ -71,20 +71,20 @@ export async function generateMetadata({ params }: MeetingPageProps): Promise<Me
       metadataBase: new URL(baseUrl),
       title: fullTitle,
       description,
-      keywords: meeting.SEO?.meta_keywords?.split(',').map((k: string) => k.trim()),
+      keywords: majlis.SEO?.meta_keywords?.split(',').map((k: string) => k.trim()),
       openGraph: {
         title: fullTitle,
         description,
-        url: meetingUrl,
+        url: majlisUrl,
         type: 'article',
         locale: 'ar_SA',
         siteName: globalData?.siteName || 'شروع',
-        images: meeting.cover_image && getStrapiMedia(meeting.cover_image.url) ? [
+        images: majlis.cover_image && getStrapiMedia(majlis.cover_image.url) ? [
           {
-            url: getStrapiMedia(meeting.cover_image.url)!,
-            width: meeting.cover_image.width || 1200,
-            height: meeting.cover_image.height || 630,
-            alt: meeting.cover_image.alternativeText || meeting.title,
+            url: getStrapiMedia(majlis.cover_image.url)!,
+            width: majlis.cover_image.width || 1200,
+            height: majlis.cover_image.height || 630,
+            alt: majlis.cover_image.alternativeText || majlis.title,
           },
         ] : [
           {
@@ -94,18 +94,18 @@ export async function generateMetadata({ params }: MeetingPageProps): Promise<Me
             alt: title,
           },
         ],
-        publishedTime: meeting.meeting_date,
+        publishedTime: majlis.majlis_date,
       },
       twitter: {
         card: 'summary_large_image',
         title: fullTitle,
         description,
-        images: meeting.cover_image && getStrapiMedia(meeting.cover_image.url)
-          ? [getStrapiMedia(meeting.cover_image.url)!]
+        images: majlis.cover_image && getStrapiMedia(majlis.cover_image.url)
+          ? [getStrapiMedia(majlis.cover_image.url)!]
           : [defaultImage],
       },
       alternates: {
-        canonical: meetingUrl,
+        canonical: majlisUrl,
       },
     };
   } catch (error) {
@@ -117,17 +117,17 @@ export async function generateMetadata({ params }: MeetingPageProps): Promise<Me
   }
 }
 
-export default async function MeetingPage({ params }: MeetingPageProps) {
+export default async function MajlisPage({ params }: MajlisPageProps) {
   try {
     const { slug } = await params;
-    const meeting = await getMeetingBySlugOptimized(slug);
+    const majlis = await getMajlisBySlugOptimized(slug);
 
-    if (!meeting) {
+    if (!majlis) {
       notFound();
     }
 
-    // Cast the meeting to Meeting type
-    const meetingData = meeting as unknown as Meeting;
+    // Cast the majlis to Majlis type
+    const majlisData = majlis as unknown as Majlis;
 
     return (
       <div className="min-h-screen bg-white">
@@ -139,11 +139,11 @@ export default async function MeetingPage({ params }: MeetingPageProps) {
                 الرئيسية
               </Link>
               <span className="text-gray-400">/</span>
-              <Link href="/meeting" className="hover:text-blue-600 transition-colors">
+              <Link href="/majlis" className="hover:text-blue-600 transition-colors">
                  الجلسات
               </Link>
               <span className="text-gray-400">/</span>
-              <span className="text-gray-900 font-medium">{meetingData.title}</span>
+              <span className="text-gray-900 font-medium">{majlisData.title}</span>
             </div>
           </div>
         </nav>
@@ -154,7 +154,7 @@ export default async function MeetingPage({ params }: MeetingPageProps) {
             <div className="space-y-8">
               <div>
                 <h1 className="text-4xl md:text-5xl font-bold text-black mb-8 leading-tight font-['IBM_Plex_Sans_Arabic']">
-                  {meetingData.title}
+                  {majlisData.title}
                 </h1>
 
                 <div className="flex flex-col gap-4 text-gray-600 mb-8 font-['IBM_Plex_Sans_Arabic']">
@@ -162,42 +162,42 @@ export default async function MeetingPage({ params }: MeetingPageProps) {
                     <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
-                    تاريخ الجلسة: {formatDate(meetingData.meeting_date)}
+                    تاريخ الجلسة: {formatDate(majlisData.majlis_date)}
                   </div>
 
-                  {meetingData.guests && meetingData.guests.length > 0 && (
-                    <GuestDisplay guests={meetingData.guests} />
+                  {majlisData.guests && majlisData.guests.length > 0 && (
+                    <GuestDisplay guests={majlisData.guests} />
                   )}
                 </div>
 
-                {meetingData.description && (
+                {majlisData.description && (
                   <div className="mb-8">
                     <h2 className="text-2xl font-bold text-gray-900 mb-4 font-['IBM_Plex_Sans_Arabic']">
                       نبذة عن الجلسة
                     </h2>
                     <div
                       className="prose prose-xl max-w-none text-gray-700 leading-relaxed font-['IBM_Plex_Sans_Arabic']"
-                      dangerouslySetInnerHTML={{ __html: meetingData.description }}
+                      dangerouslySetInnerHTML={{ __html: majlisData.description }}
                     />
                   </div>
                 )}
 
                 {/* Featured Image */}
-                {meetingData.cover_image && (
+                {majlisData.cover_image && (
                   <div className="mb-8">
                     <div className="relative aspect-[4/3] md:aspect-[16/9] bg-gray-100 overflow-hidden">
                       <Image
-                        src={getStrapiMedia(meetingData.cover_image?.url) || ''}
-                        alt={meetingData.cover_image?.alternativeText || meetingData.title}
-                        width={meetingData.cover_image?.width || 1200}
-                        height={meetingData.cover_image?.height || 675}
+                        src={getStrapiMedia(majlisData.cover_image?.url) || ''}
+                        alt={majlisData.cover_image?.alternativeText || majlisData.title}
+                        width={majlisData.cover_image?.width || 1200}
+                        height={majlisData.cover_image?.height || 675}
                         className="w-full h-full object-cover"
                         priority
                       />
                     </div>
-                    {meetingData.cover_image?.alternativeText && (
+                    {majlisData.cover_image?.alternativeText && (
                       <p className="text-xs md:text-sm text-gray-500 mt-2 md:mt-3 text-center italic">
-                        {meetingData.cover_image.alternativeText}
+                        {majlisData.cover_image.alternativeText}
                       </p>
                     )}
                   </div>
@@ -205,7 +205,7 @@ export default async function MeetingPage({ params }: MeetingPageProps) {
               </div>
 
               {/* Action Button */}
-              {meetingData.video_url && (
+              {majlisData.video_url && (
                 <div className="pt-8 border-t border-gray-200">
                   <a
                     href={meetingData.video_url}

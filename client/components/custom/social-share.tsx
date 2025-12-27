@@ -7,7 +7,7 @@ interface SocialShareProps {
   url?: string;
   description?: string;
   slug?: string;
-  type?: 'article' | 'meeting' | 'podcast' | 'news';
+  type?: 'article' | 'majlis' | 'podcast' | 'news';
 }
 
 export function SocialShare({ title, url, description, slug, type = 'article' }: SocialShareProps) {

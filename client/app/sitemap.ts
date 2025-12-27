@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next'
 import { getAllArticles, getAllPages, getAllMagazineIssues, getAllCategories } from '@/lib/strapi-client'
-import { getArticlesOptimized, getMagazineIssuesOptimized, getAllCategories as getCategoriesOptimized, getMeetingsOptimized, getPodcastsOptimized, getNewsOptimized } from '@/lib/strapi-optimized'
+import { getArticlesOptimized, getMagazineIssuesOptimized, getAllCategories as getCategoriesOptimized, getMajlisesOptimized, getPodcastsOptimized, getNewsOptimized } from '@/lib/strapi-optimized'
 
 // Force static generation for sitemap
 export const dynamic = 'force-static'
@@ -43,7 +43,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/meeting`,
+      url: `${baseUrl}/majlis`,
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
@@ -115,12 +115,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.6,
       }))
 
-    // Meetings
-    const meetingRoutes = (meetingsResult?.data || [])
-      .filter((meeting: any) => meeting && meeting.slug) // Filter out invalid meetings
-      .map((meeting: any) => ({
-        url: `${baseUrl}/meeting/${meeting.slug}`,
-        lastModified: safeDate(meeting.updatedAt || meeting.publishedAt),
+    // Majlises
+    const majlisRoutes = (majlisesResult?.data || [])
+      .filter((majlis: any) => majlis && majlis.slug) // Filter out invalid majlises
+      .map((majlis: any) => ({
+        url: `${baseUrl}/majlis/${majlis.slug}`,
+        lastModified: safeDate(majlis.updatedAt || majlis.publishedAt),
         changeFrequency: 'monthly' as const,
         priority: 0.7,
       }))
@@ -168,7 +168,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ...articleRoutes,
       ...magazineRoutes,
       ...categoryRoutes,
-      ...meetingRoutes,
+      ...majlisRoutes,
       ...podcastRoutes,
       ...newsRoutes,
       ...pageRoutes,

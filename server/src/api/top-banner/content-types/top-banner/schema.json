@@ -20,15 +20,15 @@
     "type": {
       "type": "enumeration",
       "enum": [
-        "meeting",
+        "majlis",
         "magazine"
       ],
       "required": true
     },
-    "meetingText": {
+    "majlisText": {
       "type": "text"
     },
-    "meetingDate": {
+    "majlisDate": {
       "type": "datetime"
     },
     "magazineText": {

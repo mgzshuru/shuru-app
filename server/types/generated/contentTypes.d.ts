@@ -867,13 +867,13 @@ export interface ApiMagazineIssueMagazineIssue
   };
 }
 
-export interface ApiMeetingMeeting extends Struct.CollectionTypeSchema {
-  collectionName: 'meetings';
+export interface ApiMajlisMajlis extends Struct.CollectionTypeSchema {
+  collectionName: 'majlises';
   info: {
-    description: 'Meetings and interviews';
-    displayName: 'Meeting';
-    pluralName: 'meetings';
-    singularName: 'meeting';
+    description: 'Majlis and interviews';
+    displayName: 'Majlis';
+    pluralName: 'majlises';
+    singularName: 'majlis';
   };
   options: {
     draftAndPublish: true;
@@ -890,10 +890,10 @@ export interface ApiMeetingMeeting extends Struct.CollectionTypeSchema {
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
-      'api::meeting.meeting'
+      'api::majlis.majlis'
     > &
       Schema.Attribute.Private;
-    meeting_date: Schema.Attribute.Date;
+    majlis_date: Schema.Attribute.Date;
     publishedAt: Schema.Attribute.DateTime;
     SEO: Schema.Attribute.Component<'shared.seo', false>;
     slug: Schema.Attribute.UID<'title'> & Schema.Attribute.Required;
@@ -1420,10 +1420,10 @@ export interface ApiTopBannerTopBanner extends Struct.SingleTypeSchema {
     magazineEndDate: Schema.Attribute.DateTime;
     magazineStartDate: Schema.Attribute.DateTime;
     magazineText: Schema.Attribute.Text;
-    meetingDate: Schema.Attribute.DateTime;
-    meetingText: Schema.Attribute.Text;
+    majlisDate: Schema.Attribute.DateTime;
+    majlisText: Schema.Attribute.Text;
     publishedAt: Schema.Attribute.DateTime;
-    type: Schema.Attribute.Enumeration<['meeting', 'magazine']> &
+    type: Schema.Attribute.Enumeration<['majlis', 'magazine']> &
       Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -1950,7 +1950,7 @@ declare module '@strapi/strapi' {
       'api::global.global': ApiGlobalGlobal;
       'api::home-page.home-page': ApiHomePageHomePage;
       'api::magazine-issue.magazine-issue': ApiMagazineIssueMagazineIssue;
-      'api::meeting.meeting': ApiMeetingMeeting;
+      'api::majlis.majlis': ApiMajlisMajlis;
       'api::news-item.news-item': ApiNewsItemNewsItem;
       'api::newsletter-edition.newsletter-edition': ApiNewsletterEditionNewsletterEdition;
       'api::newsletter-page.newsletter-page': ApiNewsletterPageNewsletterPage;

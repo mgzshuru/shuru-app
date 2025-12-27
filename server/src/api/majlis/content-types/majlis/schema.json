@@ -1,11 +1,11 @@
 {
   "kind": "collectionType",
-  "collectionName": "meetings",
+  "collectionName": "majlises",
   "info": {
-    "singularName": "meeting",
-    "pluralName": "meetings",
-    "displayName": "Meeting",
-    "description": "Meetings and interviews"
+    "singularName": "majlis",
+    "pluralName": "majlises",
+    "displayName": "Majlis",
+    "description": "Majlis and interviews"
   },
   "options": {
     "draftAndPublish": true
@@ -37,7 +37,7 @@
       "type": "richtext",
       "required": false
     },
-    "meeting_date": {
+    "majlis_date": {
       "type": "date",
       "required": false
     },

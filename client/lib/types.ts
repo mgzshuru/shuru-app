@@ -48,9 +48,9 @@ export interface GlobalData {
 
 export interface TopBannerData {
   isEnabled: boolean;
-  type: 'meeting' | 'magazine';
-  meetingText?: string;
-  meetingDate?: string;
+  type: 'majlis' | 'magazine';
+  majlisText?: string;
+  majlisDate?: string;
   magazineText?: string;
   magazineStartDate?: string;
   magazineEndDate?: string;
@@ -448,14 +448,14 @@ export interface Guest {
   }
 }
 
-export interface Meeting {
+export interface Majlis {
   id: number
   documentId: string
   title: string
   slug: string
   description: string  // This is richtext in Strapi
   content?: string  // This is richtext in Strapi
-  meeting_date: string
+  majlis_date: string
   is_featured: boolean
   video_url?: string
   guests?: Guest[]

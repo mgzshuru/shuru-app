@@ -789,11 +789,11 @@ export async function getFeaturedMagazineIssuesOptimized(limit?: number) {
 }
 
 // =====================
-// MEETING FUNCTIONS (OPTIMIZED)
+// MAJLIS FUNCTIONS (OPTIMIZED)
 // =====================
 
-// Minimal population for meeting listings
-const MEETING_LIST_POPULATE = {
+// Minimal population for majlis listings
+const MAJLIS_LIST_POPULATE = {
   cover_image: {
     fields: ["url", "alternativeText", "width", "height"]
   },
@@ -802,8 +802,8 @@ const MEETING_LIST_POPULATE = {
   }
 };
 
-// Full population for meeting detail pages
-const MEETING_DETAIL_POPULATE = {
+// Full population for majlis detail pages
+const MAJLIS_DETAIL_POPULATE = {
   cover_image: {
     fields: ["url", "alternativeText", "width", "height"]
   },
@@ -813,48 +813,48 @@ const MEETING_DETAIL_POPULATE = {
   }
 };
 
-export async function getMeetingsOptimized() {
+export async function getMajlisesOptimized() {
   const query = {
-    sort: ['meeting_date:desc'],
-    populate: MEETING_LIST_POPULATE
+    sort: ['majlis_date:desc'],
+    populate: MAJLIS_LIST_POPULATE
   };
 
-  const meetings = await client.collection("meetings").find(query);
-  return meetings;
+  const majlises = await client.collection("majlises").find(query);
+  return majlises;
 }
 
-export async function getMeetingBySlugOptimized(slug: string) {
+export async function getMajlisBySlugOptimized(slug: string) {
   const query = {
     filters: {
       slug: { $eq: slug }
     },
-    populate: MEETING_DETAIL_POPULATE
+    populate: MAJLIS_DETAIL_POPULATE
   };
 
   try {
-    const response = await client.collection("meetings").find(query);
+    const response = await client.collection("majlises").find(query);
     if (response && Array.isArray(response.data) && response.data.length > 0) {
       return response.data[0];
     }
     return null;
   } catch (error) {
-    console.error("Error fetching meeting:", error);
+    console.error("Error fetching majlis:", error);
     return null;
   }
 }
 
-export async function getFeaturedMeetingsOptimized(limit?: number) {
+export async function getFeaturedMajlisesOptimized(limit?: number) {
   const query = {
     filters: {
       is_featured: { $eq: true }
     },
-    sort: ['meeting_date:desc'],
+    sort: ['majlis_date:desc'],
     ...(limit && { pagination: { limit } }),
-    populate: MEETING_LIST_POPULATE
+    populate: MAJLIS_LIST_POPULATE
   };
 
-  const meetings = await client.collection("meetings").find(query);
-  return meetings;
+  const majlises = await client.collection("majlises").find(query);
+  return majlises;
 }
 
 // =====================
@@ -1387,7 +1387,7 @@ export async function getSubmitPageCached(): Promise<SubmitPageData | null> {
 export async function getTopBanner(): Promise<TopBannerData | null> {
   try {
     const response = await client.single('top-banner').find({
-      fields: ['isEnabled', 'type', 'meetingText', 'meetingDate', 'magazineText', 'magazineStartDate', 'magazineEndDate', 'linkUrl', 'linkText']
+      fields: ['isEnabled', 'type', 'majlisText', 'majlisDate', 'magazineText', 'magazineStartDate', 'magazineEndDate', 'linkUrl', 'linkText']
     });
 
     if (response && response.data) {

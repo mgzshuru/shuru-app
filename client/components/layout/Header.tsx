@@ -54,17 +54,17 @@ export default function Header({ headerData, topBannerData }: HeaderProps) {
     const linkUrl = topBannerData.linkUrl;
     const linkText = topBannerData.linkText;
 
-    if (topBannerData.type === 'meeting') {
-      if (topBannerData.meetingDate) {
-        const meetingDate = new Date(topBannerData.meetingDate);
-        meetingDate.setHours(0, 0, 0, 0);
-        const meetingTime = meetingDate.getTime();
-        const diffTime = meetingTime - nowTime;
+    if (topBannerData.type === 'majlis') {
+      if (topBannerData.majlisDate) {
+        const majlisDate = new Date(topBannerData.majlisDate);
+        majlisDate.setHours(0, 0, 0, 0);
+        const majlisTime = majlisDate.getTime();
+        const diffTime = majlisTime - nowTime;
         const diffDays = diffTime / (1000 * 3600 * 24);
 
         if (diffDays >= 0 && diffDays <= 7) {
           shouldShow = true;
-          message = topBannerData.meetingText || '';
+          message = topBannerData.majlisText || '';
           bgColor = 'bg-blue-600';
         }
       }
