@@ -13,48 +13,50 @@ export default {
     // Fix for media library pagination z-index issue
     const style = document.createElement('style');
     style.textContent = `
-      /* Fix pagination controls in media library dialog */
-      [data-strapi-dialog] [role="navigation"] {
+      /* Fix the entire dialog footer with pagination */
+      [role="dialog"] footer {
+        z-index: 100 !important;
+        position: relative !important;
+        pointer-events: auto !important;
+      }
+
+      /* Fix pagination navigation and all its children */
+      [role="dialog"] nav[aria-label="pagination"],
+      [role="dialog"] nav[aria-label="pagination"] *,
+      [role="dialog"] nav[aria-label="pagination"] ul,
+      [role="dialog"] nav[aria-label="pagination"] li,
+      [role="dialog"] nav[aria-label="pagination"] button {
+        z-index: 101 !important;
+        position: relative !important;
+        pointer-events: auto !important;
+        cursor: pointer !important;
+      }
+
+      /* Fix entries per page dropdown */
+      [role="dialog"] [aria-label="Entries per page"],
+      [role="dialog"] [aria-label="Entries per page"] *,
+      [role="dialog"] [role="combobox"] {
+        z-index: 101 !important;
+        position: relative !important;
+        pointer-events: auto !important;
+        cursor: pointer !important;
+      }
+
+      /* Ensure scroll area doesn't overlay pagination */
+      [role="dialog"] [data-radix-scroll-area-viewport] {
         z-index: 1 !important;
-        position: relative !important;
       }
 
-      /* Ensure pagination buttons are clickable */
-      [data-strapi-dialog] [role="navigation"] button,
-      [data-strapi-dialog] [role="navigation"] a {
-        pointer-events: auto !important;
-        z-index: 2 !important;
-        position: relative !important;
-      }
-
-      /* Fix for asset grid overlay */
-      [data-strapi-dialog] [role="navigation"] {
-        pointer-events: auto !important;
-      }
-
-      /* Ensure the pagination wrapper has proper stacking */
-      [data-strapi-dialog] footer,
-      [data-strapi-dialog] [class*="Footer"] {
+      /* Fix the tabpanel that contains assets */
+      [role="dialog"] [role="tabpanel"] {
         z-index: 1 !important;
-        position: relative !important;
-        pointer-events: auto !important;
       }
 
-      /* Fix specifically for the entries per page dropdown and pagination */
-      [data-strapi-dialog] [aria-label*="Pagination"],
-      [data-strapi-dialog] [class*="PaginationFooter"],
-      [data-strapi-dialog] [class*="pagination"] {
-        z-index: 10 !important;
-        position: relative !important;
+      /* Ensure buttons work */
+      [role="dialog"] footer button,
+      [role="dialog"] nav button {
         pointer-events: auto !important;
-      }
-
-      /* Make sure buttons in pagination are on top */
-      [data-strapi-dialog] [aria-label*="Pagination"] button,
-      [data-strapi-dialog] [aria-label*="Go to"],
-      [data-strapi-dialog] select {
-        z-index: 11 !important;
-        pointer-events: auto !important;
+        cursor: pointer !important;
       }
     `;
     document.head.appendChild(style);
