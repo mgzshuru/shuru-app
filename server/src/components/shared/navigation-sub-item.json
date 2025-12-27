@@ -1,0 +1,28 @@
+{
+  "collectionName": "components_shared_navigation_sub_items",
+  "info": {
+    "displayName": "Navigation Sub Item",
+    "description": "Dropdown menu sub-item for navigation",
+    "icon": "bulletList"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true,
+      "maxLength": 50
+    },
+    "url": {
+      "type": "string",
+      "required": true
+    },
+    "openInNewTab": {
+      "type": "boolean",
+      "default": false
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

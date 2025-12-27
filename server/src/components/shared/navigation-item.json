@@ -31,6 +31,11 @@
     "onSideBar": {
       "type": "boolean",
       "default": false
+    },
+    "subItems": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.navigation-sub-item"
     }
   }
 }

@@ -303,7 +303,7 @@ export default function Header({ headerData, topBannerData }: HeaderProps) {
 
       {/* Horizontal Categories - Hidden on mobile */}
       <div
-        className={`hidden lg:flex flex-row items-center justify-center gap-2 sm:gap-4 uppercase text-white overflow-hidden transition-all duration-300 safari-flex-fix ${
+        className={`hidden lg:flex flex-row items-center justify-center gap-2 sm:gap-4 uppercase text-white overflow-visible transition-all duration-300 safari-flex-fix ${
           isScrolled && !isHovered ? 'h-0 opacity-0' : 'h-[20px] sm:h-[23px] opacity-100'
         }`}
       >
@@ -313,15 +313,42 @@ export default function Header({ headerData, topBannerData }: HeaderProps) {
             .map((item) => (
             <li
               key={item.order}
-              className="border-b-[4px] sm:border-b-[6px] border-transparent transition-colors duration-500 hover:border-orange-500"
+              className="border-b-[4px] sm:border-b-[6px] border-transparent transition-colors duration-500 hover:border-orange-500 relative group"
             >
-              <StrapiLink
-                href={item.url}
-                isExternal={item.openInNewTab}
-                className="hover:text-orange-500 transition-colors"
-              >
-                {item.label}
-              </StrapiLink>
+              {item.subItems && item.subItems.length > 0 ? (
+                <>
+                  <button
+                    className="hover:text-orange-500 transition-colors flex items-center gap-1 bg-transparent border-none cursor-pointer text-xs sm:text-sm font-normal leading-4 tracking-[1px] sm:tracking-[1.4px] uppercase text-white"
+                  >
+                    {item.label}
+                    <ChevronDown className="h-3 w-3" />
+                  </button>
+                  <div className="absolute top-full left-0 mt-1 w-56 bg-black/95 backdrop-blur-md rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <div className="py-2">
+                      {item.subItems
+                        .sort((a, b) => a.order - b.order)
+                        .map((subItem, index) => (
+                        <StrapiLink
+                          key={index}
+                          href={subItem.url}
+                          isExternal={subItem.openInNewTab}
+                          className="block px-4 py-2 text-sm text-white hover:bg-orange-500/20 hover:text-orange-500 transition-colors normal-case"
+                        >
+                          {subItem.label}
+                        </StrapiLink>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <StrapiLink
+                  href={item.url}
+                  isExternal={item.openInNewTab}
+                  className="hover:text-orange-500 transition-colors"
+                >
+                  {item.label}
+                </StrapiLink>
+              )}
             </li>
           ))}
         </ul>

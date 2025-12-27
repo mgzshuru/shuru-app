@@ -1199,6 +1199,7 @@ export interface SharedNavigationItem extends Struct.ComponentSchema {
     onSideBar: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     openInNewTab: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    subItems: Schema.Attribute.Component<'shared.navigation-sub-item', true>;
     url: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
@@ -1222,6 +1223,25 @@ export interface SharedNavigationMenu extends Struct.ComponentSchema {
         },
         number
       >;
+  };
+}
+
+export interface SharedNavigationSubItem extends Struct.ComponentSchema {
+  collectionName: 'components_shared_navigation_sub_items';
+  info: {
+    description: 'Dropdown menu sub-item for navigation';
+    displayName: 'Navigation Sub Item';
+    icon: 'bulletList';
+  };
+  attributes: {
+    label: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }>;
+    openInNewTab: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    url: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
 
@@ -1494,6 +1514,7 @@ declare module '@strapi/strapi' {
       'shared.login-button': SharedLoginButton;
       'shared.navigation-item': SharedNavigationItem;
       'shared.navigation-menu': SharedNavigationMenu;
+      'shared.navigation-sub-item': SharedNavigationSubItem;
       'shared.newsletter-category': SharedNewsletterCategory;
       'shared.newsletter-feature': SharedNewsletterFeature;
       'shared.newsletter-hero-section': SharedNewsletterHeroSection;

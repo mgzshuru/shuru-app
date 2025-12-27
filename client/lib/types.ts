@@ -105,6 +105,14 @@ export interface NavigationItem {
   order: number;
   onHeader: boolean;
   onSideBar: boolean;
+  subItems?: NavigationSubItem[];
+}
+
+export interface NavigationSubItem {
+  label: string;
+  url: string;
+  openInNewTab: boolean;
+  order: number;
 }
 
 export interface NavigationMenu {
