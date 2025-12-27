@@ -91,9 +91,22 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
     const mainArticle = shuffledMainArticle || featuredArticle || articles[0];
 
     // Use shuffled selected articles or original selected articles
-    const sideArticles = shuffledSelectedArticles.length > 0
+    let sideArticles = shuffledSelectedArticles.length > 0
       ? shuffledSelectedArticles.slice(0, maxArticles)
       : selectedArticles.slice(0, maxArticles);
+
+    // Filter out the main article from side articles to prevent duplication
+    if (mainArticle) {
+      sideArticles = sideArticles.filter(article => article.id !== mainArticle.id);
+      // If we filtered out articles, we might need to get more to fill the slots
+      const articlesSource = shuffledSelectedArticles.length > 0 ? shuffledSelectedArticles : selectedArticles;
+      if (sideArticles.length < maxArticles && articlesSource.length > maxArticles) {
+        const additionalArticles = articlesSource
+          .filter(article => article.id !== mainArticle.id)
+          .slice(0, maxArticles);
+        sideArticles = additionalArticles;
+      }
+    }
 
     // Prioritize API most read articles, fallback to CMS articles
     const trendingArticles = (apiMostReadArticles.length > 0 ? apiMostReadArticles : mostReadArticles)
