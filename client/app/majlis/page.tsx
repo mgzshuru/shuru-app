@@ -96,8 +96,8 @@ export default async function MajlisPage({ searchParams }: MajlisPageProps) {
       getFeaturedMajlisesOptimized(3)
     ]);
 
-    const allMajlises = allMajlisesResponse?.data || [];
-    const featuredMajlises = featuredMajlisesResponse?.data || [];
+    const allMajlises = (allMajlisesResponse?.data || []) as Majlis[];
+    const featuredMajlises = (featuredMajlisesResponse?.data || []) as Majlis[];
 
     return (
       <div className="min-h-screen bg-white">
@@ -186,7 +186,7 @@ export default async function MajlisPage({ searchParams }: MajlisPageProps) {
               </div>
 
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {featuredMajlises.map((Majlis: any) => (
+                {featuredMajlises.map((majlis: Majlis) => (
                   <Link
                     key={majlis.id}
                     href={`/majlis/${majlis.slug}`}
@@ -235,12 +235,11 @@ export default async function MajlisPage({ searchParams }: MajlisPageProps) {
               </div>
             ) : (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {allMajlises.map((majlis: any) => (
+                {allMajlises.map((majlis: Majlis) => (
                   <Link
                     key={majlis.id}
                     href={`/majlis/${majlis.slug}`}
                     className="group bg-white overflow-hidden shadow-md border border-gray-100">
-                    {majlis.cover_image && (
                     {majlis.cover_image && (
                       <div className="relative aspect-[16/9] overflow-hidden">
                         <Image
@@ -258,9 +257,9 @@ export default async function MajlisPage({ searchParams }: MajlisPageProps) {
                       <p className="text-gray-600 text-sm font-['IBM_Plex_Sans_Arabic']">
                         {formatDate(majlis.majlis_date)}
                       </p>
-                      {majlis.guests && (
+                      {majlis.guests && majlis.guests.length > 0 && (
                         <p className="text-gray-500 text-sm mt-2 line-clamp-1 font-['IBM_Plex_Sans_Arabic']">
-                          الضيوف: {majlis.guests}
+                          الضيوف: {majlis.guests.map(g => g.name).join(', ')}
                         </p>
                       )}
                     </div>

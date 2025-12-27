@@ -24,7 +24,7 @@ export async function generateStaticParams() {
   const majlises = result?.data || [];
 
   if (Array.isArray(majlises)) {
-    return majlises.map((majlis: any) => ({
+    return majlises.map((majlis: Majlis) => ({
       slug: majlis.slug,
     }));
   }
@@ -208,7 +208,7 @@ export default async function MajlisPage({ params }: MajlisPageProps) {
               {majlisData.video_url && (
                 <div className="pt-8 border-t border-gray-200">
                   <a
-                    href={meetingData.video_url}
+                    href={majlisData.video_url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center justify-center px-6 py-4 bg-black text-white font-bold hover:bg-gray-800 transition-colors duration-200 font-['IBM_Plex_Sans_Arabic']"
@@ -222,26 +222,26 @@ export default async function MajlisPage({ params }: MajlisPageProps) {
               )}
 
               {/* Meeting Content */}
-              {meetingData.content && (
+              {majlisData.content && (
                 <div className="pt-8 border-t border-gray-200">
                   <h2 className="text-2xl font-bold text-gray-900 mb-6 font-['IBM_Plex_Sans_Arabic']">
                     محتوى الجلسة
                   </h2>
-                  <RichText content={meetingData.content} />
+                  <RichText content={majlisData.content} />
                 </div>
               )}
 
               {/* Video Embed Section */}
-              {meetingData.video_url && (
+              {majlisData.video_url && (
                 <div className="pt-8 border-t border-gray-200">
                   <h2 className="text-2xl font-bold text-gray-900 mb-6 font-['IBM_Plex_Sans_Arabic']">
                     مشاهدة الجلسة
                   </h2>
                   <div className="aspect-video overflow-hidden shadow-lg">
-                    {meetingData.video_url.includes('youtube.com') || meetingData.video_url.includes('youtu.be') ? (
+                    {majlisData.video_url.includes('youtube.com') || majlisData.video_url.includes('youtu.be') ? (
                       <iframe
-                        src={meetingData.video_url.replace('watch?v=', 'embed/')}
-                        title={meetingData.title}
+                        src={majlisData.video_url.replace('watch?v=', 'embed/')}
+                        title={majlisData.title}
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
                         className="w-full h-full"
@@ -250,9 +250,9 @@ export default async function MajlisPage({ params }: MajlisPageProps) {
                       <video
                         controls
                         className="w-full h-full"
-                        poster={getStrapiMedia(meetingData.cover_image?.url) || ''}
+                        poster={getStrapiMedia(majlisData.cover_image?.url) || ''}
                       >
-                        <source src={meetingData.video_url} type="video/mp4" />
+                        <source src={majlisData.video_url} type="video/mp4" />
                         متصفحك لا يدعم تشغيل الفيديو.
                       </video>
                     )}
@@ -265,10 +265,10 @@ export default async function MajlisPage({ params }: MajlisPageProps) {
                 <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-6 md:p-8 border border-gray-200">
                   <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-3 md:mb-4 text-right font-['IBM_Plex_Sans_Arabic']">شارك هذه الجلسة</h3>
                   <SocialShare
-                    title={meetingData.title}
-                    slug={meetingData.slug}
-                    description={meetingData.description}
-                    type="meeting"
+                    title={majlisData.title}
+                    slug={majlisData.slug}
+                    description={majlisData.description}
+                    type="majlis"
                   />
                 </div>
               </div>
