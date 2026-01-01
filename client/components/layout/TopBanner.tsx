@@ -36,10 +36,10 @@ export default function TopBanner({
       role="banner"
       aria-label="إعلان علوي"
     >
-      <div className="container mx-auto px-4 py-1">
+      <div className="w-full px-4 py-2">
         <div className="flex items-center justify-center gap-2 sm:gap-4 text-center">
           {/* Message */}
-          <p className="text-[10px] sm:text-xs md:text-sm font-medium leading-tight">
+          <p className="text-xs sm:text-sm font-medium leading-tight">
             {message}
           </p>
 
@@ -47,7 +47,7 @@ export default function TopBanner({
           {linkUrl && (
             <a
               href={linkUrl}
-              className="text-[10px] sm:text-xs font-bold underline hover:no-underline whitespace-nowrap transition-all duration-200 hover:scale-105"
+              className="text-xs sm:text-sm font-bold underline hover:no-underline whitespace-nowrap transition-all duration-200 hover:scale-105"
               aria-label={linkText}
             >
               {linkText}

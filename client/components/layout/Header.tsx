@@ -55,29 +55,50 @@ export default function Header({ headerData, topBannerData }: HeaderProps) {
     const linkText = topBannerData.linkText;
 
     if (topBannerData.type === 'majlis') {
-      if (topBannerData.majlisDate) {
-        const majlisDate = new Date(topBannerData.majlisDate);
-        majlisDate.setHours(0, 0, 0, 0);
-        const majlisTime = majlisDate.getTime();
-        const diffTime = majlisTime - nowTime;
-        const diffDays = diffTime / (1000 * 3600 * 24);
+      // Show banner if majlisText exists, regardless of date
+      if (topBannerData.majlisText) {
+        // If date is provided, check if it's within 30 days
+        if (topBannerData.majlisDate) {
+          const majlisDate = new Date(topBannerData.majlisDate);
+          majlisDate.setHours(0, 0, 0, 0);
+          const majlisTime = majlisDate.getTime();
+          const diffTime = majlisTime - nowTime;
+          const diffDays = diffTime / (1000 * 3600 * 24);
 
-        if (diffDays >= 0 && diffDays <= 7) {
+          // Show if date is within 30 days
+          if (diffDays >= 0 && diffDays <= 30) {
+            shouldShow = true;
+          }
+        } else {
+          // No date provided, show banner anyway
           shouldShow = true;
-          message = topBannerData.majlisText || '';
-          bgColor = 'bg-blue-600';
+        }
+
+        if (shouldShow) {
+          message = topBannerData.majlisText;
+          bgColor = 'bg-gradient-to-r from-orange-500 to-orange-600';
         }
       }
     } else if (topBannerData.type === 'magazine') {
-      if (topBannerData.magazineStartDate && topBannerData.magazineEndDate) {
-        const startDate = new Date(topBannerData.magazineStartDate);
-        startDate.setHours(0, 0, 0, 0);
-        const endDate = new Date(topBannerData.magazineEndDate);
-        endDate.setHours(23, 59, 59, 999);
+      // Show banner if magazineText exists
+      if (topBannerData.magazineText) {
+        // If dates are provided, check if we're within the range
+        if (topBannerData.magazineStartDate && topBannerData.magazineEndDate) {
+          const startDate = new Date(topBannerData.magazineStartDate);
+          startDate.setHours(0, 0, 0, 0);
+          const endDate = new Date(topBannerData.magazineEndDate);
+          endDate.setHours(23, 59, 59, 999);
 
-        if (nowTime >= startDate.getTime() && nowTime <= endDate.getTime()) {
+          if (nowTime >= startDate.getTime() && nowTime <= endDate.getTime()) {
+            shouldShow = true;
+          }
+        } else {
+          // No dates provided, show banner anyway
           shouldShow = true;
-          message = topBannerData.magazineText || '';
+        }
+
+        if (shouldShow) {
+          message = topBannerData.magazineText;
           bgColor = 'bg-gradient-to-r from-orange-500 to-orange-600';
         }
       }
@@ -149,7 +170,7 @@ export default function Header({ headerData, topBannerData }: HeaderProps) {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 flex flex-col px-3 lg:px-5 shadow-md transition-all duration-300 safari-header safari-performance safari-text-fix safari-header-fallback ${isSafari ? 'bg-black' : ''}`}
+      className={`fixed top-0 left-0 right-0 flex flex-col shadow-md transition-all duration-300 safari-header safari-performance safari-text-fix safari-header-fallback ${isSafari ? 'bg-black' : ''}`}
       style={{
         zIndex: 1000,
         backgroundColor: isSafari ? 'rgba(0, 0, 0, 0.9)' : 'rgba(0, 0, 0, 0.8)',
@@ -180,7 +201,7 @@ export default function Header({ headerData, topBannerData }: HeaderProps) {
       )}
 
       {/* Top Navigation Bar */}
-      <div className="min-h-[40px] sm:min-h-[44px] lg:min-h-[50px] safari-grid-fix safari-grid-fallback overflow-hidden">
+      <div className="min-h-[40px] sm:min-h-[44px] lg:min-h-[50px] safari-grid-fix safari-grid-fallback overflow-hidden px-3 lg:px-5">
         {/* Left Section */}
         <div className="flex justify-start items-center gap-1 sm:gap-2 lg:gap-6 text-white rounded-none safari-flex-fix">
           <Button
