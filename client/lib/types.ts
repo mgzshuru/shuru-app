@@ -99,6 +99,7 @@ export interface FooterData {
 }
 
 export interface NavigationItem {
+  id?: number;
   label: string;
   url: string;
   openInNewTab: boolean;

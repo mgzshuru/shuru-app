@@ -9,8 +9,6 @@ export async function GET(request: NextRequest) {
     // Use the strapi-client function to get most read articles with proper population
     const mostViewedArticles = await getMostReadArticles(limit);
 
-    console.log('Most viewed articles data:', mostViewedArticles);
-
     const response = {
       data: mostViewedArticles,
       meta: {

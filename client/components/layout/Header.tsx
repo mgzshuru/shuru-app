@@ -333,7 +333,7 @@ export default function Header({ headerData, topBannerData }: HeaderProps) {
             .filter((item) => item.onHeader)
             .map((item) => (
             <li
-              key={item.order}
+              key={item.id || item.order}
               className="border-b-[4px] sm:border-b-[6px] border-transparent transition-colors duration-500 hover:border-orange-500 relative group"
             >
               {item.subItems && item.subItems.length > 0 ? (

@@ -9,7 +9,7 @@ import { getMagazineIssuesOptimized } from '@/lib/strapi-optimized';
 import { getStrapiMedia } from '@/components/custom/strapi-image';
 import { useAuth } from '@/hooks/use-auth';
 import { logoutAction } from '@/app/actions/auth';
-import { LogOut } from 'lucide-react';
+import { LogOut, ChevronDown } from 'lucide-react';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -21,6 +21,15 @@ export default function MobileMenu({ isOpen, onClose, headerData }: MobileMenuPr
   const router = useRouter();
   const [latestIssue, setLatestIssue] = useState<any>(null);
   const { isAuthenticated, user, loading } = useAuth();
+  const [expandedItems, setExpandedItems] = useState<number[]>([]);
+
+  const toggleExpanded = (itemOrder: number) => {
+    setExpandedItems(prev =>
+      prev.includes(itemOrder)
+        ? prev.filter(o => o !== itemOrder)
+        : [...prev, itemOrder]
+    );
+  };
 
   const handleLogout = async () => {
     try {
@@ -74,21 +83,63 @@ export default function MobileMenu({ isOpen, onClose, headerData }: MobileMenuPr
           {headerData.navigation.primaryMenuItems && headerData.navigation.primaryMenuItems
             .filter((item) => item.onSideBar)
             .map((item) => (
-            <StrapiLink
-              key={item.order}
-              href={item.url}
-              isExternal={item.openInNewTab}
-              className="block"
-              onClick={handleLinkClick}
-            >
-              <Button
-                variant="ghost"
-                size="default"
-                className="justify-start px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 text-right w-full"
-              >
-                {item.label}
-              </Button>
-            </StrapiLink>
+            <div key={item.id || item.order}>
+              {item.subItems && item.subItems.length > 0 ? (
+                <>
+                  <Button
+                    variant="ghost"
+                    size="default"
+                    className="justify-center px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 w-full flex items-center gap-2"
+                    onClick={() => toggleExpanded(item.order)}
+                  >
+                    <span>{item.label}</span>
+                    <ChevronDown
+                      className={`h-4 w-4 transition-transform ${
+                        expandedItems.includes(item.order) ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </Button>
+                  {expandedItems.includes(item.order) && (
+                    <div className="pr-4 space-y-1">
+                      {item.subItems
+                        .sort((a, b) => a.order - b.order)
+                        .map((subItem, index) => (
+                        <StrapiLink
+                          key={index}
+                          href={subItem.url}
+                          isExternal={subItem.openInNewTab}
+                          className="block"
+                          onClick={handleLinkClick}
+                        >
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="justify-center px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-50 text-center w-full"
+                          >
+                            {subItem.label}
+                          </Button>
+                        </StrapiLink>
+                      ))}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <StrapiLink
+                  href={item.url}
+                  isExternal={item.openInNewTab}
+                  className="block"
+                  onClick={handleLinkClick}
+                >
+                  <Button
+                    variant="ghost"
+                    size="default"
+                    className="justify-center px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 text-center w-full"
+                  >
+                    {item.label}
+                  </Button>
+                </StrapiLink>
+              )}
+            </div>
           ))}
         </div>
 

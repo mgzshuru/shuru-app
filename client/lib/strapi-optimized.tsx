@@ -282,7 +282,12 @@ export async function getGlobalCached(): Promise<GlobalData | null> {
           navigation: {
             populate: {
               primaryMenuItems: {
-                fields: ["label", "url", "openInNewTab", "order", "onHeader", "onSideBar"]
+                fields: ["id", "label", "url", "openInNewTab", "order", "onHeader", "onSideBar"],
+                populate: {
+                  subItems: {
+                    fields: ["label", "url", "openInNewTab", "order"]
+                  }
+                }
               }
             }
           }
@@ -357,7 +362,12 @@ export async function getGlobal(): Promise<GlobalData | null> {
             navigation: {
               populate: {
                 primaryMenuItems: {
-                  fields: ["label", "url", "openInNewTab", "order", "onHeader", "onSideBar"]
+                  fields: ["id", "label", "url", "openInNewTab", "order", "onHeader", "onSideBar"],
+                  populate: {
+                    subItems: {
+                      fields: ["label", "url", "openInNewTab", "order"]
+                    }
+                  }
                 }
               }
             },
