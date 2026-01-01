@@ -67,7 +67,6 @@ export default async function Home() {
         ))}
 
         {/* Prefetch APIs */}
-        <link rel="prefetch" href="/api/selected-article" />
         <link rel="prefetch" href="/api/most-read-articles?limit=4" />
 
         <main className="min-h-screen bg-white">

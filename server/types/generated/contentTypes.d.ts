@@ -1151,55 +1151,6 @@ export interface ApiSavedArticleSavedArticle
   };
 }
 
-export interface ApiSelectedArticleSelectedArticle
-  extends Struct.SingleTypeSchema {
-  collectionName: 'selected_articles';
-  info: {
-    description: 'Curated selection of articles for sidebar display';
-    displayName: 'Selected Articles';
-    pluralName: 'selected-articles';
-    singularName: 'selected-article';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    articles: Schema.Attribute.Relation<'oneToMany', 'api::article.article'>;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    description: Schema.Attribute.Text;
-    displayOrder: Schema.Attribute.Enumeration<
-      ['manual', 'newest', 'oldest', 'mostRead']
-    > &
-      Schema.Attribute.DefaultTo<'manual'>;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::selected-article.selected-article'
-    > &
-      Schema.Attribute.Private;
-    maxArticles: Schema.Attribute.Integer &
-      Schema.Attribute.SetMinMax<
-        {
-          max: 10;
-          min: 1;
-        },
-        number
-      > &
-      Schema.Attribute.DefaultTo<3>;
-    publishedAt: Schema.Attribute.DateTime;
-    showInHero: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    title: Schema.Attribute.String &
-      Schema.Attribute.DefaultTo<'Selected Articles'>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    useRandomArticles: Schema.Attribute.Boolean &
-      Schema.Attribute.DefaultTo<false>;
-  };
-}
-
 export interface ApiSubmitPageContentSubmitPageContent
   extends Struct.SingleTypeSchema {
   collectionName: 'submit_page_contents';
@@ -1957,7 +1908,6 @@ declare module '@strapi/strapi' {
       'api::page.page': ApiPagePage;
       'api::podcast.podcast': ApiPodcastPodcast;
       'api::saved-article.saved-article': ApiSavedArticleSavedArticle;
-      'api::selected-article.selected-article': ApiSelectedArticleSelectedArticle;
       'api::submit-page-content.submit-page-content': ApiSubmitPageContentSubmitPageContent;
       'api::subscriber.subscriber': ApiSubscriberSubscriber;
       'api::top-banner.top-banner': ApiTopBannerTopBanner;
