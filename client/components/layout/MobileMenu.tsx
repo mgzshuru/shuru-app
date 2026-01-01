@@ -89,7 +89,7 @@ export default function MobileMenu({ isOpen, onClose, headerData }: MobileMenuPr
                   <Button
                     variant="ghost"
                     size="default"
-                    className="justify-center px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 w-full flex items-center gap-2"
+                    className="justify-center px-3 py-3 text-base font-medium text-gray-900 hover:bg-gray-100 w-full flex items-center gap-2 min-h-[48px]"
                     onClick={() => toggleExpanded(item.order)}
                   >
                     <span>{item.label}</span>
@@ -100,7 +100,7 @@ export default function MobileMenu({ isOpen, onClose, headerData }: MobileMenuPr
                     />
                   </Button>
                   {expandedItems.includes(item.order) && (
-                    <div className="pr-4 space-y-1">
+                    <div className="space-y-1 mt-1 mb-2 bg-gray-50 rounded-md py-2 animate-in slide-in-from-top-2 duration-200">
                       {item.subItems
                         .sort((a, b) => a.order - b.order)
                         .map((subItem, index) => (
@@ -114,7 +114,7 @@ export default function MobileMenu({ isOpen, onClose, headerData }: MobileMenuPr
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="justify-center px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-50 text-center w-full"
+                            className="justify-center px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-gray-900 w-full min-h-[44px]"
                           >
                             {subItem.label}
                           </Button>
@@ -133,7 +133,7 @@ export default function MobileMenu({ isOpen, onClose, headerData }: MobileMenuPr
                   <Button
                     variant="ghost"
                     size="default"
-                    className="justify-center px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 text-center w-full"
+                    className="justify-center px-3 py-3 text-base font-medium text-gray-900 hover:bg-gray-100 w-full min-h-[48px]"
                   >
                     {item.label}
                   </Button>

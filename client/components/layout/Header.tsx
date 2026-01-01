@@ -31,6 +31,7 @@ export default function Header({ headerData, topBannerData }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isSafari, setIsSafari] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<number | null>(null);
   const router = useRouter();
   const { isAuthenticated, user, loading, refreshAuth } = useAuth();
   const [showBanner, setShowBanner] = useState(true);
@@ -148,11 +149,27 @@ export default function Header({ headerData, topBannerData }: HeaderProps) {
     // Add event listener
     window.addEventListener('scroll', handleScroll, { passive: true });
 
-    // Clean up event listener
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
+    // Cleanup
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('.dropdown-menu-item')) {
+        setOpenDropdown(null);
+      }
+    };
+
+    if (openDropdown !== null) {
+      document.addEventListener('click', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [openDropdown]);
 
   // Disable body scroll when mobile menu is open
   useEffect(() => {
@@ -334,17 +351,22 @@ export default function Header({ headerData, topBannerData }: HeaderProps) {
             .map((item) => (
             <li
               key={item.id || item.order}
-              className="border-b-[4px] sm:border-b-[6px] border-transparent transition-colors duration-500 hover:border-orange-500 relative group"
+              className="border-b-[4px] sm:border-b-[6px] border-transparent transition-colors duration-500 hover:border-orange-500 relative dropdown-menu-item"
+              onMouseEnter={() => setOpenDropdown(item.order)}
+              onMouseLeave={() => setOpenDropdown(null)}
             >
               {item.subItems && item.subItems.length > 0 ? (
                 <>
                   <button
-                    className="hover:text-orange-500 transition-colors flex items-center gap-1 bg-transparent border-none cursor-pointer text-xs sm:text-sm font-normal leading-4 tracking-[1px] sm:tracking-[1.4px] uppercase text-white"
+                    className="hover:text-orange-500 transition-colors flex items-center gap-1 bg-transparent border-none cursor-pointer text-xs sm:text-sm font-normal leading-4 tracking-[1px] sm:tracking-[1.4px] uppercase text-white min-h-[44px]"
+                    onClick={() => setOpenDropdown(openDropdown === item.order ? null : item.order)}
                   >
                     {item.label}
-                    <ChevronDown className="h-3 w-3" />
+                    <ChevronDown className={`h-3 w-3 sm:h-4 sm:w-4 transition-transform ${openDropdown === item.order ? 'rotate-180' : ''}`} />
                   </button>
-                  <div className="absolute top-full left-0 mt-1 w-56 bg-black/95 backdrop-blur-md rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  <div className={`fixed left-1/2 -translate-x-1/2 top-[140px] w-[90vw] sm:w-80 max-w-md bg-black/95 backdrop-blur-md rounded-md shadow-2xl transition-all duration-200 z-[100] max-h-[70vh] overflow-y-auto ${
+                    openDropdown === item.order ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
+                  }`}>
                     <div className="py-2">
                       {item.subItems
                         .sort((a, b) => a.order - b.order)
@@ -353,7 +375,8 @@ export default function Header({ headerData, topBannerData }: HeaderProps) {
                           key={index}
                           href={subItem.url}
                           isExternal={subItem.openInNewTab}
-                          className="block px-4 py-2 text-sm text-white hover:bg-orange-500/20 hover:text-orange-500 transition-colors normal-case"
+                          className="block px-4 py-3 sm:py-2 text-sm sm:text-base text-white hover:bg-orange-500/20 hover:text-orange-500 transition-colors normal-case min-h-[44px] flex items-center"
+                          onClick={() => setOpenDropdown(null)}
                         >
                           {subItem.label}
                         </StrapiLink>
