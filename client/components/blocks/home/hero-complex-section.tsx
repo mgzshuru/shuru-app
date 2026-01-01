@@ -19,17 +19,18 @@ interface HeroComplexSectionData {
 }
 
 interface HeroComplexSectionProps {
-  data: HeroComplexSectionData;
+  data?: HeroComplexSectionData;
   articles?: Article[];
 }
 
-export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionProps) {
+export function HeroComplexSection({ data = {}, articles = [] }: HeroComplexSectionProps) {
+  // Use default values when data is not provided from Strapi
   const {
     featuredArticle,
     mostReadArticles = [],
     showMostRead = true,
     maxMostReadArticles = 4,
-    useRandomFeaturedArticle = false,
+    useRandomFeaturedArticle = true, // Default to random when no Strapi data
   } = data;
 
   // Get configuration for selected articles (now always random)
@@ -61,14 +62,14 @@ export function HeroComplexSection({ data, articles = [] }: HeroComplexSectionPr
   }, [articles, randomSeed]);
 
   const shuffledMainArticle = useMemo(() => {
-    // If useRandomFeaturedArticle is enabled, pick randomly from all articles
-    if (useRandomFeaturedArticle && articles.length > 0) {
+    // If a specific featured article is provided, use it
+    if (featuredArticle && !useRandomFeaturedArticle) {
+      return featuredArticle;
+    }
+    // Otherwise pick randomly from all articles (default behavior)
+    if (articles.length > 0) {
       const shuffled = shuffleArray(articles);
       return shuffled[0];
-    }
-    // Otherwise use the specified featured article or first article
-    if (featuredArticle) {
-      return featuredArticle;
     }
     return articles[0];
   }, [useRandomFeaturedArticle, featuredArticle, articles, randomSeed]);

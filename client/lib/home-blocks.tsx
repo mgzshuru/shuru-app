@@ -27,36 +27,42 @@ export const renderHomePageBlock = (block: HomePageBlock, articles: Article[] = 
 
   switch (block.__component) {
     case 'home.hero-complex-section': {
-      const heroComplexData = {
-        title: block.title,
-        subtitle: block.subtitle,
-        featuredArticle: block.featuredArticle,
-        mostReadArticles: block.mostReadArticles || [],
-        showMostRead: block.showMostRead ?? true,
-        maxMostReadArticles: block.maxMostReadArticles || 4,
-        useRandomFeaturedArticle: block.useRandomFeaturedArticle ?? false,
-      };
+      // Only pass data if block has actual configuration, otherwise component uses defaults
+      const heroComplexData = block.featuredArticle || block.mostReadArticles?.length > 0
+        ? {
+            title: block.title,
+            subtitle: block.subtitle,
+            featuredArticle: block.featuredArticle,
+            mostReadArticles: block.mostReadArticles || [],
+            showMostRead: block.showMostRead ?? true,
+            maxMostReadArticles: block.maxMostReadArticles || 4,
+            useRandomFeaturedArticle: block.useRandomFeaturedArticle ?? false,
+          }
+        : undefined;
       return <HeroComplexSection key={uniqueKey} data={heroComplexData} articles={articles} />;
     }
 
     case 'home.article-grid-section': {
-      const articleGridData = {
-        title: block.title,
-        subtitle: block.subtitle,
-        showTitle: block.showTitle ?? true,
-        articles: block.articles || [],
-        maxArticles: block.maxArticles || 6,
-        gridColumns: block.gridColumns || '3',
-        category: block.category,
-        showCategory: block.showCategory ?? true,
-        showExcerpt: block.showExcerpt ?? true,
-        showDate: block.showDate ?? true,
-        showAuthor: block.showAuthor ?? false,
-        backgroundColor: block.backgroundColor || 'white',
-        sectionSpacing: block.sectionSpacing || 'medium',
-        sidebarContent: block.sidebarContent || [],
-        showSidebar: block.showSidebar ?? true,
-      };
+      // Only pass data if block has custom configuration
+      const articleGridData = block.title || block.category || block.articles?.length > 0
+        ? {
+            title: block.title,
+            subtitle: block.subtitle,
+            showTitle: block.showTitle ?? true,
+            articles: block.articles || [],
+            maxArticles: block.maxArticles || 6,
+            gridColumns: block.gridColumns || '3',
+            category: block.category,
+            showCategory: block.showCategory ?? true,
+            showExcerpt: block.showExcerpt ?? true,
+            showDate: block.showDate ?? true,
+            showAuthor: block.showAuthor ?? false,
+            backgroundColor: block.backgroundColor || 'white',
+            sectionSpacing: block.sectionSpacing || 'medium',
+            sidebarContent: block.sidebarContent || [],
+            showSidebar: false, // Always hide sidebar
+          }
+        : { showSidebar: false }; // Hide sidebar for default section too
       return <ArticleGridSection key={uniqueKey} data={articleGridData} articles={articles} />;
     }
 
@@ -93,31 +99,33 @@ export const HomePageBlocksRenderer: React.FC<HomePageBlocksRendererProps> = ({
   articles = [],
   categories = []
 }) => {
+  // Check if sections exist in blocks
+  const hasHeroSection = blocks?.some(block => block.__component === 'home.hero-complex-section');
+  const hasArticleGridSection = blocks?.some(block => block.__component === 'home.article-grid-section');
+
   // Safety check for blocks array
   if (!blocks || !Array.isArray(blocks)) {
     console.warn('No blocks provided or blocks is not an array:', blocks);
     return (
-      <div className="w-full bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center justify-center min-h-[400px]">
-            <div className="bg-white rounded-xl shadow-lg p-12 max-w-md mx-auto text-center">
-              <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center">
-                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">لا يوجد محتوى متاح</h3>
-              <p className="text-gray-500">يرجى إضافة المحتوى من لوحة الإدارة</p>
-            </div>
-          </div>
-        </div>
+      <div className="w-full min-h-screen">
+        {/* Always render hero section even when no blocks */}
+        <HeroComplexSection articles={articles} />
+
+        {/* Always render article grid section even when no blocks */}
+        <ArticleGridSection articles={articles} />
       </div>
     );
   }
 
   return (
     <div className="w-full min-h-screen">
+      {/* Always render hero section first if not already in blocks */}
+      {!hasHeroSection && <HeroComplexSection articles={articles} />}
+
       {blocks.map((block) => renderHomePageBlock(block, articles, categories))}
+
+      {/* Always render article grid section if not already in blocks */}
+      {!hasArticleGridSection && <ArticleGridSection articles={articles} />}
     </div>
   );
 };

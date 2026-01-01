@@ -37,11 +37,11 @@ interface ArticleGridSectionData {
 }
 
 interface ArticleGridSectionProps {
-  data: ArticleGridSectionData;
+  data?: ArticleGridSectionData;
   articles?: Article[];
 }
 
-export function ArticleGridSection({ data, articles = [] }: ArticleGridSectionProps) {
+export function ArticleGridSection({ data = {}, articles = [] }: ArticleGridSectionProps) {
   const {
     title = "أحدث القصص",
     subtitle,
