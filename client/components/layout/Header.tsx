@@ -375,7 +375,7 @@ export default function Header({ headerData, topBannerData }: HeaderProps) {
                           key={index}
                           href={subItem.url}
                           isExternal={subItem.openInNewTab}
-                          className="block px-4 py-3 sm:py-2 text-sm sm:text-base text-white hover:bg-orange-500/20 hover:text-orange-500 transition-colors normal-case min-h-[44px] flex items-center"
+                          className="px-4 py-3 sm:py-2 text-sm sm:text-base text-white hover:bg-orange-500/20 hover:text-orange-500 transition-colors normal-case min-h-[44px] flex items-center"
                           onClick={() => setOpenDropdown(null)}
                         >
                           {subItem.label}
