@@ -153,7 +153,7 @@ export default async function PodcastPage({ params }: PodcastPageProps) {
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="space-y-8">
               <div>
-                <h1 className="text-4xl md:text-5xl font-bold text-black mb-8 leading-tight font-['IBM_Plex_Sans_Arabic']">
+                <h1 className="text-4xl md:text-5xl font-bold text-black mb-8 leading-tight md:leading-[1] font-['IBM_Plex_Sans_Arabic']" dir="rtl" style={{ lineHeight: '1.6', wordSpacing: '0.1em' }}>
                   {podcastData.title}
                 </h1>
 
