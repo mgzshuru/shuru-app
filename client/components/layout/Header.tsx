@@ -364,7 +364,7 @@ export default function Header({ headerData, topBannerData }: HeaderProps) {
                     {item.label}
                     <ChevronDown className={`h-3 w-3 sm:h-4 sm:w-4 transition-transform ${openDropdown === item.order ? 'rotate-180' : ''}`} />
                   </button>
-                  <div className={`fixed left-1/2 -translate-x-1/2 top-[140px] w-[90vw] sm:w-80 max-w-md bg-black/95 backdrop-blur-md rounded-md shadow-2xl transition-all duration-200 z-[100] max-h-[70vh] overflow-y-auto ${
+                  <div className={`fixed left-1/2 -translate-x-1/2 top-[140px] w-[70vw] sm:w-56 max-w-xs bg-black/95 backdrop-blur-md rounded-md shadow-2xl transition-all duration-200 z-[100] max-h-[70vh] overflow-y-auto ${
                     openDropdown === item.order ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
                   }`}>
                     <div className="py-2">
