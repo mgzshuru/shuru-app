@@ -23,7 +23,7 @@ export default function MagazineReadPage() {
       const mobileCheck = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase());
       setIsMobile(mobileCheck);
     };
-    
+
     checkMobile();
   }, []);
 
