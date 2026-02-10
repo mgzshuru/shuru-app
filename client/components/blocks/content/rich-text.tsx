@@ -10,6 +10,77 @@ interface RichTextProps {
   className?: string;
 }
 
+// Helper function to extract YouTube video ID from various URL formats
+function getYouTubeVideoId(url: string): string | null {
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\s?]+)/,
+    /youtube\.com\/watch\?.*v=([^&\s]+)/,
+  ];
+
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match && match[1]) {
+      return match[1];
+    }
+  }
+  return null;
+}
+
+// Helper function to convert YouTube URLs to embeds
+function convertYouTubeLinks(html: string): string {
+  // Pattern to match YouTube links in various formats
+  const youtubePatterns = [
+    // Match standalone YouTube URLs (not already in iframe)
+    /(?<!src=["'])https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})(?:[^\s<]*)/gi,
+    // Match YouTube URLs in anchor tags
+    /<a[^>]*href=["'](https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})[^"']*)["'][^>]*>([^<]*)<\/a>/gi,
+  ];
+
+  let processedHtml = html;
+
+  // First, handle anchor tags with YouTube links
+  processedHtml = processedHtml.replace(
+    /<a[^>]*href=["'](https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})[^"']*)["'][^>]*>([^<]*)<\/a>/gi,
+    (match, url, videoId) => {
+      return `<div class="youtube-embed-wrapper" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; margin: 2rem 0;">
+        <iframe
+          style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+          src="https://www.youtube.com/embed/${videoId}"
+          title="YouTube video player"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen>
+        </iframe>
+      </div>`;
+    }
+  );
+
+  // Then, handle standalone YouTube URLs that aren't already in iframes
+  processedHtml = processedHtml.replace(
+    /(?<!src=["']|<iframe[^>]*>)(?:^|\s|<p>)(https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11}))(?:[^\s<]*)/gim,
+    (match, url, videoId) => {
+      // Check if this URL is already inside an iframe
+      const beforeMatch = processedHtml.substring(0, processedHtml.indexOf(match));
+      if (beforeMatch.includes('<iframe') && !beforeMatch.includes('</iframe>')) {
+        return match;
+      }
+
+      return `<div class="youtube-embed-wrapper" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; margin: 2rem 0;">
+        <iframe
+          style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+          src="https://www.youtube.com/embed/${videoId}"
+          title="YouTube video player"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen>
+        </iframe>
+      </div>`;
+    }
+  );
+
+  return processedHtml;
+}
+
 export function RichText({ content, className }: RichTextProps) {
   // Configure marked options for better rendering
   const htmlContent = useMemo(() => {
@@ -21,12 +92,16 @@ export function RichText({ content, className }: RichTextProps) {
     // Check if content is already HTML or if it's Markdown
     const isMarkdown = content.includes('#') || content.includes('**') || content.includes('- ');
 
+    let processedContent = content;
+
     if (isMarkdown) {
-      return marked(content);
+      processedContent = marked(content) as string;
     }
 
-    // If it's already HTML, return as is
-    return content;
+    // Convert YouTube links to embeds
+    processedContent = convertYouTubeLinks(processedContent);
+
+    return processedContent;
   }, [content]);
 
   return (
@@ -70,6 +145,8 @@ export function RichText({ content, className }: RichTextProps) {
         'prose-img:rounded-none prose-img:shadow-lg',
         // HR (horizontal rules)
         'prose-hr:border-gray-200 prose-hr:my-8',
+        // YouTube embeds
+        '[&_.youtube-embed-wrapper]:my-8 [&_.youtube-embed-wrapper]:shadow-lg',
         className
       )}
       dangerouslySetInnerHTML={{ __html: htmlContent }}
