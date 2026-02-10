@@ -121,7 +121,7 @@ export default async function MajlisPage({ searchParams }: MajlisPageProps) {
                   <div className="border-t border-gray-800 pt-6">
                     <div className="flex items-center mb-3">
                       <span className="bg-orange-500 text-black px-3 py-1 text-sm font-bold font-['IBM_Plex_Sans_Arabic']">
-                        أحدث جلسة
+                        أحدث مجلس
                       </span>
                     </div>
                     <p className="text-gray-400 mb-4 font-['IBM_Plex_Sans_Arabic']">
@@ -138,7 +138,7 @@ export default async function MajlisPage({ searchParams }: MajlisPageProps) {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                         </svg>
-                        مشاهدة الجلسة
+                        مشاهدة المجلس
                       </Link>
                       {allMajlises[0].video_url && (
                         <a

@@ -226,7 +226,7 @@ export default async function Profile() {
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
                   <div>
                     <h3 className="font-semibold text-gray-900 text-lg mb-2">تسجيل الخروج</h3>
-                    <p className="text-gray-600">إنهاء الجلسة الحالية والعودة إلى الصفحة الرئيسية</p>
+                    <p className="text-gray-600">إنهاء المجلس الحالية والعودة إلى الصفحة الرئيسية</p>
                   </div>
                   <LogOutButton />
                 </div>

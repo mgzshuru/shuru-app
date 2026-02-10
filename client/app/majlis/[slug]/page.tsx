@@ -49,8 +49,8 @@ export async function generateMetadata({ params }: MajlisPageProps): Promise<Met
 
     if (!majlis) {
       return {
-        title: 'الجلسة غير موجودة',
-        description: 'الجلسة المطلوبة غير موجودة',
+        title: 'المجلس غير موجودة',
+        description: 'المجلس المطلوبة غير موجودة',
       };
     }
 
@@ -59,7 +59,7 @@ export async function generateMetadata({ params }: MajlisPageProps): Promise<Met
 
     const title = majlis.SEO?.meta_title || `${majlis.title}`;
     const description = majlis.SEO?.meta_description ||
-      (majlis.description ? majlis.description.replace(/<[^>]*>/g, '').substring(0, 160) + '...' : `جلسة من شروع`);
+      (majlis.description ? majlis.description.replace(/<[^>]*>/g, '').substring(0, 160) + '...' : `مجلس من شروع`);
 
     const fullTitle = title;
 
@@ -111,8 +111,8 @@ export async function generateMetadata({ params }: MajlisPageProps): Promise<Met
   } catch (error) {
     console.error('Error generating metadata:', error);
     return {
-      title: 'جلسة شروع',
-      description: 'جلسة شروع',
+      title: 'مجلس شروع',
+      description: 'مجلس شروع',
     };
   }
 }
@@ -162,7 +162,7 @@ export default async function MajlisPage({ params }: MajlisPageProps) {
                     <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
-                    تاريخ الجلسة: {formatDate(majlisData.majlis_date)}
+                    تاريخ المجلس: {formatDate(majlisData.majlis_date)}
                   </div>
 
                   {majlisData.guests && majlisData.guests.length > 0 && (
@@ -173,7 +173,7 @@ export default async function MajlisPage({ params }: MajlisPageProps) {
                 {majlisData.description && (
                   <div className="mb-8">
                     <h2 className="text-2xl font-bold text-gray-900 mb-4 font-['IBM_Plex_Sans_Arabic']">
-                      نبذة عن الجلسة
+                      نبذة عن المجلس
                     </h2>
                     <div
                       className="prose prose-xl max-w-none text-gray-700 leading-relaxed font-['IBM_Plex_Sans_Arabic']"
@@ -225,7 +225,7 @@ export default async function MajlisPage({ params }: MajlisPageProps) {
               {majlisData.content && (
                 <div className="pt-8 border-t border-gray-200">
                   <h2 className="text-2xl font-bold text-gray-900 mb-6 font-['IBM_Plex_Sans_Arabic']">
-                    محتوى الجلسة
+                    محتوى المجلس
                   </h2>
                   <RichText content={majlisData.content} />
                 </div>
@@ -235,7 +235,7 @@ export default async function MajlisPage({ params }: MajlisPageProps) {
               {majlisData.video_url && (
                 <div className="pt-8 border-t border-gray-200">
                   <h2 className="text-2xl font-bold text-gray-900 mb-6 font-['IBM_Plex_Sans_Arabic']">
-                    مشاهدة الجلسة
+                    مشاهدة المجلس
                   </h2>
                   <div className="aspect-video overflow-hidden shadow-lg">
                     {majlisData.video_url.includes('youtube.com') || majlisData.video_url.includes('youtu.be') ? (
@@ -263,7 +263,7 @@ export default async function MajlisPage({ params }: MajlisPageProps) {
               {/* Social Share */}
               <div className="pt-8 border-t border-gray-200">
                 <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-6 md:p-8 border border-gray-200">
-                  <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-3 md:mb-4 text-right font-['IBM_Plex_Sans_Arabic']">شارك هذه الجلسة</h3>
+                  <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-3 md:mb-4 text-right font-['IBM_Plex_Sans_Arabic']">شارك هذه المجلس</h3>
                   <SocialShare
                     title={majlisData.title}
                     slug={majlisData.slug}
@@ -286,7 +286,7 @@ export default async function MajlisPage({ params }: MajlisPageProps) {
             عذراً، حدث خطأ
           </h1>
           <p className="text-gray-600 font-['IBM_Plex_Sans_Arabic']">
-            لم نتمكن من تحميل تفاصيل الجلسة. يرجى المحاولة مرة أخرى لاحقاً.
+            لم نتمكن من تحميل تفاصيل المجلس. يرجى المحاولة مرة أخرى لاحقاً.
           </p>
           <Link
             href="/meeting"
