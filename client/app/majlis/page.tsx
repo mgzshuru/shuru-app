@@ -160,7 +160,7 @@ export default async function MajlisPage({ searchParams }: MajlisPageProps) {
 
               {/* Hero Image */}
               {allMajlises.length > 0 && allMajlises[0].cover_image && (
-                <div className="relative aspect-[4/3] overflow-hidden shadow-2xl">
+                <div className="relative aspect-[16/9] overflow-hidden shadow-2xl">
                   <Image
                     src={getStrapiMedia(allMajlises[0].cover_image.url) || '/placeholder.jpg'}
                     alt={allMajlises[0].cover_image.alternativeText || allMajlises[0].title}
