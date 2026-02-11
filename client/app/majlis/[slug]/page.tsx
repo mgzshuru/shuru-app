@@ -1,4 +1,5 @@
 import React from 'react';
+import type { ComponentType } from 'react';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -10,6 +11,9 @@ import { Majlis } from '@/lib/types';
 import { RichText } from '@/components/blocks/content/rich-text';
 import { SocialShare } from '@/components/custom/social-share';
 import { GuestDisplay } from '@/components/custom/guest-display';
+
+const NextLink = Link as unknown as ComponentType<any>;
+const NextImage = Image as unknown as ComponentType<any>;
 
 // Generate static params for all majlises
 export async function generateStaticParams() {
@@ -135,13 +139,13 @@ export default async function MajlisPage({ params }: MajlisPageProps) {
         <nav className="bg-gray-50 border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex items-center space-x-2 rtl:space-x-reverse text-sm text-gray-600 font-['IBM_Plex_Sans_Arabic']">
-              <Link href="/" className="hover:text-blue-600 transition-colors">
+              <NextLink href="/" className="hover:text-blue-600 transition-colors">
                 الرئيسية
-              </Link>
+              </NextLink>
               <span className="text-gray-400">/</span>
-              <Link href="/majlis" className="hover:text-blue-600 transition-colors">
+              <NextLink href="/majlis" className="hover:text-blue-600 transition-colors">
                  الجلسات
-              </Link>
+              </NextLink>
               <span className="text-gray-400">/</span>
               <span className="text-gray-900 font-medium">{majlisData.title}</span>
             </div>
@@ -160,7 +164,7 @@ export default async function MajlisPage({ params }: MajlisPageProps) {
                 <div className="flex flex-col gap-4 text-gray-600 mb-8 font-['IBM_Plex_Sans_Arabic']">
                   <div className="flex items-center">
                     <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      <path strokeLinecap={'round' as const} strokeLinejoin={'round' as const} strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                     تاريخ المجلس: {formatDate(majlisData.majlis_date)}
                   </div>
@@ -186,7 +190,7 @@ export default async function MajlisPage({ params }: MajlisPageProps) {
                 {majlisData.cover_image && (
                   <div className="mb-8">
                     <div className="relative aspect-[4/3] md:aspect-[16/9] bg-gray-100 overflow-hidden">
-                      <Image
+                      <NextImage
                         src={getStrapiMedia(majlisData.cover_image?.url) || ''}
                         alt={majlisData.cover_image?.alternativeText || majlisData.title}
                         width={majlisData.cover_image?.width || 1200}
@@ -288,12 +292,12 @@ export default async function MajlisPage({ params }: MajlisPageProps) {
           <p className="text-gray-600 font-['IBM_Plex_Sans_Arabic']">
             لم نتمكن من تحميل تفاصيل المجلس. يرجى المحاولة مرة أخرى لاحقاً.
           </p>
-          <Link
+          <NextLink
             href="/meeting"
             className="inline-block mt-6 px-6 py-3 bg-black text-white font-bold hover:bg-gray-800 transition-colors font-['IBM_Plex_Sans_Arabic']"
           >
             العودة إلى اللقاءات
-          </Link>
+          </NextLink>
         </div>
       </div>
     );
