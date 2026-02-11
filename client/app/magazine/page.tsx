@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { getAllMagazineIssues, getFeaturedMagazineIssues } from '@/lib/strapi-client';
 import { getGlobalCached, getMagazineIssuesOptimized, getFeaturedMagazineIssuesOptimized } from '@/lib/strapi-optimized';
 import { getStrapiMedia } from '@/components/custom/strapi-image';
+import { DownloadPdfButton } from '@/components/custom/download-pdf-button';
 import { formatDate } from '@/lib/utils';
 import { MagazineIssue } from '@/lib/types';
 
@@ -131,17 +132,16 @@ export default async function MagazinePage({ searchParams }: MagazinePageProps) 
                     {/* Action Buttons */}
                     <div className="flex flex-col sm:flex-row gap-4">
                       {allIssues[0].pdf_attachment && getStrapiMedia(allIssues[0].pdf_attachment.url) && (
-                        <a
-                          href={getStrapiMedia(allIssues[0].pdf_attachment.url)!}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center px-8 py-4 bg-white text-black font-bold hover:bg-gray-100 transition-colors duration-200 font-['IBM_Plex_Sans_Arabic']"
+                        <DownloadPdfButton
+                          pdfUrl={getStrapiMedia(allIssues[0].pdf_attachment.url)!}
+                          fileName={`${allIssues[0].title}-العدد-${allIssues[0].issue_number}.pdf`}
+                          className="inline-flex items-center justify-center px-8 py-4 bg-white text-black font-bold hover:bg-gray-100 transition-colors duration-200 font-['IBM_Plex_Sans_Arabic'] disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                           </svg>
                           تحميل PDF
-                        </a>
+                        </DownloadPdfButton>
                       )}
                       <Link
                         href={`/magazine/${allIssues[0].slug}`}
