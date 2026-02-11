@@ -191,7 +191,7 @@ export default async function MajlisPage({ params }: MajlisPageProps) {
                         alt={majlisData.cover_image?.alternativeText || majlisData.title}
                         width={majlisData.cover_image?.width || 1200}
                         height={majlisData.cover_image?.height || 675}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-contain md:object-cover"
                         priority
                       />
                     </div>
