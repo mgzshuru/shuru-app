@@ -75,7 +75,7 @@ const nextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: "frame-ancestors 'self' https://cms.shuru.sa https://shuru.sa http://localhost:1337; worker-src 'self' blob:; frame-src 'self' https://mozilla.github.io;",
+            value: "frame-ancestors 'self' https://cms.shuru.sa https://shuru.sa http://localhost:1337; worker-src 'self' blob:; frame-src 'self' https://mozilla.github.io https://www.youtube.com https://www.youtube-nocookie.com;",
           },
           {
             key: 'Referrer-Policy',
