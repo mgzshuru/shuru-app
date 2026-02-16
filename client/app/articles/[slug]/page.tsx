@@ -374,13 +374,13 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         {article.enable_cover_image && article.cover_image && (
           <div className="px-4 md:px-6 mb-12 md:mb-16">
             <div className="max-w-6xl mx-auto">
-              <div className="relative aspect-[4/3] md:aspect-[16/9] bg-gray-100 overflow-hidden">
+              <div className="relative md:aspect-[16/9] bg-gray-100 overflow-hidden">
                 <Image
                   src={getStrapiMedia(article.cover_image.url) || ''}
                   alt={article.cover_image.alternativeText || article.title}
                   width={article.cover_image.width || 1200}
                   height={article.cover_image.height || 675}
-                  className="w-full h-full object-cover"
+                  className="w-full h-auto md:h-full md:object-cover"
                   priority
                 />
               </div>
