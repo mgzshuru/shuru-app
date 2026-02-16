@@ -8,7 +8,6 @@ import { getArticleForDetail, getArticleForSEO, getRelatedArticlesOptimized, get
 import { getRelatedArticlesFromCategories } from '@/lib/strapi-client';
 import { getStrapiMedia } from '@/components/custom/strapi-image';
 import { SocialShare } from '@/components/custom/social-share';
-import { TableOfContents } from '@/components/custom/table-of-contents';
 import { SaveButton } from '@/components/custom/save-button';
 import { formatDate, extractTextFromRichContent } from '@/lib/utils';
 import { Article, Block } from '@/lib/types';
