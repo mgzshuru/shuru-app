@@ -6,10 +6,17 @@ import { cookies } from "next/headers";
 // 1. Specify protected and public routes
 const protectedRoutes = ["/profile", "/auth/change-password", "/profile/saved-articles"];
 const publicRoutes = ["/auth/login", "/auth/signup", "/"];
+const disabledRoutes = ["/submit"]; // Routes temporarily disabled
 
 export default async function middleware(req: NextRequest) {
   // 2. Check if the current route is protected or public
   const path = req.nextUrl.pathname;
+
+  // Check if route is disabled
+  if (disabledRoutes.includes(path)) {
+    return NextResponse.redirect(new URL("/", req.nextUrl));
+  }
+
   const isProtectedRoute = protectedRoutes.includes(path);
   const isPublicRoute = publicRoutes.includes(path);
 

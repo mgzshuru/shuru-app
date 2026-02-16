@@ -132,7 +132,7 @@ export default async function Profile() {
                     </Link>
                   </Button>
 
-                  <Button asChild variant="outline" className="group h-auto p-0 border-gray-200 hover:border-green-300 hover:shadow-md transition-all duration-300 overflow-hidden">
+                  {/* <Button asChild variant="outline" className="group h-auto p-0 border-gray-200 hover:border-green-300 hover:shadow-md transition-all duration-300 overflow-hidden">
                     <Link href="/submit">
                       <div className="flex items-center gap-4 text-right p-6 w-full">
                         <div className="p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-2xl flex-shrink-0 group-hover:from-green-100 group-hover:to-green-200 transition-all duration-300">
@@ -140,11 +140,10 @@ export default async function Profile() {
                         </div>
                         <div className="text-right flex-1 min-w-0">
                           <div className="font-bold text-gray-900 text-lg mb-1">اكتب معنا</div>
-                          {/* <div className="text-sm text-gray-500 leading-relaxed">شارك أفكارك ومقالاتك</div> */}
                         </div>
                       </div>
                     </Link>
-                  </Button>
+                  </Button> */}
 
                   <Button asChild variant="outline" className="group h-auto p-0 border-gray-200 hover:border-purple-300 hover:shadow-md transition-all duration-300 overflow-hidden">
                     <Link href="/profile/saved-articles">
